@@ -12,14 +12,11 @@ namespace BookHub.DAL.DataAccess
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserEntity>(entity =>
             {
-                entity.HasKey(c => c.UserId);
-                entity.Property(c => c.Name)
-                .IsRequired();
-
                 entity.HasMany(u => u.Achievments)
                 .WithMany(a => a.Users)
                 .UsingEntity(j =>
@@ -31,9 +28,6 @@ namespace BookHub.DAL.DataAccess
 
             modelBuilder.Entity<CollectionEntity>(entity =>
             {
-                entity.HasKey(c => c.Id);
-                entity.Property(c => c.Name)
-                .IsRequired();
 
 
                 entity.HasOne(c => c.User)
@@ -42,13 +36,7 @@ namespace BookHub.DAL.DataAccess
                 .OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<AchievmentEntity>(entity =>
-            {
-                entity.HasKey(a => a.Id);
-                entity.Property(a => a.Name)
-                .IsRequired();
-
-            });
+            modelBuilder.Entity<AchievmentEntity>();
         }
 
 
