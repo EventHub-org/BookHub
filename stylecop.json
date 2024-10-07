@@ -1,0 +1,14 @@
+{
+  "settings": {
+    "documentationRules": {
+      "requireDocumentation": true,
+      "requireSummary": true
+    },
+    "maintainabilityRules": {
+      "maxLineLength": 120
+    },
+    "orderingRules": {
+      "usingDirectivesPlacement": "outsideNamespace"
+    }
+  }
+}
