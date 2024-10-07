@@ -8,6 +8,7 @@ namespace BookHub.DAL.DataAccess
         public virtual DbSet<UserEntity> Users { get; set; }
         public virtual DbSet<CollectionEntity> Collections { get; set; }
         public virtual DbSet<AchievmentEntity> Achievments { get; set; }
+        public DbSet<FriendshipEntity> Friendships { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
@@ -26,15 +27,21 @@ namespace BookHub.DAL.DataAccess
                 });
             });
 
-            modelBuilder.Entity<CollectionEntity>(entity =>
+            modelBuilder.Entity<FriendshipEntity>(entity =>
             {
+                entity.HasKey(fs => new { fs.User1Id, fs.User2Id });
 
+                entity.HasOne(fs => fs.User1)
+                    .WithMany(u => u.Inviters)
+                    .HasForeignKey(fs => fs.User1Id)
+                    .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasOne(c => c.User)
-                .WithMany( u => u.Collections)
-                .HasForeignKey(c => c.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(fs => fs.User2)
+                    .WithMany(u => u.Invitees)
+                    .HasForeignKey(fs => fs.User2Id)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
+
 
             modelBuilder.Entity<AchievmentEntity>();
         }

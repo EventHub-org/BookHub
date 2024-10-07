@@ -26,5 +26,10 @@ namespace BookHub.DAL.Entities
 
         public ICollection<CollectionEntity> Collections { get; set; }
         public ICollection<AchievmentEntity> Achievments { get; set; }
+
+        // Collection of users who initiated the "friendship"
+        public virtual ICollection<FriendshipEntity> Inviters { get; set; }
+        // Collection of users who where invited to the "friendship"
+        public virtual ICollection<FriendshipEntity> Invitees { get; set; }
     }
 }
