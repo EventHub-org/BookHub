@@ -10,7 +10,7 @@ namespace BookHub.DAL.DataAccess
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
             // Отримання рядка підключення зі змінної середовища
-            var connectionString = "Server=LAPTOP-9SF7UDGK\\BOOKHUB;Database=BookHub;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;";
+            var connectionString = "Server=PostgreSQL 16\\BOOKHUB;Database=BookHub;User Id=postgres;Password=root;MultipleActiveResultSets=true;Encrypt=True;\r\n";
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new InvalidOperationException("Connection string not found in environment variables.");
