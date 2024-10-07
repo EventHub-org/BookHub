@@ -7,9 +7,13 @@ namespace BookHub.DAL.DataAccess
     {
         public virtual DbSet<UserEntity> Users { get; set; }
         public virtual DbSet<CollectionEntity> Collections { get; set; }
-        public virtual DbSet<AchievmentEntity> Achievments { get; set; }
+        public virtual DbSet<AchievementEntity> Achievements { get; set; }
+        public virtual DbSet<ReviewEntity> Reviews { get; set; }
+        public virtual DbSet<BookEntity> Books { get; set; }
+        public virtual DbSet<ReadingProgressEntity> ReadingProgresses { get; set; }
+        public virtual DbSet<FriendshipEntity> Friendships { get; set; }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options)
+    public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,7 +46,7 @@ namespace BookHub.DAL.DataAccess
                 .OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<AchievmentEntity>(entity =>
+            modelBuilder.Entity<AchievementEntity>(entity =>
             {
                 entity.HasKey(a => a.Id);
                 entity.Property(a => a.Name)

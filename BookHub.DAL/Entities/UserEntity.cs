@@ -1,5 +1,4 @@
-﻿
-namespace BookHub.DAL.Entities
+﻿namespace BookHub.DAL.Entities
 {
     public class UserEntity
     {
@@ -10,6 +9,6 @@ namespace BookHub.DAL.Entities
         public string ProfilePicture { get; set; } //url
 
         public ICollection<CollectionEntity> Collections { get; set; }
-        public ICollection<AchievmentEntity> Achievments { get; set; }
+        public ICollection<AchievementEntity> Achievments { get; set; }
     }
 }
