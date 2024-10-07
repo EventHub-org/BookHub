@@ -8,6 +8,9 @@ namespace BookHub.DAL.DataAccess
         public virtual DbSet<UserEntity> Users { get; set; }
         public virtual DbSet<CollectionEntity> Collections { get; set; }
         public virtual DbSet<AchievmentEntity> Achievments { get; set; }
+        public virtual DbSet<BookEntity> Books { get; set; }
+        public virtual DbSet<ReviewEntity> Reviews { get; set; }
+        public virtual DbSet<ReadingProgressEntity> ReadingProgresses { get; set; }
         public DbSet<FriendshipEntity> Friendships { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
