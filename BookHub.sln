@@ -12,6 +12,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DF83BAD4-8951-43DD-B685-168A57E6E267}"
 	ProjectSection(SolutionItems) = preProject
 		.env = .env
+		stylecop.json = stylecop.json
+	EndProjectSection
+	ProjectSection(FolderGlobals) = preProject
+		D_5_4GlovaWPF_4WPF-Project_4BookHub_4stylecop_1json__JsonSchema = 
 	EndProjectSection
 EndProject
 Global

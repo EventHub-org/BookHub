@@ -4,7 +4,7 @@ using BookHub.DAL.DataAccess;
 
 namespace BookHub.DAL.Repositories.Implementations
 {
-    public class ReadingProgressRepository : IReadingProgressRepository<ReadingProgressEntity>
+    public class ReadingProgressRepository : IRepository<ReadingProgressEntity>, IReadingProgressRepository<ReadingProgressEntity>
     {
         private readonly AppDbContext _context;
 
@@ -13,30 +13,30 @@ namespace BookHub.DAL.Repositories.Implementations
             _context = context;
         }
 
-        public void AddReadingProgress(ReadingProgressEntity entity)
+        public async Task AddAsync(ReadingProgressEntity entity)
         {
             _context.ReadingProgresses.Add(entity);
             _context.SaveChanges();
         }
 
-        public void UpdateReadingProgress(ReadingProgressEntity entity)
+        public async Task UpdateAsync(ReadingProgressEntity entity)
         {
             _context.ReadingProgresses.Update(entity);
             _context.SaveChanges();
         }
 
-        public void DeleteReadingProgress(ReadingProgressEntity entity)
+        public async Task DeleteAsync(ReadingProgressEntity entity)
         {
             _context.ReadingProgresses.Remove(entity);
             _context.SaveChanges();
         }
 
-        public ReadingProgressEntity GetReadingProgressById(int id)
+        public async Task<ReadingProgressEntity> GetByIdAsync(int id)
         {
             return _context.ReadingProgresses.Find(id);
         }
 
-        public IEnumerable<ReadingProgressEntity> GetAllReadingProgresses()
+        public async Task<IEnumerable<ReadingProgressEntity>> GetAllAsync()
         {
             return _context.ReadingProgresses.ToList();
         }

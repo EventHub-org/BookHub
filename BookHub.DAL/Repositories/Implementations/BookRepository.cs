@@ -4,7 +4,7 @@ using BookHub.DAL.DataAccess;
 
 namespace BookHub.DAL.Repositories.Implementations
 {
-    public class BookRepository : IBookRepository<BookEntity>
+    public class BookRepository : IRepository<BookEntity>, IBookRepository<BookEntity>
     {
         private readonly AppDbContext _context;
 
@@ -13,30 +13,30 @@ namespace BookHub.DAL.Repositories.Implementations
             _context = context;
         }
 
-        public void AddBook(BookEntity entity)
+        public async Task AddAsync(BookEntity entity)
         {
             _context.Books.Add(entity);
             _context.SaveChanges();
         }
 
-        public void UpdateBook(BookEntity entity)
+        public async Task UpdateAsync(BookEntity entity)
         {
             _context.Books.Update(entity);
             _context.SaveChanges();
         }
 
-        public void DeleteBook(BookEntity entity)
+        public async Task DeleteAsync(BookEntity entity)
         {
             _context.Books.Remove(entity);
             _context.SaveChanges();
         }
 
-        public BookEntity GetBookById(int id)
+        public async Task<BookEntity> GetByIdAsync(int id)
         {
             return _context.Books.Find(id);
         }
 
-        public IEnumerable<BookEntity> GetAllBooks()
+        public async Task<IEnumerable<BookEntity>> GetAllAsync()
         {
             return _context.Books.ToList();
         }

@@ -4,7 +4,7 @@ using BookHub.DAL.DataAccess;
 
 namespace BookHub.DAL.Repositories.Implementations
 {
-    public class AchievementRepository : IAchievementRepository<AchievementEntity>
+    public class AchievementRepository : IRepository<AchievementEntity>, IAchievementRepository<AchievementEntity>
     {
         private readonly AppDbContext _context;
 
@@ -13,30 +13,30 @@ namespace BookHub.DAL.Repositories.Implementations
             _context = context;
         }
 
-        public void AddAchievement(AchievementEntity entity)
+        public async Task AddAsync(AchievementEntity entity)
         {
             _context.Achievements.Add(entity);
             _context.SaveChanges();
         }
 
-        public void UpdateAchievement(AchievementEntity entity)
+        public async Task UpdateAsync(AchievementEntity entity)
         {
             _context.Achievements.Update(entity);
             _context.SaveChanges();
         }
 
-        public void DeleteAchievement(AchievementEntity entity)
+        public async Task DeleteAsync(AchievementEntity entity)
         {
             _context.Achievements.Remove(entity);
             _context.SaveChanges();
         }
 
-        public AchievementEntity GetAchievementById(int id)
+        public async Task<AchievementEntity> GetByIdAsync(int id)
         {
             return _context.Achievements.Find(id);
         }
 
-        public IEnumerable<AchievementEntity> GetAllAchievements()
+        public async Task<IEnumerable<AchievementEntity>> GetAllAsync()
         {
             return _context.Achievements.ToList();
         }

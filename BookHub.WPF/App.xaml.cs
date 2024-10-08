@@ -1,4 +1,8 @@
+using BookHub.DAL.DataAccess;
+using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.IO;
 using System.Windows;
 
 namespace BookHub.WPF
@@ -8,6 +12,7 @@ namespace BookHub.WPF
     /// </summary>
     public partial class App : Application
     {
+
         public App()
         {
             ConfigureLogging();
@@ -15,11 +20,12 @@ namespace BookHub.WPF
 
         private void ConfigureLogging()
         {
+            var URL = "http://localhost:5341";
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug() // Мінімальний рівень логів
                 .Enrich.FromLogContext() // Контекст до логів
                 .WriteTo.Console()
-                .WriteTo.Seq("http://localhost:5341") // Виводимо логи в Seq, вказавши його адресу
+                .WriteTo.Seq(URL) // Виводимо логи в Seq, вказавши його адресу
                 .CreateLogger();
 
             Log.Information("Serilog налаштовано для WPF!");

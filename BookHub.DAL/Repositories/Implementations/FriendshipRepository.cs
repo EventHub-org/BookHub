@@ -4,7 +4,7 @@ using BookHub.DAL.DataAccess;
 
 namespace BookHub.DAL.Repositories.Implementations
 {
-    public class FriendshipRepository : IFriendshipRepository<FriendshipEntity>
+    public class FriendshipRepository : IRepository<FriendshipEntity>, IFriendshipRepository<FriendshipEntity>
     {
         private readonly AppDbContext _context;
 
@@ -13,30 +13,30 @@ namespace BookHub.DAL.Repositories.Implementations
             _context = context;
         }
 
-        public void AddFriendship(FriendshipEntity entity)
+        public async Task AddAsync(FriendshipEntity entity)
         {
             _context.Friendships.Add(entity);
             _context.SaveChanges();
         }
 
-        public void UpdateFriendship(FriendshipEntity entity)
+        public async Task UpdateAsync(FriendshipEntity entity)
         {
             _context.Friendships.Update(entity);
             _context.SaveChanges();
         }
 
-        public void DeleteFriendship(FriendshipEntity entity)
+        public async Task DeleteAsync(FriendshipEntity entity)
         {
             _context.Friendships.Remove(entity);
             _context.SaveChanges();
         }
 
-        public FriendshipEntity GetFriendshipById(int id)
+        public async Task<FriendshipEntity> GetByIdAsync(int id)
         {
             return _context.Friendships.Find(id);
         }
 
-        public IEnumerable<FriendshipEntity> GetAllFriendships()
+        public async Task<IEnumerable<FriendshipEntity>> GetAllAsync()
         {
             return _context.Friendships.ToList();
         }

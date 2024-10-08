@@ -4,7 +4,7 @@ using BookHub.DAL.DataAccess;
 
 namespace BookHub.DAL.Repositories.Implementations
 {
-    public class ReviewRepository : IReviewRepository<ReviewEntity>
+    public class ReviewRepository : IRepository<ReviewEntity>, IReviewRepository<ReviewEntity>
     {
         private readonly AppDbContext _context;
 
@@ -13,30 +13,30 @@ namespace BookHub.DAL.Repositories.Implementations
             _context = context;
         }
 
-        public void AddReview(ReviewEntity entity)
+        public async Task AddAsync(ReviewEntity entity)
         {
             _context.Reviews.Add(entity);
             _context.SaveChanges();
         }
 
-        public void UpdateReview(ReviewEntity entity)
+        public async Task UpdateAsync(ReviewEntity entity)
         {
             _context.Reviews.Update(entity);
             _context.SaveChanges();
         }
 
-        public void DeleteReview(ReviewEntity entity)
+        public async Task DeleteAsync(ReviewEntity entity)
         {
             _context.Reviews.Remove(entity);
             _context.SaveChanges();
         }
 
-        public ReviewEntity GetReviewById(int id)
+        public async Task<ReviewEntity> GetByIdAsync(int id)
         {
             return _context.Reviews.Find(id);
         }
 
-        public IEnumerable<ReviewEntity> GetAllReviews()
+        public async Task<IEnumerable<ReviewEntity>> GetAllAsync()
         {
             return _context.Reviews.ToList();
         }
