@@ -24,7 +24,7 @@ namespace BookHub.DAL.Entities
         public string ProfilePicture { get; set; } //url
 
         public ICollection<CollectionEntity> Collections { get; set; }
-        public ICollection<AchievmentEntity> Achievments { get; set; }
+        public ICollection<AchievementEntity> Achievments { get; set; }
 
         // Collection of users who initiated the "friendship"
         public virtual ICollection<FriendshipEntity> Inviters { get; set; }

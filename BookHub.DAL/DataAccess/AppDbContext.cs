@@ -11,7 +11,7 @@ namespace BookHub.DAL.DataAccess
         public virtual DbSet<ReadingProgressEntity> ReadingProgresses { get; set; }
         public virtual DbSet<FriendshipEntity> Friendships { get; set; }
         public virtual DbSet<CollectionEntity> Collections { get; set; }
-        public virtual DbSet<AchievmentEntity> Achievments { get; set; }
+        public virtual DbSet<AchievementEntity> Achievements { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
@@ -43,7 +43,7 @@ namespace BookHub.DAL.DataAccess
             });
 
 
-            modelBuilder.Entity<AchievmentEntity>();
+            modelBuilder.Entity<AchievementEntity>();
         }
     }
 }

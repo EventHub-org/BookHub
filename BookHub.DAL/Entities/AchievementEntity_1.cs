@@ -2,7 +2,7 @@
 
 namespace BookHub.DAL.Entities
 {
-    public class AchievmentEntity
+    public class AchievementEntity
     {
         [Key]
         public int Id { get; set; }
