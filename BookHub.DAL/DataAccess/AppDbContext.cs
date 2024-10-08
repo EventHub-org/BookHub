@@ -14,7 +14,6 @@ namespace BookHub.DAL.DataAccess
         public virtual DbSet<FriendshipEntity> Friendships { get; set; }
         public virtual DbSet<CollectionEntity> Collections { get; set; }
         public virtual DbSet<AchievmentEntity> Achievments { get; set; }
-        public DbSet<FriendshipEntity> FriendshipEntity { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
@@ -34,16 +33,14 @@ namespace BookHub.DAL.DataAccess
 
             modelBuilder.Entity<FriendshipEntity>(entity =>
             {
-                entity.HasKey(fs => new { fs.FriendId, fs.UserId });
-
-                entity.HasOne(fs => fs.User)
+                entity.HasKey(fs => new { fs.User1Id, fs.User2Id });
+                entity.HasOne(fs => fs.User1)
                     .WithMany(u => u.Inviters)
-                    .HasForeignKey(fs => fs.UserId)
+                    .HasForeignKey(fs => fs.User1Id)
                     .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(fs => fs.Friend)
+                entity.HasOne(fs => fs.User2)
                     .WithMany(u => u.Invitees)
-                    .HasForeignKey(fs => fs.FriendId)
+                    .HasForeignKey(fs => fs.User2Id)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 

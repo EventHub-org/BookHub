@@ -129,16 +129,10 @@ namespace BookHub.DAL.Migrations
 
             modelBuilder.Entity("BookHub.DAL.Entities.FriendshipEntity", b =>
                 {
-                    b.Property<int>("FriendId")
+                    b.Property<int>("User1Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Id")
+                    b.Property<int>("User2Id")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
@@ -146,11 +140,11 @@ namespace BookHub.DAL.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("FriendId", "UserId");
+                    b.HasKey("User1Id", "User2Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("User2Id");
 
-                    b.ToTable("FriendshipEntity");
+                    b.ToTable("Friendships");
                 });
 
             modelBuilder.Entity("BookHub.DAL.Entities.ReadingProgressEntity", b =>
@@ -280,21 +274,21 @@ namespace BookHub.DAL.Migrations
 
             modelBuilder.Entity("BookHub.DAL.Entities.FriendshipEntity", b =>
                 {
-                    b.HasOne("BookHub.DAL.Entities.UserEntity", "Friend")
-                        .WithMany("Invitees")
-                        .HasForeignKey("FriendId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("BookHub.DAL.Entities.UserEntity", "User")
+                    b.HasOne("BookHub.DAL.Entities.UserEntity", "User1")
                         .WithMany("Inviters")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("User1Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Friend");
+                    b.HasOne("BookHub.DAL.Entities.UserEntity", "User2")
+                        .WithMany("Invitees")
+                        .HasForeignKey("User2Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("User1");
+
+                    b.Navigation("User2");
                 });
 
             modelBuilder.Entity("BookHub.DAL.Entities.ReadingProgressEntity", b =>
