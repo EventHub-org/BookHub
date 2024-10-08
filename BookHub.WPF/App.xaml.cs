@@ -1,4 +1,5 @@
-﻿using System.Windows;
+using Serilog;
+using System.Windows;
 
 namespace BookHub.WPF
 {
@@ -7,6 +8,40 @@ namespace BookHub.WPF
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            ConfigureLogging();
+        }
+
+        private void ConfigureLogging()
+        {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug() // Мінімальний рівень логів
+                .Enrich.FromLogContext() // Контекст до логів
+                .WriteTo.Console()
+                .WriteTo.Seq("http://localhost:5341") // Виводимо логи в Seq, вказавши його адресу
+                .CreateLogger();
+
+            Log.Information("Serilog налаштовано для WPF!");
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            // Відловлюємо виключення
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+                Log.Fatal(args.ExceptionObject as Exception, "Невловима помилка");
+
+            Log.Information("Додаток запущено");
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            Log.Information("Додаток закрито");
+            Log.CloseAndFlush(); // Закриваємо логування перед завершенням додатка
+            base.OnExit(e);
+        }
     }
 
 }
