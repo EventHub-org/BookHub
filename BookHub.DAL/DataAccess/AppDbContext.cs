@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using BookHub.DAL.Entities;
-using Microsoft.Extensions.Configuration;
-using System;
 
 namespace BookHub.DAL.DataAccess
 {
