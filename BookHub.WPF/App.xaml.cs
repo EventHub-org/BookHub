@@ -1,8 +1,6 @@
-using BookHub.DAL.DataAccess;
-using DotNetEnv;
-using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using BookHub.DAL.Mappers;
 using Serilog;
-using System.IO;
 using System.Windows;
 
 namespace BookHub.WPF
@@ -12,6 +10,7 @@ namespace BookHub.WPF
     /// </summary>
     public partial class App : Application
     {
+        private IMapper _mapper;
 
         public App()
         {
@@ -29,6 +28,16 @@ namespace BookHub.WPF
                 .CreateLogger();
 
             Log.Information("Serilog налаштовано для WPF!");
+        }
+
+        private void ConfigureAutoMapper()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<BookProfile>();
+            });
+
+            _mapper = config.CreateMapper();
         }
 
         protected override void OnStartup(StartupEventArgs e)
