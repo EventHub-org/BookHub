@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using BookHub.DAL.DTO;
+using BookHub.DAL.Entities;
 
 namespace BookHub.DAL.Mappers
 {
-    internal class BookProfile
+    public class BookProfile : Profile
     {
+        public BookProfile()
+        {
+            CreateMap<BookDto, BookEntity>()
+                .ForMember(dest => dest.Reviews, opt => opt.Ignore())
+                .ReverseMap();
+        }
     }
 }
