@@ -7,22 +7,22 @@ using Moq;
 
 namespace BookHub.Tests.Services.Impl
 {
-    public class BookServiceImplTests
+    public class ReviewServiceImplTests
     {
-        private readonly Mock<IBookRepository<BookEntity>> _mockBookRepository;
+        private readonly Mock<IReviewRepository<ReviewEntity>> _mockReviewRepository;
         private readonly IMapper _mapper;
-        private readonly BookServiceImpl _bookService;
+        private readonly ReviewServiceImpl _reviewService;
 
-        public BookServiceImplTests()
+        public ReviewServiceImplTests()
         {
-            _mockBookRepository = new Mock<IBookRepository<BookEntity>>();
+            _mockReviewRepository = new Mock<IReviewRepository<ReviewEntity>>();
 
             var config = new MapperConfiguration(cfg => {
-                cfg.AddProfile<BookProfile>();
+                cfg.AddProfile<ReviewProfile>();
             });
             _mapper = config.CreateMapper();
 
-            _bookService = new BookServiceImpl(_mockBookRepository.Object, _mapper);
+            _reviewService = new ReviewServiceImpl(_mockReviewRepository.Object, _mapper);
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace BookHub.Tests.Services.Impl
             int page = 1;
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => _bookService.GetPaginatedBooks(size, page));
+            var exception = Assert.Throws<ArgumentException>(() => _reviewService.GetPaginatedReviews(size, page));
             Assert.Equal("Page size must be greater than zero. (Parameter 'size')", exception.Message);
         }
 
@@ -45,7 +45,7 @@ namespace BookHub.Tests.Services.Impl
             int page = 0;
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => _bookService.GetPaginatedBooks(size, page));
+            var exception = Assert.Throws<ArgumentException>(() => _reviewService.GetPaginatedReviews(size, page));
             Assert.Equal("Page number must be greater than zero. (Parameter 'page')", exception.Message);
         }
 
@@ -55,26 +55,26 @@ namespace BookHub.Tests.Services.Impl
             int size = 2;
             int page = 1;
 
-            var bookEntities = new List<BookEntity>
+            var reviewEntities = new List<ReviewEntity>
             {
-                new BookEntity(),
-                new BookEntity()
+                new ReviewEntity(),
+                new ReviewEntity()
             };
 
             var totalElements = 5;
-            _mockBookRepository
+            _mockReviewRepository
                 .Setup(repo => repo.GetPagedAsync(size, page))
-                .ReturnsAsync((bookEntities, totalElements));
+                .ReturnsAsync((reviewEntities, totalElements));
 
             // Act
-            var result = _bookService.GetPaginatedBooks(size, page);
+            var result = _reviewService.GetPaginatedReviews(size, page);
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal(totalElements, result.TotalElements);
             Assert.Equal(page, result.CurrentPage);
             Assert.Equal((int)Math.Ceiling((double)totalElements / size), result.TotalPages);
-            Assert.Equal(bookEntities.Count, result.Items.Count);
+            Assert.Equal(reviewEntities.Count, result.Items.Count);
         }
     }
 }
