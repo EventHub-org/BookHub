@@ -2,7 +2,6 @@ using AutoMapper;
 using BookHub.DAL.Mappers;
 using Serilog;
 using System.Windows;
-using AutoMapper;
 
 namespace BookHub.WPF
 {
