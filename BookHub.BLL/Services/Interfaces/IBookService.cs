@@ -2,7 +2,7 @@
 
 namespace BookHub.BLL.Services.Interfaces
 {
-    public interface BookService
+    public interface IBookService
     {
         PageDto<BookDto> GetPaginatedBooks(int pageNumber, int pageSize);
     }
