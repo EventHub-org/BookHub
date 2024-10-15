@@ -7,18 +7,18 @@ using BookHub.DAL.Repositories.Interfaces;
 namespace BookHub.BLL.Services.Implementations
 {
 
-    public class BookServiceImpl
+    public class BookService
     {
         private readonly IBookRepository<BookEntity> _bookRepository;
         private readonly IMapper _mapper;
 
-        public BookServiceImpl(IBookRepository<BookEntity> bookRepository, IMapper mapper)
+        public BookService(IBookRepository<BookEntity> bookRepository, IMapper mapper)
         {
             _bookRepository = bookRepository;
             _mapper = mapper;
         }
 
-        public PageDto<BookDto> GetPageDto(int size, int page) 
+        public async Task<PageDto<BookDto>> GetPaginatedBooks(int size, int page) 
         {
             if (size <= 0)
             {
@@ -30,7 +30,7 @@ namespace BookHub.BLL.Services.Implementations
                 throw new ArgumentException("Page number must be greater than zero.", nameof(page));
             }
 
-            var (bookEntities, totalElements) = _bookRepository.GetPagedAsync(size, page).GetAwaiter().GetResult();
+            var (bookEntities, totalElements) = await _bookRepository.GetPagedAsync(size, page);
 
             var bookDtos = _mapper.Map<List<BookDto>>(bookEntities);
 
