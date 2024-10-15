@@ -4,6 +4,7 @@ using BookHub.DAL.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookHub.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241014225430_edit")]
+    partial class edit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,7 +63,7 @@ namespace BookHub.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Achievements", (string)null);
+                    b.ToTable("Achievements");
                 });
 
             modelBuilder.Entity("BookHub.DAL.Entities.BookEntity", b =>
@@ -101,7 +104,7 @@ namespace BookHub.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Books", (string)null);
+                    b.ToTable("Books");
                 });
 
             modelBuilder.Entity("BookHub.DAL.Entities.CollectionEntity", b =>
@@ -124,7 +127,7 @@ namespace BookHub.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Collections", (string)null);
+                    b.ToTable("Collections");
                 });
 
             modelBuilder.Entity("BookHub.DAL.Entities.FriendshipEntity", b =>
@@ -144,7 +147,7 @@ namespace BookHub.DAL.Migrations
 
                     b.HasIndex("User2Id");
 
-                    b.ToTable("Friendships", (string)null);
+                    b.ToTable("Friendships");
                 });
 
             modelBuilder.Entity("BookHub.DAL.Entities.ReadingProgressEntity", b =>
@@ -177,7 +180,7 @@ namespace BookHub.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ReadingProgresses", (string)null);
+                    b.ToTable("ReadingProgresses");
                 });
 
             modelBuilder.Entity("BookHub.DAL.Entities.ReviewEntity", b =>
@@ -211,7 +214,7 @@ namespace BookHub.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("BookHub.DAL.Entities.UserEntity", b =>
@@ -243,7 +246,7 @@ namespace BookHub.DAL.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("AchievementEntityUserEntity", b =>
