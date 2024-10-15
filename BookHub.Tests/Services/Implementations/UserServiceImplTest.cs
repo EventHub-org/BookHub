@@ -13,7 +13,7 @@ namespace BookHub.Tests.Services.Impl
     {
         private readonly Mock<IUserRepository<UserEntity>> _mockUserRepository;
         private readonly IMapper _mapper;
-        private readonly UserServiceImpl _userService;
+        private readonly UserService _userService;
 
         public UserServiceImplTests()
         {
@@ -24,37 +24,37 @@ namespace BookHub.Tests.Services.Impl
             });
             _mapper = config.CreateMapper();
 
-            _userService = new UserServiceImpl(_mockUserRepository.Object, _mapper);
+            _userService = new UserService(_mockUserRepository.Object, _mapper);
         }
 
         [Fact]
-        public void GetPaginatedUsers_ShouldThrowArgumentException_WhenPageSizeIsZero()
+        public async Task GetPaginatedUsers_ShouldThrowArgumentException_WhenPageSizeIsZero()
         {
             // Arrange
             int pageSize = 0;
             int pageNumber = 1;
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => _userService.GetPaginatedUsers(pageNumber, pageSize));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _userService.GetPaginatedUsers(pageNumber, pageSize));
             Assert.Equal("Page size must be greater than zero. (Parameter 'pageSize')", exception.Message);
         }
 
         [Fact]
-        public void GetPaginatedUsers_ShouldThrowArgumentException_WhenPageNumberIsZero()
+        public async Task GetPaginatedUsers_ShouldThrowArgumentException_WhenPageNumberIsZero()
         {
             // Arrange
             int pageSize = 1;
             int pageNumber = 0;
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => _userService.GetPaginatedUsers(pageNumber, pageSize));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _userService.GetPaginatedUsers(pageNumber, pageSize));
             Assert.Equal("Page number must be greater than zero. (Parameter 'pageNumber')", exception.Message);
         }
 
 
 
         [Fact]
-        public void GetPaginatedUsers_ShouldReturnPageDto_WhenDataIsValid()
+        public async Task GetPaginatedUsers_ShouldReturnPageDto_WhenDataIsValid()
         {
             int pageSize = 2;
             int pageNumber = 1;
@@ -71,7 +71,7 @@ namespace BookHub.Tests.Services.Impl
                 .ReturnsAsync((userEntities, totalElements));
 
             // Act
-            var result = _userService.GetPaginatedUsers(pageNumber, pageSize);
+            var result = await _userService.GetPaginatedUsers(pageNumber, pageSize);
 
             // Assert
             Assert.NotNull(result);
@@ -82,7 +82,7 @@ namespace BookHub.Tests.Services.Impl
         }
 
         [Fact]
-        public async void GetUserByIdAsync_ShouldThrowException_WhenUserNotFound()
+        public async Task GetUserByIdAsync_ShouldThrowException_WhenUserNotFound()
         {
             // Arrange
             int userId = 999;
@@ -94,7 +94,7 @@ namespace BookHub.Tests.Services.Impl
         }
 
         [Fact]
-        public async void GetUserByIdAsync_ShouldReturnUserDto_WhenUserExists()
+        public async Task GetUserByIdAsync_ShouldReturnUserDto_WhenUserExists()
         {
             // Arrange
             int userId = 1;
@@ -102,7 +102,6 @@ namespace BookHub.Tests.Services.Impl
             {
                 UserId = userId,
                 Name = "John Doe",
-                Email = "john.doe@example.com",
                 ProfilePicture = "http://example.com/profile.jpg"
             };
 
@@ -115,7 +114,6 @@ namespace BookHub.Tests.Services.Impl
             Assert.NotNull(result);
             Assert.Equal(userEntity.UserId, result.Id);
             Assert.Equal(userEntity.Name, result.Name);
-            Assert.Equal(userEntity.Email, result.Email);
             Assert.Equal(userEntity.ProfilePicture, result.ProfilePictureUrl);
         }
     }

@@ -7,18 +7,18 @@ using BookHub.DAL.Repositories.Interfaces;
 
 namespace BookHub.BLL.Services.Implementations
 {
-    public class UserServiceImpl : UserService
+    public class UserService : IUserService
     {
         private readonly IUserRepository<UserEntity> _userRepository;
         private readonly IMapper _mapper;
 
-        public UserServiceImpl(IUserRepository<UserEntity> userRepository, IMapper mapper)
+        public UserService(IUserRepository<UserEntity> userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
         }
 
-        public PageDto<UserDto> GetPaginatedUsers(int pageNumber, int pageSize)
+        public async Task<PageDto<UserDto>> GetPaginatedUsers(int pageNumber, int pageSize)
         {
             if (pageSize <= 0)
             {
@@ -30,7 +30,7 @@ namespace BookHub.BLL.Services.Implementations
                 throw new ArgumentException("Page number must be greater than zero.", nameof(pageNumber));
             }
 
-            var (userEntities, totalElements) = _userRepository.GetPagedAsync(pageSize, pageNumber).GetAwaiter().GetResult();
+            var (userEntities, totalElements) = await _userRepository.GetPagedAsync(pageSize, pageNumber);
 
             var userDtos = _mapper.Map<List<UserDto>>(userEntities);
 
