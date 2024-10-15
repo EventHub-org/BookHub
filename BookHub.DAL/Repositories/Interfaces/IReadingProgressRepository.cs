@@ -4,6 +4,6 @@ namespace BookHub.DAL.Repositories.Interfaces
 {
     public interface IReadingProgressRepository<TEntity> where TEntity : class
     {
-
+        Task AddAsync(ReadingProgressEntity entity);
     }
 }
