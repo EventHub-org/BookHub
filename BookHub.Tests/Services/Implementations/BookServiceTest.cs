@@ -33,7 +33,7 @@ namespace BookHub.Tests.Services.Impl
             int page = 1;
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _bookService.GetPaginatedBooks(size, page));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _bookService.GetPaginatedBooksAsync(size, page));
             Assert.Equal("Page size must be greater than zero. (Parameter 'size')", exception.Message);
         }
 
@@ -45,7 +45,7 @@ namespace BookHub.Tests.Services.Impl
             int page = 0;
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _bookService.GetPaginatedBooks(size, page));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _bookService.GetPaginatedBooksAsync(size, page));
             Assert.Equal("Page number must be greater than zero. (Parameter 'page')", exception.Message);
         }
 
@@ -67,7 +67,7 @@ namespace BookHub.Tests.Services.Impl
                 .ReturnsAsync((bookEntities, totalElements));
 
             // Act
-            var result = await _bookService.GetPaginatedBooks(size, page);
+            var result = await _bookService.GetPaginatedBooksAsync(size, page);
 
             // Assert
             Assert.NotNull(result);

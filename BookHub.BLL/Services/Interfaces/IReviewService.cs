@@ -4,6 +4,6 @@ namespace BookHub.BLL.Services.Interfaces
 {
     public interface IReviewService
     {
-        PageDto<ReviewDto> GetPaginatedReviews(int pageNumber, int pageSize);
+        Task<PageDto<ReviewDto>> GetPaginatedReviewsAsync(int pageNumber, int pageSize);
     }
 }

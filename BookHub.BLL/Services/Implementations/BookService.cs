@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BookHub.BLL.Services.Interfaces;
 using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
@@ -7,7 +8,7 @@ using BookHub.DAL.Repositories.Interfaces;
 namespace BookHub.BLL.Services.Implementations
 {
 
-    public class BookService
+    public class BookService : IBookService
     {
         private readonly IBookRepository<BookEntity> _bookRepository;
         private readonly IMapper _mapper;
@@ -18,7 +19,7 @@ namespace BookHub.BLL.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<PageDto<BookDto>> GetPaginatedBooks(int size, int page) 
+        public async Task<PageDto<BookDto>> GetPaginatedBooksAsync(int size, int page) 
         {
             if (size <= 0)
             {

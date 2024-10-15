@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using BookHub.DAL.DTO;
+using BookHub.BLL.Services.Interfaces;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
 
 namespace BookHub.BLL.Services.Implementations
 {
-    public class ReviewService
+    public class ReviewService : IReviewService
     {
         private readonly IReviewRepository<ReviewEntity> _reviewRepository;
         private readonly IMapper _mapper;
