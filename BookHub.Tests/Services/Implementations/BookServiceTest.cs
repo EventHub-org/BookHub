@@ -11,7 +11,7 @@ namespace BookHub.Tests.Services.Impl
     {
         private readonly Mock<IBookRepository<BookEntity>> _mockBookRepository;
         private readonly IMapper _mapper;
-        private readonly BookServiceImpl _bookService;
+        private readonly BookService _bookService;
 
         public BookServiceImplTests()
         {
@@ -22,35 +22,35 @@ namespace BookHub.Tests.Services.Impl
             });
             _mapper = config.CreateMapper();
 
-            _bookService = new BookServiceImpl(_mockBookRepository.Object, _mapper);
+            _bookService = new BookService(_mockBookRepository.Object, _mapper);
         }
 
         [Fact]
-        public void GetPageDto_ShouldThrowArgumentException_WhenSizeIsZero()
+        public async Task GetPageDto_ShouldThrowArgumentException_WhenSizeIsZero()
         {
             // Arrange
             int size = 0;
             int page = 1;
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => _bookService.GetPaginatedBooks(size, page));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _bookService.GetPaginatedBooks(size, page));
             Assert.Equal("Page size must be greater than zero. (Parameter 'size')", exception.Message);
         }
 
         [Fact]
-        public void GetPageDto_ShouldThrowArgumentException_WhenPageIsZero()
+        public async Task GetPageDto_ShouldThrowArgumentException_WhenPageIsZero()
         {
             // Arrange
             int size = 1;
             int page = 0;
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => _bookService.GetPaginatedBooks(size, page));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _bookService.GetPaginatedBooks(size, page));
             Assert.Equal("Page number must be greater than zero. (Parameter 'page')", exception.Message);
         }
 
         [Fact]
-        public void GetPageDto_ShouldReturnPageDto_WhenDataIsValid()
+        public async Task GetPageDto_ShouldReturnPageDto_WhenDataIsValid()
         {
             int size = 2;
             int page = 1;
@@ -67,7 +67,7 @@ namespace BookHub.Tests.Services.Impl
                 .ReturnsAsync((bookEntities, totalElements));
 
             // Act
-            var result = _bookService.GetPaginatedBooks(size, page);
+            var result = await _bookService.GetPaginatedBooks(size, page);
 
             // Assert
             Assert.NotNull(result);

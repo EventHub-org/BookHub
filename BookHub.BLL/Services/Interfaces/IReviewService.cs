@@ -2,7 +2,7 @@
 
 namespace BookHub.BLL.Services.Interfaces
 {
-    public interface ReviewService
+    public interface IReviewService
     {
         PageDto<ReviewDto> GetPaginatedReviews(int pageNumber, int pageSize);
     }

@@ -3,20 +3,22 @@ using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
 
+
 namespace BookHub.BLL.Services.Implementations
 {
-    public class ReviewServiceImpl
+
+    public class BookService
     {
-        private readonly IReviewRepository<ReviewEntity> _reviewRepository;
+        private readonly IBookRepository<BookEntity> _bookRepository;
         private readonly IMapper _mapper;
 
-        public ReviewServiceImpl(IReviewRepository<ReviewEntity> reviewRepository, IMapper mapper) 
+        public BookService(IBookRepository<BookEntity> bookRepository, IMapper mapper)
         {
-            _reviewRepository = reviewRepository;
+            _bookRepository = bookRepository;
             _mapper = mapper;
         }
 
-        public PageDto<ReviewDto> GetPaginatedReviews(int size, int page)
+        public async Task<PageDto<BookDto>> GetPaginatedBooks(int size, int page) 
         {
             if (size <= 0)
             {
@@ -28,19 +30,20 @@ namespace BookHub.BLL.Services.Implementations
                 throw new ArgumentException("Page number must be greater than zero.", nameof(page));
             }
 
-            var (reviewEntities, totalElements) = _reviewRepository.GetPagedAsync(size, page).GetAwaiter().GetResult();
+            var (bookEntities, totalElements) = await _bookRepository.GetPagedAsync(size, page);
 
-            var reviewDtos = _mapper.Map<List<ReviewDto>>(reviewEntities);
+            var bookDtos = _mapper.Map<List<BookDto>>(bookEntities);
 
             var totalPages = (int)Math.Ceiling((double)totalElements / size);
 
-            return new PageDto<ReviewDto>
+            return new PageDto<BookDto>
             {
-                Items = reviewDtos,
+                Items = bookDtos,
                 TotalElements = totalElements,
                 CurrentPage = page,
                 TotalPages = totalPages
             };
+
         }
     }
 }
