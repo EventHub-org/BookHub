@@ -18,7 +18,7 @@ namespace BookHub.BLL.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<PageDto<UserDto>> GetPaginatedUsers(int pageNumber, int pageSize)
+        public async Task<PageDto<UserDto>> GetPaginatedUsersAsync(int pageNumber, int pageSize)
         {
             if (pageSize <= 0)
             {
