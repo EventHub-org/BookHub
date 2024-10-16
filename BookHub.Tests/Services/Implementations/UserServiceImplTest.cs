@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BookHub.BLL.Services.Implementations;
-using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Mappers;
 using BookHub.DAL.Repositories.Interfaces;
@@ -35,7 +34,7 @@ namespace BookHub.Tests.Services.Impl
             int pageNumber = 1;
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _userService.GetPaginatedUsers(pageNumber, pageSize));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _userService.GetPaginatedUsersAsync(pageNumber, pageSize));
             Assert.Equal("Page size must be greater than zero. (Parameter 'pageSize')", exception.Message);
         }
 
@@ -47,7 +46,7 @@ namespace BookHub.Tests.Services.Impl
             int pageNumber = 0;
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _userService.GetPaginatedUsers(pageNumber, pageSize));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _userService.GetPaginatedUsersAsync(pageNumber, pageSize));
             Assert.Equal("Page number must be greater than zero. (Parameter 'pageNumber')", exception.Message);
         }
 
@@ -71,7 +70,7 @@ namespace BookHub.Tests.Services.Impl
                 .ReturnsAsync((userEntities, totalElements));
 
             // Act
-            var result = await _userService.GetPaginatedUsers(pageNumber, pageSize);
+            var result = await _userService.GetPaginatedUsersAsync(pageNumber, pageSize);
 
             // Assert
             Assert.NotNull(result);
