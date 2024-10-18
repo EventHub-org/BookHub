@@ -2,8 +2,9 @@
 
 namespace BookHub.DAL.Repositories.Interfaces
 {
-    public interface ICollectionRepository<TEntity> where TEntity : class
+    public interface ICollectionRepository : IRepository<CollectionEntity>
     {
-
+        Task UpdateAsync(CollectionEntity obj);
+        Task SaveAsync();
     }
 }

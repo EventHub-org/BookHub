@@ -2,8 +2,9 @@
 
 namespace BookHub.DAL.Repositories.Interfaces
 {
-    public interface IReadingProgressRepository<TEntity> where TEntity : class
+    public interface IReadingProgressRepository : IRepository<ReadingProgressEntity>
     {
-        Task AddAsync(ReadingProgressEntity entity);
+        Task UpdateAsync(ReadingProgressEntity obj);
+        Task SaveAsync();
     }
 }

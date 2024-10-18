@@ -2,8 +2,9 @@
 
 namespace BookHub.DAL.Repositories.Interfaces
 {
-    public interface IFriendshipRepository<TEntity> where TEntity : class
+    public interface IFriendshipRepository : IRepository<FriendshipEntity>
     {
-
+        Task UpdateAsync(FriendshipEntity obj);
+        Task SaveAsync();
     }
 }

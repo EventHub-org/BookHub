@@ -5,42 +5,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookHub.DAL.Repositories.Implementations
 {
-    public class ReviewRepository : IRepository<ReviewEntity>, IReviewRepository<ReviewEntity>
+    public class ReviewRepository : Repository<ReviewEntity>, IReviewRepository
     {
-        private readonly AppDbContext _context;
+        private AppDbContext _context;
 
-        public ReviewRepository(AppDbContext context)
+        public ReviewRepository(AppDbContext context) : base(context)
         {
             _context = context;
         }
 
-        public async Task AddAsync(ReviewEntity entity)
+
+        public async Task UpdateAsync(ReviewEntity obj)
         {
-            _context.Reviews.Add(entity);
-            _context.SaveChanges();
+            _context.Reviews.Update(obj);
         }
 
-        public async Task UpdateAsync(ReviewEntity entity)
+        public async Task SaveAsync()
         {
-            _context.Reviews.Update(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(ReviewEntity entity)
-        {
-            _context.Reviews.Remove(entity);
-            _context.SaveChanges();
-        }
-
-        public async Task<ReviewEntity> GetByIdAsync(int id)
-        {
-            return _context.Reviews.Find(id);
-        }
-
-        public async Task<IEnumerable<ReviewEntity>> GetAllAsync()
-        {
-            return _context.Reviews.ToList();
-        }
 
         public async Task<(List<ReviewEntity> Items, long TotalCount)> GetPagedAsync(int pageSize, int pageNumber)
         {

@@ -2,8 +2,10 @@
 
 namespace BookHub.DAL.Repositories.Interfaces
 {
-    public interface IReviewRepository<TEntity> where TEntity : class
+    public interface IReviewRepository : IRepository<ReviewEntity>
     {
+        Task UpdateAsync(ReviewEntity obj);
+        Task SaveAsync();
         Task<(List<ReviewEntity> Items, long TotalCount)> GetPagedAsync(int pageSize, int pageNumber);
     }
 }
