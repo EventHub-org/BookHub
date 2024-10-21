@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BookHub.BLL.Services.Implementations
+﻿namespace BookHub.BLL.Services.Implementations
 {
     public class ServiceResult
     {
@@ -18,6 +12,4 @@ namespace BookHub.BLL.Services.Implementations
         public static ServiceResult ErrorResult(string errorMessage)
             => new ServiceResult { Success = false, ErrorMessage = errorMessage };
     }
-
-
 }

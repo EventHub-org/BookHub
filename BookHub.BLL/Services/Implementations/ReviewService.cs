@@ -19,16 +19,16 @@ namespace BookHub.BLL.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<PageDto<ReviewDto>> GetPaginatedReviewsAsync(int size, int page)
+        public async Task<ServiceResult> GetPaginatedReviewsAsync(int size, int page)
         {
             if (size <= 0)
             {
-                throw new ArgumentException("Page size must be greater than zero.", nameof(size));
+                ServiceResult.ErrorResult("Page size must be greater than zero.");
             }
 
             if (page <= 0)
             {
-                throw new ArgumentException("Page number must be greater than zero.", nameof(page));
+                ServiceResult.ErrorResult("Page number must be greater than zero.");
             }
 
             var (reviewEntities, totalElements) = await _reviewRepository.GetPagedAsync(size, page);
@@ -37,41 +37,41 @@ namespace BookHub.BLL.Services.Implementations
 
             var totalPages = (int)Math.Ceiling((double)totalElements / size);
 
-            return new PageDto<ReviewDto>
+            return ServiceResult.SuccessResult(new PageDto<ReviewDto>
             {
                 Items = reviewDtos,
                 TotalElements = totalElements,
                 CurrentPage = page,
                 TotalPages = totalPages
-            };
+            });
         }
 
-        public async Task<ReviewDto> GetReviewAsync(int id)
+        public async Task<ServiceResult> GetReviewAsync(int id)
         {
-            ReviewEntity reviewEntity = await GetReviewEntityAsync(id);
+            var reviewEntity = await GetReviewEntityAsync(id);
 
             var reviewDto = _mapper.Map<ReviewDto>(reviewEntity);
 
-            return reviewDto;
+            return ServiceResult.SuccessResult(reviewDto);
         }
 
         public async Task DeleteReviewAsync(int id)
         {
             var reviewEntity = await GetReviewEntityAsync(id);
 
-            await _repository.DeleteAsync(reviewEntity);
+            await _repository.DeleteAsync((ReviewEntity)reviewEntity.Data);
         }
 
-        private async Task<ReviewEntity> GetReviewEntityAsync(int id)
+        private async Task<ServiceResult> GetReviewEntityAsync(int id)
         {
             var reviewEntity = await _repository.GetByIdAsync(b => b.Id == id);
 
             if (reviewEntity == null)
             {
-                throw new KeyNotFoundException($"Book with ID {id} not found.");
+                ServiceResult.ErrorResult($"Book with ID {id} not found.");
             }
 
-            return reviewEntity;
+            return ServiceResult.SuccessResult(reviewEntity);
         }
     }
 }

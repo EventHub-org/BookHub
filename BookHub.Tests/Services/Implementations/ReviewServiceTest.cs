@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using BookHub.BLL.Services.Implementations;
+using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Mappers;
 using BookHub.DAL.Repositories.Interfaces;
 using Moq;
+using Sprache;
 using System.Linq.Expressions;
 
 namespace BookHub.Tests.Services.Impl
