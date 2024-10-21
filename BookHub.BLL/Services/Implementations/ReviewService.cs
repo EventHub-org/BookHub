@@ -9,10 +9,12 @@ namespace BookHub.BLL.Services.Implementations
     public class ReviewService : IReviewService
     {
         private readonly IReviewRepository _reviewRepository;
+        private readonly IRepository<ReviewEntity> _repository;
         private readonly IMapper _mapper;
 
-        public ReviewService(IReviewRepository reviewRepository, IMapper mapper)
+        public ReviewService(IRepository<ReviewEntity> repository, IReviewRepository reviewRepository, IMapper mapper)
         {
+            _repository = repository;
             _reviewRepository = reviewRepository;
             _mapper = mapper;
         }
@@ -42,6 +44,34 @@ namespace BookHub.BLL.Services.Implementations
                 CurrentPage = page,
                 TotalPages = totalPages
             };
+        }
+
+        public async Task<ReviewDto> GetReviewAsync(int id)
+        {
+            ReviewEntity reviewEntity = await GetReviewEntityAsync(id);
+
+            var reviewDto = _mapper.Map<ReviewDto>(reviewEntity);
+
+            return reviewDto;
+        }
+
+        public async Task DeleteReviewAsync(int id)
+        {
+            var reviewEntity = await GetReviewEntityAsync(id);
+
+            await _repository.DeleteAsync(reviewEntity);
+        }
+
+        private async Task<ReviewEntity> GetReviewEntityAsync(int id)
+        {
+            var reviewEntity = await _repository.GetByIdAsync(b => b.Id == id);
+
+            if (reviewEntity == null)
+            {
+                throw new KeyNotFoundException($"Book with ID {id} not found.");
+            }
+
+            return reviewEntity;
         }
     }
 }
