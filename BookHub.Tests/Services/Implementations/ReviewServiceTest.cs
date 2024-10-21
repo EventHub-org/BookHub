@@ -9,13 +9,13 @@ namespace BookHub.Tests.Services.Impl
 {
     public class ReviewServiceImplTests
     {
-        private readonly Mock<IReviewRepository<ReviewEntity>> _mockReviewRepository;
+        private readonly Mock<IReviewRepository> _mockReviewRepository;
         private readonly IMapper _mapper;
         private readonly ReviewService _reviewService;
 
         public ReviewServiceImplTests()
         {
-            _mockReviewRepository = new Mock<IReviewRepository<ReviewEntity>>();
+            _mockReviewRepository = new Mock<IReviewRepository>();
 
             var config = new MapperConfiguration(cfg => {
                 cfg.AddProfile<ReviewProfile>();

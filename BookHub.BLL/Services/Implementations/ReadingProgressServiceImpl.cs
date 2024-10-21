@@ -12,12 +12,12 @@ namespace BookHub.BLL.Services.Implementations
 {
     public class ReadingProgressServiceImpl : IReadingProgressService
     {
-        private readonly IReadingProgressRepository<ReadingProgressEntity> _readingProgressRepository;
+        private readonly IReadingProgressRepository _readingProgressRepository;
         private readonly IMapper _readingProgressMapper;
         private readonly ILogger<ReadingProgressServiceImpl> _logger;
 
         public ReadingProgressServiceImpl(
-            IReadingProgressRepository<ReadingProgressEntity> readingProgressRepository,
+            IReadingProgressRepository readingProgressRepository,
             IMapper readingProgressMapper
             )
         {

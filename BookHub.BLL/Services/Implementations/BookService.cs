@@ -11,11 +11,11 @@ namespace BookHub.BLL.Services.Implementations
 
     public class BookService : IBookService
     {
-        private readonly IBookRepository<BookEntity> _bookRepository;
+        private readonly IBookRepository _bookRepository;
         private readonly IRepository<BookEntity> _repository;
         private readonly IMapper _mapper;
 
-        public BookService(IRepository<BookEntity> repository, IBookRepository<BookEntity> bookRepository, IMapper mapper)
+        public BookService(IRepository<BookEntity> repository, IBookRepository bookRepository, IMapper mapper)
         {   
             _repository = repository;
             _bookRepository = bookRepository;
@@ -58,7 +58,7 @@ namespace BookHub.BLL.Services.Implementations
 
         private async Task<BookEntity> GetBookEntityAsync(int id)
         {
-            var bookEntity = await _repository.GetByIdAsync(id);
+            var bookEntity = await _repository.GetByIdAsync(b => b.Id == id);
 
             if (bookEntity == null)
             {

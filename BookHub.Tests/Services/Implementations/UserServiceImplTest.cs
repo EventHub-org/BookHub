@@ -4,19 +4,20 @@ using BookHub.DAL.Entities;
 using BookHub.DAL.Mappers;
 using BookHub.DAL.Repositories.Interfaces;
 using Moq;
+using System.Linq.Expressions;
 
 
 namespace BookHub.Tests.Services.Impl
 {
     public class UserServiceImplTests
     {
-        private readonly Mock<IUserRepository<UserEntity>> _mockUserRepository;
+        private readonly Mock<IUserRepository> _mockUserRepository;
         private readonly IMapper _mapper;
         private readonly UserService _userService;
 
         public UserServiceImplTests()
         {
-            _mockUserRepository = new Mock<IUserRepository<UserEntity>>();
+            _mockUserRepository = new Mock<IUserRepository>();
 
             var config = new MapperConfiguration(cfg => {
                 cfg.AddProfile<UserProfile>();
@@ -85,7 +86,7 @@ namespace BookHub.Tests.Services.Impl
         {
             // Arrange
             int userId = 999;
-            _mockUserRepository.Setup(repo => repo.GetByIdAsync(userId)).ReturnsAsync((UserEntity)null);
+            _mockUserRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<UserEntity, bool>>>())).ReturnsAsync((UserEntity)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(() => _userService.GetUserByIdAsync(userId));
@@ -104,7 +105,7 @@ namespace BookHub.Tests.Services.Impl
                 ProfilePicture = "http://example.com/profile.jpg"
             };
 
-            _mockUserRepository.Setup(repo => repo.GetByIdAsync(userId)).ReturnsAsync(userEntity);
+            _mockUserRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<UserEntity, bool>>>())).ReturnsAsync(userEntity);
 
             // Act
             var result = await _userService.GetUserByIdAsync(userId);

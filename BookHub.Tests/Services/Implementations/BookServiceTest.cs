@@ -4,20 +4,21 @@ using BookHub.DAL.Entities;
 using BookHub.DAL.Mappers;
 using BookHub.DAL.Repositories.Interfaces;
 using Moq;
+using System.Linq.Expressions;
 
 namespace BookHub.Tests.Services.Impl
 {
     public class BookServiceImplTests
     {
         private readonly Mock<IRepository<BookEntity>> _mockRepository;
-        private readonly Mock<IBookRepository<BookEntity>> _mockBookRepository;
+        private readonly Mock<IBookRepository> _mockBookRepository;
         private readonly IMapper _mapper;
         private readonly BookService _bookService;
 
         public BookServiceImplTests()
         {
             _mockRepository = new Mock<IRepository<BookEntity>>();
-            _mockBookRepository = new Mock<IBookRepository<BookEntity>>();
+            _mockBookRepository = new Mock<IBookRepository>();
 
             var config = new MapperConfiguration(cfg => {
                 cfg.AddProfile<BookProfile>();
@@ -85,7 +86,7 @@ namespace BookHub.Tests.Services.Impl
             // Arrange
             int bookId = 1;
             var bookEntity = new BookEntity { Id = bookId };
-            _mockRepository.Setup(repo => repo.GetByIdAsync(bookId)).ReturnsAsync(bookEntity);
+            _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<BookEntity, bool>>>())).ReturnsAsync(bookEntity);
 
             // Act
             var result = await _bookService.GetBookAsync(bookId);
@@ -100,7 +101,7 @@ namespace BookHub.Tests.Services.Impl
         {
             // Arrange
             int bookId = 1;
-            _mockRepository.Setup(repo => repo.GetByIdAsync(bookId)).ReturnsAsync((BookEntity)null);
+            _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<BookEntity, bool>>>())).ReturnsAsync((BookEntity)null);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => _bookService.GetBookAsync(bookId));
@@ -113,7 +114,7 @@ namespace BookHub.Tests.Services.Impl
             // Arrange
             int bookId = 1;
             var bookEntity = new BookEntity { Id = bookId };
-            _mockRepository.Setup(repo => repo.GetByIdAsync(bookId)).ReturnsAsync(bookEntity);
+            _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<BookEntity, bool>>>())).ReturnsAsync(bookEntity);
 
             // Act
             await _bookService.DeleteBookAsync(bookId);

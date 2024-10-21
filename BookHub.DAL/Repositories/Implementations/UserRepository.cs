@@ -5,42 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookHub.DAL.Repositories.Implementations
 {
-    public class UserRepository : IRepository<UserEntity>, IUserRepository<UserEntity>
+    public class UserRepository : Repository<UserEntity>, IUserRepository
     {
-        private readonly AppDbContext _context;
+        private AppDbContext _context;
 
-        public UserRepository(AppDbContext context)
+        public UserRepository(AppDbContext context): base(context)
         {
             _context = context;
         }
 
-        public async Task AddAsync(UserEntity entity)
-        {
-            _context.Users.Add(entity);
-            _context.SaveChanges();
-        }
-
-        public async Task UpdateAsync(UserEntity entity)
-        {
-            _context.Users.Update(entity);
-            _context.SaveChanges();
-        }
-
-        public async Task DeleteAsync(UserEntity entity)
-        {
-            _context.Users.Remove(entity);
-            _context.SaveChanges();
-        }
-
-        public async Task<UserEntity> GetByIdAsync(int id)
-        {
-            return _context.Users.Find(id);
-        }
-
-        public async Task<IEnumerable<UserEntity>> GetAllAsync()
-        {
-            return _context.Users.ToList();
-        }
 
         public async Task<(List<UserEntity> Items, long TotalCount)> GetPagedAsync(int pageSize, int pageNumber)
         {

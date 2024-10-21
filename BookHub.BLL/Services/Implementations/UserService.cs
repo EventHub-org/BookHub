@@ -9,10 +9,10 @@ namespace BookHub.BLL.Services.Implementations
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository<UserEntity> _userRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public UserService(IUserRepository<UserEntity> userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -46,7 +46,7 @@ namespace BookHub.BLL.Services.Implementations
         }
         public async Task<UserDto> GetUserByIdAsync(int userId)
         {
-            var userEntity = await _userRepository.GetByIdAsync(userId);
+            var userEntity = await _userRepository.GetByIdAsync(u => u.UserId == userId);
             if (userEntity == null)
             {
                 throw new Exception("User not found.");
