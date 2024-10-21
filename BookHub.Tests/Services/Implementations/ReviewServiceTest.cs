@@ -4,17 +4,20 @@ using BookHub.DAL.Entities;
 using BookHub.DAL.Mappers;
 using BookHub.DAL.Repositories.Interfaces;
 using Moq;
+using System.Linq.Expressions;
 
 namespace BookHub.Tests.Services.Impl
 {
     public class ReviewServiceImplTests
     {
+        private readonly Mock<IRepository<ReviewEntity>> _mockRepository;
         private readonly Mock<IReviewRepository> _mockReviewRepository;
         private readonly IMapper _mapper;
         private readonly ReviewService _reviewService;
 
         public ReviewServiceImplTests()
         {
+            _mockRepository = new Mock<IRepository<ReviewEntity>>();
             _mockReviewRepository = new Mock<IReviewRepository>();
 
             var config = new MapperConfiguration(cfg => {
@@ -22,7 +25,7 @@ namespace BookHub.Tests.Services.Impl
             });
             _mapper = config.CreateMapper();
 
-            _reviewService = new ReviewService(_mockReviewRepository.Object, _mapper);
+            _reviewService = new ReviewService(_mockRepository.Object, _mockReviewRepository.Object, _mapper);
         }
 
         [Fact]
@@ -76,6 +79,49 @@ namespace BookHub.Tests.Services.Impl
             Assert.Equal(page, result.CurrentPage);
             Assert.Equal((int)Math.Ceiling((double)totalElements / size), result.TotalPages);
             Assert.Equal(reviewEntities.Count, result.Items.Count);
+        }
+
+        [Fact]
+        public async Task GetReviewAsync_ShouldReturnReviewDto_WhenReviewExists()
+        {
+            // Arrange
+            int reviewId = 1;
+            var reviewEntity = new ReviewEntity { Id = reviewId };
+            _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<ReviewEntity, bool>>>())).ReturnsAsync(reviewEntity);
+
+            // Act
+            var result = await _reviewService.GetReviewAsync(reviewId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(reviewId, result.Id);
+        }
+
+        [Fact]
+        public async Task GetReviewAsync_ShouldThrowKeyNotFoundException_WhenReviewDoesNotExist()
+        {
+            // Arrange
+            int reviewId = 1;
+            _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<ReviewEntity, bool>>>())).ReturnsAsync((ReviewEntity)null);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => _reviewService.GetReviewAsync(reviewId));
+            Assert.Equal($"Book with ID {reviewId} not found.", exception.Message);
+        }
+
+        [Fact]
+        public async Task DeleteReviewAsync_ShouldCallRepositoryDelete_WhenReviewExists()
+        {
+            // Arrange
+            int reviewId = 1;
+            var reviewEntity = new ReviewEntity { Id = reviewId };
+            _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<ReviewEntity, bool>>>())).ReturnsAsync(reviewEntity);
+
+            // Act
+            await _reviewService.DeleteReviewAsync(reviewId);
+
+            // Assert
+            _mockRepository.Verify(repo => repo.DeleteAsync(reviewEntity), Times.Once);
         }
     }
 }
