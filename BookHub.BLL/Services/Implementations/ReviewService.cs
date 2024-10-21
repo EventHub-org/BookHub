@@ -71,7 +71,7 @@ namespace BookHub.BLL.Services.Implementations
 
             if (reviewEntity == null)
             {
-                ServiceResultType<PageDto<ReviewDto>>.ErrorResult($"Book with ID {id} not found.");
+                ServiceResultType<PageDto<ReviewDto>>.ErrorResult($"Review with ID {id} not found.");
             }
 
             return ServiceResultType<ReviewEntity>.SuccessResult(reviewEntity);
