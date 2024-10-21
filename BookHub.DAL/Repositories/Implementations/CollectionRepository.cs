@@ -4,11 +4,11 @@ using BookHub.DAL.DataAccess;
 
 namespace BookHub.DAL.Repositories.Implementations
 {
-    public class CollectionRepository : Repository<CollectionEntity>, ICollectionRepository
+    public class CollectionRepository 
     {
         private AppDbContext _context;
 
-        public CollectionRepository(AppDbContext context) : base(context)
+        public CollectionRepository(AppDbContext context) 
         {
             _context = context;
         }

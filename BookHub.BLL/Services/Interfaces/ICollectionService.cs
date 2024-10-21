@@ -1,4 +1,5 @@
-﻿using BookHub.DAL.DTO;
+﻿using BookHub.BLL.Services.Implementations;
+using BookHub.DAL.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace BookHub.BLL.Services.Interfaces
 {
     public interface ICollectionService
     {
-        Task<CollectionDto> CreateCollectionAsync(CollectionDto collectionDto);
+        Task<ServiceResult> CreateCollectionAsync(CollectionDto collectionDto);
 
     }
 }

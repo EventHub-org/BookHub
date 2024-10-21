@@ -18,28 +18,27 @@ namespace BookHub.BLL.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<CollectionDto> CreateCollectionAsync(CollectionDto collectionDto)
+        public async Task<ServiceResult> CreateCollectionAsync(CollectionDto collectionDto)
         {
-
-
             if (collectionDto == null)
             {
-                throw new ArgumentNullException(nameof(collectionDto));
+                return ServiceResult.ErrorResult("Collection data cannot be null");
             }
+
             var validationResults = new List<ValidationResult>();
             var validationContext = new ValidationContext(collectionDto);
             bool isValid = Validator.TryValidateObject(collectionDto, validationContext, validationResults, true);
 
             if (!isValid)
             {
-                throw new ValidationException("Validation failed: " + string.Join(", ", validationResults.Select(v => v.ErrorMessage)));
+                return ServiceResult.ErrorResult("Validation failed: " + string.Join(", ", validationResults.Select(v => v.ErrorMessage)));
             }
+
             // Перетворення DTO в сутність
             var collectionEntity = _mapper.Map<CollectionEntity>(collectionDto);
             await _collectionRepository.AddAsync(collectionEntity);
-            return _mapper.Map<CollectionDto>(collectionEntity);
+            return ServiceResult.SuccessResult(_mapper.Map<CollectionDto>(collectionEntity)); 
         }
-
 
     }
 }
