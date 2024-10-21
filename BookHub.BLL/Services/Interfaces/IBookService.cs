@@ -6,5 +6,6 @@ namespace BookHub.BLL.Services.Interfaces
     {
         Task<BookDto> GetBookAsync(int id);
         Task<PageDto<BookDto>> GetPaginatedBooksAsync(int pageNumber, int pageSize);
+        Task DeleteBookAsync(int id);
     }
 }

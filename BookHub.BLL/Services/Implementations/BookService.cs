@@ -21,12 +21,7 @@ namespace BookHub.BLL.Services.Implementations
 
         public async Task<BookDto> GetBookAsync(int id)
         {
-            var bookEntity = await _bookRepository.GetByIdAsync(id);
-
-            if (bookEntity == null)
-            {
-                throw new KeyNotFoundException($"Book with ID {id} not found.");
-            }
+            BookEntity bookEntity = await GetBookEntityAsync(id);
 
             var bookDto = _mapper.Map<BookDto>(bookEntity);
 
@@ -58,7 +53,24 @@ namespace BookHub.BLL.Services.Implementations
                 CurrentPage = page,
                 TotalPages = totalPages
             };
+        }
+        public async Task DeleteBookAsync(int id)
+        {
+            var bookEntity = await GetBookEntityAsync(id);
 
+            await _bookRepository.DeleteAsync(bookEntity);
+        }
+
+        private async Task<BookEntity> GetBookEntityAsync(int id)
+        {
+            var bookEntity = await _bookRepository.GetByIdAsync(id);
+
+            if (bookEntity == null)
+            {
+                throw new KeyNotFoundException($"Book with ID {id} not found.");
+            }
+
+            return bookEntity;
         }
     }
 }
