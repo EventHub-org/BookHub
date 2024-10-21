@@ -9,12 +9,14 @@ namespace BookHub.Tests.Services.Impl
 {
     public class BookServiceImplTests
     {
+        private readonly Mock<IRepository<BookEntity>> _mockRepository;
         private readonly Mock<IBookRepository<BookEntity>> _mockBookRepository;
         private readonly IMapper _mapper;
         private readonly BookService _bookService;
 
         public BookServiceImplTests()
         {
+            _mockRepository = new Mock<IRepository<BookEntity>>();
             _mockBookRepository = new Mock<IBookRepository<BookEntity>>();
 
             var config = new MapperConfiguration(cfg => {
@@ -22,7 +24,7 @@ namespace BookHub.Tests.Services.Impl
             });
             _mapper = config.CreateMapper();
 
-            _bookService = new BookService(_mockBookRepository.Object, _mapper);
+            _bookService = new BookService(_mockRepository.Object, _mockBookRepository.Object, _mapper);
         }
 
         [Fact]
@@ -75,6 +77,49 @@ namespace BookHub.Tests.Services.Impl
             Assert.Equal(page, result.CurrentPage);
             Assert.Equal((int)Math.Ceiling((double)totalElements / size), result.TotalPages);
             Assert.Equal(bookEntities.Count, result.Items.Count);
+        }
+
+        [Fact]
+        public async Task GetBookAsync_ShouldReturnBookDto_WhenBookExists()
+        {
+            // Arrange
+            int bookId = 1;
+            var bookEntity = new BookEntity { Id = bookId };
+            _mockRepository.Setup(repo => repo.GetByIdAsync(bookId)).ReturnsAsync(bookEntity);
+
+            // Act
+            var result = await _bookService.GetBookAsync(bookId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(bookId, result.Id);
+        }
+
+        [Fact]
+        public async Task GetBookAsync_ShouldThrowKeyNotFoundException_WhenBookDoesNotExist()
+        {
+            // Arrange
+            int bookId = 1;
+            _mockRepository.Setup(repo => repo.GetByIdAsync(bookId)).ReturnsAsync((BookEntity)null);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => _bookService.GetBookAsync(bookId));
+            Assert.Equal($"Book with ID {bookId} not found.", exception.Message);
+        }
+
+        [Fact]
+        public async Task DeleteBookAsync_ShouldCallRepositoryDelete_WhenBookExists()
+        {
+            // Arrange
+            int bookId = 1;
+            var bookEntity = new BookEntity { Id = bookId };
+            _mockRepository.Setup(repo => repo.GetByIdAsync(bookId)).ReturnsAsync(bookEntity);
+
+            // Act
+            await _bookService.DeleteBookAsync(bookId);
+
+            // Assert
+            _mockRepository.Verify(repo => repo.DeleteAsync(bookEntity), Times.Once);
         }
     }
 }
