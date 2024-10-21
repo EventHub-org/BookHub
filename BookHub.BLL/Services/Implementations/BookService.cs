@@ -3,6 +3,7 @@ using BookHub.BLL.Services.Interfaces;
 using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Implementations;
+using BookHub.BLL.Utils;
 
 
 namespace BookHub.BLL.Services.Implementations
@@ -30,15 +31,7 @@ namespace BookHub.BLL.Services.Implementations
 
         public async Task<PageDto<BookDto>> GetPaginatedBooksAsync(int size, int page) 
         {
-            if (size <= 0)
-            {
-                throw new ArgumentException("Page size must be greater than zero.", nameof(size));
-            }
-
-            if (page <= 0)
-            {
-                throw new ArgumentException("Page number must be greater than zero.", nameof(page));
-            }
+            PageUtils.ValidatePage(size, page);
 
             var (bookEntities, totalElements) = await _bookRepository.GetPagedAsync(size, page);
 
