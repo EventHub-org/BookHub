@@ -12,14 +12,14 @@ namespace BookHub.Tests.Services.Impl
 {
     public class ReadingProgressServiceImplTest
     {
-        private readonly Mock<IReadingProgressRepository<ReadingProgressEntity>> _mockReadingProgressRepository;
+        private readonly Mock<IReadingProgressRepository> _mockReadingProgressRepository;
         private readonly IMapper _mapper;
         private readonly Mock<ILogger<ReadingProgressServiceImpl>> _mockLogger;
         private readonly ReadingProgressServiceImpl _readingProgressService;
 
         public ReadingProgressServiceImplTest()
         {
-            _mockReadingProgressRepository = new Mock<IReadingProgressRepository<ReadingProgressEntity>>();
+            _mockReadingProgressRepository = new Mock<IReadingProgressRepository>();
 
             var config = new MapperConfiguration(cfg => {
                 cfg.AddProfile<ReadingProgressProfile>();

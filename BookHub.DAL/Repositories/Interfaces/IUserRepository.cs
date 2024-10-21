@@ -2,9 +2,8 @@
 
 namespace BookHub.DAL.Repositories.Interfaces
 {
-    public interface IUserRepository<TEntity> where TEntity : class
+    public interface IUserRepository : IRepository<UserEntity>
     {
-        Task<UserEntity> GetByIdAsync(int id);
         Task<(List<UserEntity> Items, long TotalCount)> GetPagedAsync(int pageSize, int pageNumber);
     }
 }

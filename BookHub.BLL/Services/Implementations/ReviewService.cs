@@ -8,10 +8,10 @@ namespace BookHub.BLL.Services.Implementations
 {
     public class ReviewService : IReviewService
     {
-        private readonly IReviewRepository<ReviewEntity> _reviewRepository;
+        private readonly IReviewRepository _reviewRepository;
         private readonly IMapper _mapper;
 
-        public ReviewService(IReviewRepository<ReviewEntity> reviewRepository, IMapper mapper)
+        public ReviewService(IReviewRepository reviewRepository, IMapper mapper)
         {
             _reviewRepository = reviewRepository;
             _mapper = mapper;

@@ -2,7 +2,7 @@
 
 namespace BookHub.DAL.Repositories.Interfaces
 {
-    public interface IAchievementRepository<TEntity> where TEntity : class
+    public interface IAchievementRepository : IRepository<AchievementEntity>
     {
 
     }
