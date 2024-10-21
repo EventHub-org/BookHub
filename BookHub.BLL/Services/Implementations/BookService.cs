@@ -2,7 +2,7 @@
 using BookHub.BLL.Services.Interfaces;
 using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
-using BookHub.DAL.Repositories.Interfaces;
+using BookHub.DAL.Repositories.Implementations;
 
 
 namespace BookHub.BLL.Services.Implementations
@@ -10,13 +10,27 @@ namespace BookHub.BLL.Services.Implementations
 
     public class BookService : IBookService
     {
-        private readonly IBookRepository<BookEntity> _bookRepository;
+        private readonly BookRepository _bookRepository;
         private readonly IMapper _mapper;
 
-        public BookService(IBookRepository<BookEntity> bookRepository, IMapper mapper)
+        public BookService(BookRepository bookRepository, IMapper mapper)
         {
             _bookRepository = bookRepository;
             _mapper = mapper;
+        }
+
+        public async Task<BookDto> GetBookAsync(int id)
+        {
+            var bookEntity = await _bookRepository.GetByIdAsync(id);
+
+            if (bookEntity == null)
+            {
+                throw new KeyNotFoundException($"Book with ID {id} not found.");
+            }
+
+            var bookDto = _mapper.Map<BookDto>(bookEntity);
+
+            return bookDto;
         }
 
         public async Task<PageDto<BookDto>> GetPaginatedBooksAsync(int size, int page) 
