@@ -83,7 +83,7 @@ namespace BookHub.Tests.Services.Impl
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(collectionDto.Name, result.Name);
+            Assert.Equal(collectionDto.Name, result.Data.Name);
         }
     }
 }

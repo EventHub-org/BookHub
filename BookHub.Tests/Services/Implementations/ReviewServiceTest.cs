@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using BookHub.BLL.Services.Implementations;
-using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Mappers;
 using BookHub.DAL.Repositories.Interfaces;
 using Moq;
-using Sprache;
 using System.Linq.Expressions;
 
 namespace BookHub.Tests.Services.Impl
@@ -76,11 +74,11 @@ namespace BookHub.Tests.Services.Impl
             var result = await _reviewService.GetPaginatedReviewsAsync(size, page);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(totalElements, result.TotalElements);
-            Assert.Equal(page, result.CurrentPage);
-            Assert.Equal((int)Math.Ceiling((double)totalElements / size), result.TotalPages);
-            Assert.Equal(reviewEntities.Count, result.Items.Count);
+            Assert.NotNull(result.Data);
+            Assert.Equal(totalElements, result.Data.TotalElements);
+            Assert.Equal(page, result.Data.CurrentPage);
+            Assert.Equal((int)Math.Ceiling((double)totalElements / size), result.Data.TotalPages);
+            Assert.Equal(reviewEntities.Count, result.Data.Items.Count);
         }
 
         [Fact]
@@ -96,7 +94,7 @@ namespace BookHub.Tests.Services.Impl
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(reviewId, result.Id);
+            Assert.Equal(reviewId, result.Data.Id);
         }
 
         [Fact]

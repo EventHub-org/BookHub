@@ -4,6 +4,7 @@ using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using BookHub.BLL.Utils;
 
 namespace BookHub.BLL.Services.Implementations
 {
@@ -18,11 +19,11 @@ namespace BookHub.BLL.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<ServiceResult> CreateCollectionAsync(CollectionDto collectionDto)
+        public async Task<ServiceResultType<CollectionDto>> CreateCollectionAsync(CollectionDto collectionDto)
         {
             if (collectionDto == null)
             {
-                return ServiceResult.ErrorResult("Collection data cannot be null");
+                return ServiceResultType<CollectionDto>.ErrorResult("Collection data cannot be null");
             }
 
             var validationResults = new List<ValidationResult>();
@@ -31,13 +32,13 @@ namespace BookHub.BLL.Services.Implementations
 
             if (!isValid)
             {
-                return ServiceResult.ErrorResult("Validation failed: " + string.Join(", ", validationResults.Select(v => v.ErrorMessage)));
+                return ServiceResultType<CollectionDto>.ErrorResult("Validation failed: " + string.Join(", ", validationResults.Select(v => v.ErrorMessage)));
             }
 
             // Перетворення DTO в сутність
             var collectionEntity = _mapper.Map<CollectionEntity>(collectionDto);
             await _collectionRepository.AddAsync(collectionEntity);
-            return ServiceResult.SuccessResult(_mapper.Map<CollectionDto>(collectionEntity)); 
+            return ServiceResultType<CollectionDto>.SuccessResult(_mapper.Map<CollectionDto>(collectionEntity)); 
         }
 
     }
