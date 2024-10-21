@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using BookHub.BLL.Services.Interfaces;
+using BookHub.BLL.Utils;
 using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
-using BookHub.DAL.Repositories.Implementations;
-using BookHub.BLL.Utils;
+using BookHub.DAL.Repositories.Interfaces;
 
 
 namespace BookHub.BLL.Services.Implementations
@@ -11,11 +11,13 @@ namespace BookHub.BLL.Services.Implementations
 
     public class BookService : IBookService
     {
-        private readonly BookRepository _bookRepository;
+        private readonly IBookRepository<BookEntity> _bookRepository;
+        private readonly IRepository<BookEntity> _repository;
         private readonly IMapper _mapper;
 
-        public BookService(BookRepository bookRepository, IMapper mapper)
-        {
+        public BookService(IRepository<BookEntity> repository, IBookRepository<BookEntity> bookRepository, IMapper mapper)
+        {   
+            _repository = repository;
             _bookRepository = bookRepository;
             _mapper = mapper;
         }
@@ -51,12 +53,12 @@ namespace BookHub.BLL.Services.Implementations
         {
             var bookEntity = await GetBookEntityAsync(id);
 
-            await _bookRepository.DeleteAsync(bookEntity);
+            await _repository.DeleteAsync(bookEntity);
         }
 
         private async Task<BookEntity> GetBookEntityAsync(int id)
         {
-            var bookEntity = await _bookRepository.GetByIdAsync(id);
+            var bookEntity = await _repository.GetByIdAsync(id);
 
             if (bookEntity == null)
             {
