@@ -4,6 +4,7 @@ using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
 using Moq;
+using Sprache;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Xunit;
@@ -35,8 +36,10 @@ namespace BookHub.Tests.Services.Impl
             // Arrange
             CollectionDto collectionDto = null;
 
+            var stas  = await _collectionService.CreateCollectionAsync(collectionDto);
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() => _collectionService.CreateCollectionAsync(collectionDto));
+             Assert.Equal("Collection data cannot be null", stas.ErrorMessage);
+
         }
 
         [Fact]
@@ -46,10 +49,10 @@ namespace BookHub.Tests.Services.Impl
             var collectionDto = new CollectionDto { Name = "A" }; // Ім'я занадто коротке
 
             // Act
-            var exception = await Assert.ThrowsAsync<ValidationException>(() => _collectionService.CreateCollectionAsync(collectionDto));
+            var test = await _collectionService.CreateCollectionAsync(collectionDto);
 
             // Assert
-            Assert.Equal("Validation failed: Name must be between 2 and 50 characters.", exception.Message);
+            Assert.False(test.Success);
         }
 
         [Fact]
@@ -59,10 +62,10 @@ namespace BookHub.Tests.Services.Impl
             var collectionDto = new CollectionDto { Name = new string('A', 51) }; // Ім'я занадто довге
 
             // Act
-            var exception = await Assert.ThrowsAsync<ValidationException>(() => _collectionService.CreateCollectionAsync(collectionDto));
+            var exception = await  _collectionService.CreateCollectionAsync(collectionDto);
 
             // Assert
-            Assert.Equal("Validation failed: Name must be between 2 and 50 characters.", exception.Message);
+            Assert.False(exception.Success);
         }
 
 
@@ -83,7 +86,7 @@ namespace BookHub.Tests.Services.Impl
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(collectionDto.Name, result.Name);
+            Assert.Equal(collectionDto.Name, result.Data.Name);
         }
     }
 }

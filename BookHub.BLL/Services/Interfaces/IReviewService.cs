@@ -1,10 +1,11 @@
 ﻿using BookHub.DAL.DTO;
+using BookHub.BLL.Utils;
 
 namespace BookHub.BLL.Services.Interfaces
 {
     public interface IReviewService
     {
-        Task<PageDto<ReviewDto>> GetPaginatedReviewsAsync(int pageNumber, int pageSize);
-        Task DeleteReviewAsync(int id);
+        Task<ServiceResultType<PageDto<ReviewDto>>> GetPaginatedReviewsAsync(int pageNumber, int pageSize);
+        Task<ServiceResultType> DeleteReviewAsync(int id);
     }
 }

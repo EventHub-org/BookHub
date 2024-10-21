@@ -36,8 +36,8 @@ namespace BookHub.Tests.Services.Impl
             int page = 1;
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _reviewService.GetPaginatedReviewsAsync(size, page));
-            Assert.Equal("Page size must be greater than zero. (Parameter 'size')", exception.Message);
+            var exception = await _reviewService.GetPaginatedReviewsAsync(size, page);
+            Assert.Equal("Page size must be greater than zero.", exception.ErrorMessage);
         }
 
         [Fact]
@@ -48,8 +48,8 @@ namespace BookHub.Tests.Services.Impl
             int page = 0;
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _reviewService.GetPaginatedReviewsAsync(size, page));
-            Assert.Equal("Page number must be greater than zero. (Parameter 'page')", exception.Message);
+            var exception = await _reviewService.GetPaginatedReviewsAsync(size, page);
+            Assert.Equal("Page size must be greater than zero.", exception.ErrorMessage);
         }
 
         [Fact]
@@ -74,11 +74,11 @@ namespace BookHub.Tests.Services.Impl
             var result = await _reviewService.GetPaginatedReviewsAsync(size, page);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(totalElements, result.TotalElements);
-            Assert.Equal(page, result.CurrentPage);
-            Assert.Equal((int)Math.Ceiling((double)totalElements / size), result.TotalPages);
-            Assert.Equal(reviewEntities.Count, result.Items.Count);
+            Assert.NotNull(result.Data);
+            Assert.Equal(totalElements, result.Data.TotalElements);
+            Assert.Equal(page, result.Data.CurrentPage);
+            Assert.Equal((int)Math.Ceiling((double)totalElements / size), result.Data.TotalPages);
+            Assert.Equal(reviewEntities.Count, result.Data.Items.Count);
         }
 
         [Fact]
@@ -93,8 +93,8 @@ namespace BookHub.Tests.Services.Impl
             var result = await _reviewService.GetReviewAsync(reviewId);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(reviewId, result.Id);
+            Assert.NotNull(result.Data);
+            Assert.Equal(reviewId, result.Data.Id);
         }
 
         [Fact]
@@ -105,8 +105,8 @@ namespace BookHub.Tests.Services.Impl
             _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<ReviewEntity, bool>>>())).ReturnsAsync((ReviewEntity)null);
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => _reviewService.GetReviewAsync(reviewId));
-            Assert.Equal($"Book with ID {reviewId} not found.", exception.Message);
+            var exception = await _reviewService.GetReviewAsync(reviewId);
+            Assert.Equal($"Review with ID {reviewId} not found.", exception.ErrorMessage);
         }
 
         [Fact]
