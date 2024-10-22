@@ -27,6 +27,11 @@ namespace BookHub.BLL.Services.Implementations
         {
             var bookEntity = await GetBookEntityAsync(id);
 
+            if (!bookEntity.Success)
+            {
+                return ServiceResultType<BookDto>.ErrorResult(bookEntity.ErrorMessage);
+            }
+
             var bookDto = _mapper.Map<BookDto>(bookEntity.Data);
             
             return ServiceResultType<BookDto>.SuccessResult(bookDto);
@@ -34,7 +39,12 @@ namespace BookHub.BLL.Services.Implementations
 
         public async Task<ServiceResultType<PageDto<BookDto>>> GetPaginatedBooksAsync(int size, int page) 
         {
-            PageUtils.ValidatePage<BookDto>(size, page);
+            var validationResult = PageUtils.ValidatePage<BookDto>(size, page);
+
+            if (!validationResult.Success)
+            {
+                return ServiceResultType<PageDto<BookDto>>.ErrorResult(validationResult.ErrorMessage);
+            }
 
             var (bookEntities, totalElements) = await _bookRepository.GetPagedAsync(size, page);
 
@@ -52,9 +62,14 @@ namespace BookHub.BLL.Services.Implementations
         }
         public async Task<ServiceResultType> DeleteBookAsync(int id)
         {
-            var bookEntity = await GetBookEntityAsync(id);
+            var bookEntityResult = await GetBookEntityAsync(id);
 
-            await _repository.DeleteAsync(bookEntity.Data);
+            if (!bookEntityResult.Success)
+            {
+                return ServiceResultType.ErrorResult(bookEntityResult.ErrorMessage);
+            }
+
+            await _repository.DeleteAsync(bookEntityResult.Data);
 
             return ServiceResultType.SuccessResult();
         }

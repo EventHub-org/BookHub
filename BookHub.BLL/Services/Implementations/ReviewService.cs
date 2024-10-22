@@ -22,7 +22,12 @@ namespace BookHub.BLL.Services.Implementations
 
         public async Task<ServiceResultType<PageDto<ReviewDto>>> GetPaginatedReviewsAsync(int size, int page)
         {
-            PageUtils.ValidatePage<ReviewDto>(size, page);
+            var validationResult = PageUtils.ValidatePage<BookDto>(size, page);
+
+            if (!validationResult.Success)
+            {
+                return ServiceResultType<PageDto<ReviewDto>>.ErrorResult(validationResult.ErrorMessage);
+            }
 
             var (reviewEntities, totalElements) = await _reviewRepository.GetPagedAsync(size, page);
 
@@ -41,18 +46,28 @@ namespace BookHub.BLL.Services.Implementations
 
         public async Task<ServiceResultType<ReviewDto>> GetReviewAsync(int id)
         {
-            var reviewEntity = await GetReviewEntityAsync(id);
+            var reviewEntityResult = await GetReviewEntityAsync(id);
 
-            var reviewDto = _mapper.Map<ReviewDto>(reviewEntity);
+            if (!reviewEntityResult.Success)
+            {
+                return ServiceResultType<ReviewDto>.ErrorResult(reviewEntityResult.ErrorMessage);
+            }
+
+            var reviewDto = _mapper.Map<ReviewDto>(reviewEntityResult.Data);
 
             return ServiceResultType<ReviewDto>.SuccessResult(reviewDto);
         }
 
         public async Task<ServiceResultType> DeleteReviewAsync(int id)
         {
-            var reviewEntity = await GetReviewEntityAsync(id);
+            var reviewEntityResult = await GetReviewEntityAsync(id);
 
-            await _repository.DeleteAsync(reviewEntity.Data);
+            if (!reviewEntityResult.Success)
+            {
+                return ServiceResultType.ErrorResult(reviewEntityResult.ErrorMessage);
+            }
+
+            await _repository.DeleteAsync(reviewEntityResult.Data);
 
             return ServiceResultType.SuccessResult();
         }
@@ -63,7 +78,7 @@ namespace BookHub.BLL.Services.Implementations
 
             if (reviewEntity == null)
             {
-                ServiceResultType<PageDto<ReviewDto>>.ErrorResult($"Review with ID {id} not found.");
+                return ServiceResultType<ReviewEntity>.ErrorResult($"Review with ID {id} not found.");
             }
 
             return ServiceResultType<ReviewEntity>.SuccessResult(reviewEntity);
