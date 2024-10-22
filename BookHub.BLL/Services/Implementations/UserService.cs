@@ -2,9 +2,8 @@
 using BookHub.BLL.Services.Interfaces;
 using BookHub.BLL.Utils;
 using BookHub.DAL.DTO;
-using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
-
+using Serilog;
 
 namespace BookHub.BLL.Services.Implementations
 {
@@ -40,7 +39,9 @@ namespace BookHub.BLL.Services.Implementations
 
             var userDtos = _mapper.Map<List<UserDto>>(userEntities);
             var totalPages = (int)Math.Ceiling((double)totalElements / pageSize);
-
+            
+            Log.Information("Отримання всіх користувачів з пагінацією");
+            
             var pageDto = new PageDto<UserDto>
             {
                 Items = userDtos,
@@ -59,7 +60,9 @@ namespace BookHub.BLL.Services.Implementations
             {
                 return ServiceResultType<UserDto>.ErrorResult("User not found.");
             }
-
+            
+            Log.Information("Отримання користувача за id");
+            
             var userDto = _mapper.Map<UserDto>(userEntity);
             return ServiceResultType<UserDto>.SuccessResult(userDto);
         }
