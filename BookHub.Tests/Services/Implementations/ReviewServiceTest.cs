@@ -45,11 +45,11 @@ namespace BookHub.Tests.Services.Impl
         {
             // Arrange
             int size = 1;
-            int page = 0;
+            int page = -1;
 
             // Act & Assert
             var exception = await _reviewService.GetPaginatedReviewsAsync(size, page);
-            Assert.Equal("Page size must be greater than zero.", exception.ErrorMessage);
+            Assert.Equal("Page number must be greater than or equal to zero.", exception.ErrorMessage);
         }
 
         [Fact]
