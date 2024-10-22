@@ -5,6 +5,7 @@ using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
 using BookHub.BLL.Utils;
 using Serilog;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace BookHub.BLL.Services.Implementations
 {
@@ -36,7 +37,7 @@ namespace BookHub.BLL.Services.Implementations
 
             var totalPages = (int)Math.Ceiling((double)totalElements / size);
 
-            Log.Information("Отримання всіх рецензій з пагінацією");
+            Log.Information($"Ініціалізовано отримання всіх книг з пагінацією о {DateTime.UtcNow}.");
 
             return ServiceResultType<PageDto<ReviewDto>>.SuccessResult(new PageDto<ReviewDto>
             {
@@ -58,7 +59,7 @@ namespace BookHub.BLL.Services.Implementations
 
             var reviewDto = _mapper.Map<ReviewDto>(reviewEntityResult.Data);
 
-            Log.Information("Отримання рецензії за id");
+            Log.Information($"Ініціалізовано отримання рецензії за Id з Id: {id} о {DateTime.UtcNow}.");
 
             return ServiceResultType<ReviewDto>.SuccessResult(reviewDto);
         }
@@ -74,7 +75,7 @@ namespace BookHub.BLL.Services.Implementations
 
             await _repository.DeleteAsync(reviewEntityResult.Data);
 
-            Log.Information("Видалення рецензії за id");
+            Log.Information($"Ініціалізовано видалення рецензії з Id: {id} о {DateTime.UtcNow}.");
 
             return ServiceResultType.SuccessResult();
         }
@@ -87,7 +88,7 @@ namespace BookHub.BLL.Services.Implementations
             {
                 return ServiceResultType<ReviewEntity>.ErrorResult($"Review with ID {id} not found.");
             }
-
+            Log.Information($"Ініціалізовано отримання рецензії за Id з Id: {id} о {DateTime.UtcNow}.");
             return ServiceResultType<ReviewEntity>.SuccessResult(reviewEntity);
         }
     }

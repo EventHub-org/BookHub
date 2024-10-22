@@ -4,7 +4,9 @@ using BookHub.BLL.Utils;
 using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
+using Microsoft.VisualBasic.ApplicationServices;
 using Serilog;
+using System.Net;
 
 namespace BookHub.BLL.Services.Implementations
 {
@@ -33,7 +35,7 @@ namespace BookHub.BLL.Services.Implementations
 
             var bookDto = _mapper.Map<BookDto>(bookEntity.Data);
 
-            Log.Information("Отримання книги за id");
+            Log.Information($"Ініціалізовано додавання книги з Id: {id} о {DateTime.UtcNow}.");
 
             return ServiceResultType<BookDto>.SuccessResult(bookDto);
         }
@@ -53,7 +55,7 @@ namespace BookHub.BLL.Services.Implementations
 
             var totalPages = (int)Math.Ceiling((double)totalElements / size);
 
-            Log.Information("Отримання всіх книг з пагінацією");
+            Log.Information($"Ініціалізовано отримання всіх книг з пагінацією о {DateTime.UtcNow}.");
 
             return ServiceResultType<PageDto<BookDto>>.SuccessResult(new PageDto<BookDto>
             {
@@ -74,7 +76,7 @@ namespace BookHub.BLL.Services.Implementations
 
             await _repository.DeleteAsync(bookEntityResult.Data);
 
-            Log.Information("Видалення книги за id");
+            Log.Information($"Ініціалізовано видалення книги з Id: {id} о {DateTime.UtcNow}.");
 
             return ServiceResultType.SuccessResult();
         }
@@ -87,7 +89,7 @@ namespace BookHub.BLL.Services.Implementations
             {
                 return ServiceResultType<BookEntity>.ErrorResult($"Book with ID {id} not found.");
             }
-
+            Log.Information($"Ініціалізовано отримання книги за Id з Id: {id} о {DateTime.UtcNow}.");
             return ServiceResultType<BookEntity>.SuccessResult(bookEntity);
         }
     }
