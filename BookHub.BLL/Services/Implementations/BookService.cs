@@ -4,8 +4,7 @@ using BookHub.BLL.Utils;
 using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
-using Sprache;
-
+using Serilog;
 
 namespace BookHub.BLL.Services.Implementations
 {
@@ -33,7 +32,9 @@ namespace BookHub.BLL.Services.Implementations
             }
 
             var bookDto = _mapper.Map<BookDto>(bookEntity.Data);
-            
+
+            Log.Information("Отримання книги за id");
+
             return ServiceResultType<BookDto>.SuccessResult(bookDto);
         }
 
@@ -51,6 +52,8 @@ namespace BookHub.BLL.Services.Implementations
             var bookDtos = _mapper.Map<List<BookDto>>(bookEntities);
 
             var totalPages = (int)Math.Ceiling((double)totalElements / size);
+
+            Log.Information("Отримання всіх книг з пагінацією");
 
             return ServiceResultType<PageDto<BookDto>>.SuccessResult(new PageDto<BookDto>
             {
@@ -70,6 +73,8 @@ namespace BookHub.BLL.Services.Implementations
             }
 
             await _repository.DeleteAsync(bookEntityResult.Data);
+
+            Log.Information("Видалення книги за id");
 
             return ServiceResultType.SuccessResult();
         }

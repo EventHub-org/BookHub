@@ -4,6 +4,7 @@ using BookHub.BLL.Services.Interfaces;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
 using BookHub.BLL.Utils;
+using Serilog;
 
 namespace BookHub.BLL.Services.Implementations
 {
@@ -35,6 +36,8 @@ namespace BookHub.BLL.Services.Implementations
 
             var totalPages = (int)Math.Ceiling((double)totalElements / size);
 
+            Log.Information("Отримання всіх рецензій з пагінацією");
+
             return ServiceResultType<PageDto<ReviewDto>>.SuccessResult(new PageDto<ReviewDto>
             {
                 Items = reviewDtos,
@@ -55,6 +58,8 @@ namespace BookHub.BLL.Services.Implementations
 
             var reviewDto = _mapper.Map<ReviewDto>(reviewEntityResult.Data);
 
+            Log.Information("Отримання рецензії за id");
+
             return ServiceResultType<ReviewDto>.SuccessResult(reviewDto);
         }
 
@@ -68,6 +73,8 @@ namespace BookHub.BLL.Services.Implementations
             }
 
             await _repository.DeleteAsync(reviewEntityResult.Data);
+
+            Log.Information("Видалення рецензії за id");
 
             return ServiceResultType.SuccessResult();
         }
