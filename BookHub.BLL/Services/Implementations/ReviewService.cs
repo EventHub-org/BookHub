@@ -22,15 +22,7 @@ namespace BookHub.BLL.Services.Implementations
 
         public async Task<ServiceResultType<PageDto<ReviewDto>>> GetPaginatedReviewsAsync(int size, int page)
         {
-            if (size <= 0)
-            {
-                ServiceResultType<PageDto<ReviewDto>>.ErrorResult("Page size must be greater than zero.");
-            }
-
-            if (page <= 0)
-            {
-                ServiceResultType<PageDto<ReviewDto>>.ErrorResult("Page number must be greater than zero.");
-            }
+            PageUtils.ValidatePage<ReviewDto>(size, page);
 
             var (reviewEntities, totalElements) = await _reviewRepository.GetPagedAsync(size, page);
 

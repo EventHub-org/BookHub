@@ -4,6 +4,7 @@ using BookHub.BLL.Utils;
 using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
+using Sprache;
 
 
 namespace BookHub.BLL.Services.Implementations
@@ -22,18 +23,18 @@ namespace BookHub.BLL.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<BookDto> GetBookAsync(int id)
+        public async Task<ServiceResultType<BookDto>> GetBookAsync(int id)
         {
-            BookEntity bookEntity = await GetBookEntityAsync(id);
+            var bookEntity = await GetBookEntityAsync(id);
 
-            var bookDto = _mapper.Map<BookDto>(bookEntity);
-
-            return bookDto;
+            var bookDto = _mapper.Map<BookDto>(bookEntity.Data);
+            
+            return ServiceResultType<BookDto>.SuccessResult(bookDto);
         }
 
-        public async Task<PageDto<BookDto>> GetPaginatedBooksAsync(int size, int page) 
+        public async Task<ServiceResultType<PageDto<BookDto>>> GetPaginatedBooksAsync(int size, int page) 
         {
-            PageUtils.ValidatePage(size, page);
+            PageUtils.ValidatePage<BookDto>(size, page);
 
             var (bookEntities, totalElements) = await _bookRepository.GetPagedAsync(size, page);
 
@@ -41,31 +42,33 @@ namespace BookHub.BLL.Services.Implementations
 
             var totalPages = (int)Math.Ceiling((double)totalElements / size);
 
-            return new PageDto<BookDto>
+            return ServiceResultType<PageDto<BookDto>>.SuccessResult(new PageDto<BookDto>
             {
                 Items = bookDtos,
                 TotalElements = totalElements,
                 CurrentPage = page,
                 TotalPages = totalPages
-            };
+            });
         }
-        public async Task DeleteBookAsync(int id)
+        public async Task<ServiceResultType> DeleteBookAsync(int id)
         {
             var bookEntity = await GetBookEntityAsync(id);
 
-            await _repository.DeleteAsync(bookEntity);
+            await _repository.DeleteAsync(bookEntity.Data);
+
+            return ServiceResultType.SuccessResult();
         }
 
-        private async Task<BookEntity> GetBookEntityAsync(int id)
+        private async Task<ServiceResultType<BookEntity>> GetBookEntityAsync(int id)
         {
             var bookEntity = await _repository.GetByIdAsync(b => b.Id == id);
 
             if (bookEntity == null)
             {
-                throw new KeyNotFoundException($"Book with ID {id} not found.");
+                return ServiceResultType<BookEntity>.ErrorResult($"Book with ID {id} not found.");
             }
 
-            return bookEntity;
+            return ServiceResultType<BookEntity>.SuccessResult(bookEntity);
         }
     }
 }
