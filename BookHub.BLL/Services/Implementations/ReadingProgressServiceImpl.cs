@@ -41,6 +41,7 @@ namespace BookHub.BLL.Services.Implementations
             await _readingProgressRepository.AddAsync(entity);
 
             var response = _mapper.Map<ReadingProgressResponseDTO>(entity);
+            Log.Information($"Ініціалізовано створення прогресу читання з Id: {entity.Id} о {DateTime.UtcNow}.");
             return ServiceResultType<ReadingProgressResponseDTO>.SuccessResult(response);
         }
 
@@ -51,6 +52,7 @@ namespace BookHub.BLL.Services.Implementations
                 return ServiceResultType<ReadingProgressResponseDTO>.ErrorResult("Reading progress not found");
 
             var response = _mapper.Map<ReadingProgressResponseDTO>(entity);
+            Log.Information($"Ініціалізовано отримання прогресу читання за Id з Id: {id} о {DateTime.UtcNow}.");
             return ServiceResultType<ReadingProgressResponseDTO>.SuccessResult(response);
         }
 
@@ -61,6 +63,7 @@ namespace BookHub.BLL.Services.Implementations
                 return ServiceResultType<bool>.ErrorResult("Reading progress not found");
 
             await _readingProgressRepository.DeleteAsync(entity);
+            Log.Information($"Ініціалізовано видалення прогресу читання з Id: {id} о {DateTime.UtcNow}.");
             return ServiceResultType<bool>.SuccessResult(true);
         }
 
