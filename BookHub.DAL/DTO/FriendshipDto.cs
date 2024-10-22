@@ -1,14 +1,13 @@
-using Microsoft.VisualBasic.ApplicationServices;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace BookHub.DAL.Entities
+namespace BookHub.DAL.DTO
 {
-    public class FriendshipEntity
+    public class FriendshipDto
     {
         public int User1Id { get; set; }
-        public UserEntity User1 { get; set; }
+        public UserDto User1 { get; set; }
         public int User2Id { get; set; }
-        public UserEntity User2 { get; set; }
+        public UserDto User2 { get; set; }
 
         [Required(ErrorMessage = "Status is required.")]
         [StringLength(20, ErrorMessage = "Status cannot exceed 20 characters.")]

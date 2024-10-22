@@ -1,6 +1,7 @@
 ﻿using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
 using BookHub.DAL.DataAccess;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookHub.DAL.Repositories.Implementations
 {
@@ -13,6 +14,7 @@ namespace BookHub.DAL.Repositories.Implementations
             _context = context;
         }
 
-       
+        
+
     }
 }
