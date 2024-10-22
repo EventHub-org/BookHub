@@ -6,6 +6,7 @@ using BookHub.DAL.Repositories.Interfaces;
 using Moq;
 using Sprache;
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -13,13 +14,16 @@ namespace BookHub.Tests.Services.Impl
 {
     public class CollectionServiceImplTest
     {
+
         private readonly Mock<IRepository<CollectionEntity>> _mockCollectionRepository;
+        private readonly Mock<IRepository<BookEntity>> _mockBookRepository; 
         private readonly IMapper _mapper;
         private readonly CollectionService _collectionService;
 
         public CollectionServiceImplTest()
         {
             _mockCollectionRepository = new Mock<IRepository<CollectionEntity>>();
+            _mockBookRepository = new Mock<IRepository<BookEntity>>(); 
 
             var config = new MapperConfiguration(cfg =>
             {
@@ -27,7 +31,7 @@ namespace BookHub.Tests.Services.Impl
             });
             _mapper = config.CreateMapper();
 
-            _collectionService = new CollectionService(_mockCollectionRepository.Object, _mapper);
+            _collectionService = new CollectionService(_mockCollectionRepository.Object, _mockBookRepository.Object, _mapper);
         }
 
         [Fact]
@@ -88,5 +92,107 @@ namespace BookHub.Tests.Services.Impl
             Assert.NotNull(result);
             Assert.Equal(collectionDto.Name, result.Data.Name);
         }
+
+        [Fact]
+        public async Task AddBookToCollectionAsync_ShouldReturnError_WhenBookNotFound()
+        {
+            // Arrange
+            int collectionId = 1;
+            int bookId = 1;
+
+            var collectionEntity = new CollectionEntity { Id = collectionId };
+
+            _mockCollectionRepository
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<CollectionEntity, bool>>>()))
+                .ReturnsAsync(collectionEntity);
+
+            _mockBookRepository
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<BookEntity, bool>>>()))
+                .ReturnsAsync((BookEntity)null);
+
+            // Act
+            var result = await _collectionService.AddBookToCollectionAsync(collectionId, bookId);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Equal("Book not found", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task AddBookToCollectionAsync_ShouldAddBookToCollection_WhenBookIsFound()
+        {
+            // Arrange
+            int collectionId = 1;
+            int bookId = 1;
+
+            var collectionEntity = new CollectionEntity
+            {
+                Id = collectionId,
+                Books = new List<BookEntity>() 
+            };
+
+            var bookEntity = new BookEntity
+            {
+                Id = bookId,
+                Title = "New Book"
+            };
+
+            _mockCollectionRepository
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<CollectionEntity, bool>>>()))
+                .ReturnsAsync(collectionEntity);
+
+            _mockBookRepository
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<BookEntity, bool>>>()))
+                .ReturnsAsync(bookEntity);
+
+            _mockCollectionRepository
+                .Setup(repo => repo.UpdateAsync(It.IsAny<CollectionEntity>()))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _collectionService.AddBookToCollectionAsync(collectionId, bookId);
+
+            // Assert
+            Assert.True(result.Success);  
+            Assert.Contains(collectionEntity.Books, b => b.Id == bookId); 
+        }
+        [Fact]
+        public async Task AddBookToCollectionAsync_ShouldReturnError_WhenBookIsAlreadyInCollection()
+        {
+            // Arrange
+            int collectionId = 1;
+            int bookId = 1;
+
+            var collectionEntity = new CollectionEntity
+            {
+                Id = collectionId,
+                Books = new List<BookEntity>
+        {
+            new BookEntity { Id = bookId, Title = "Existing Book" }
+        }
+            };
+
+            var bookEntity = new BookEntity
+            {
+                Id = bookId,
+                Title = "Existing Book"
+            };
+
+            _mockCollectionRepository
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<CollectionEntity, bool>>>()))
+                .ReturnsAsync(collectionEntity);
+
+            _mockBookRepository
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<BookEntity, bool>>>()))
+                .ReturnsAsync(bookEntity);
+
+            // Act
+            var result = await _collectionService.AddBookToCollectionAsync(collectionId, bookId);
+
+            // Assert
+            Assert.False(result.Success);  
+            Assert.Equal("Book is already in the collection", result.ErrorMessage); 
+        }
+
     }
 }
