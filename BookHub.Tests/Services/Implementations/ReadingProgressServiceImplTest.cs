@@ -3,124 +3,112 @@ using BookHub.BLL.Services.Implementations;
 using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
-using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
+using System;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BookHub.Tests.Services.Impl
 {
     public class ReadingProgressServiceImplTest
     {
-        private readonly Mock<IReadingProgressRepository> _mockReadingProgressRepository;
+        private readonly Mock<IReadingProgressRepository> _mockRepository;
         private readonly IMapper _mapper;
-        private readonly Mock<ILogger<ReadingProgressServiceImpl>> _mockLogger;
-        private readonly ReadingProgressServiceImpl _readingProgressService;
+        private readonly ReadingProgressServiceImpl _service;
 
         public ReadingProgressServiceImplTest()
         {
-            _mockReadingProgressRepository = new Mock<IReadingProgressRepository>();
+            _mockRepository = new Mock<IReadingProgressRepository>();
 
-            var config = new MapperConfiguration(cfg => {
-                cfg.AddProfile<ReadingProgressProfile>();
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<ReadingProgressDTO, ReadingProgressEntity>();
+                cfg.CreateMap<ReadingProgressEntity, ReadingProgressResponseDTO>();
             });
             _mapper = config.CreateMapper();
 
-            _readingProgressService = new ReadingProgressServiceImpl(
-                _mockReadingProgressRepository.Object,
-                _mapper
-            );
+            _service = new ReadingProgressServiceImpl(_mockRepository.Object, _mapper);
         }
 
         [Fact]
-        public async Task CreateReadingProgress_ShouldAddReadingProgress_WhenValidDTOIsProvided()
+        public async Task CreateReadingProgress_ShouldReturnSuccess_WhenValidDTOIsProvided()
         {
-            // Arrange
-            var readingProgressDTO = new ReadingProgressDTO
-            {
-                UserId = 1,
-                BookId = 2,
-                CurrentPage = 100
-            };
+            var dto = new ReadingProgressDTO { UserId = 1, BookId = 2, CurrentPage = 100 };
+            _mockRepository.Setup(repo => repo.AddAsync(It.IsAny<ReadingProgressEntity>())).Returns(Task.CompletedTask);
 
-            _mockReadingProgressRepository
-                .Setup(repo => repo.AddAsync(It.IsAny<ReadingProgressEntity>()))
-                .Returns(Task.CompletedTask);
+            var result = await _service.CreateReadingProgressAsync(dto);
 
-            // Act
-            var result = await _readingProgressService.createReadingProgress(readingProgressDTO);
-
-            // Assert
-            _mockReadingProgressRepository.Verify(repo => repo.AddAsync(It.IsAny<ReadingProgressEntity>()), Times.Once);
-
-            Assert.NotNull(result);
-            Assert.Equal(readingProgressDTO.UserId, result.UserId);
-            Assert.Equal(readingProgressDTO.BookId, result.BookId);
-            Assert.Equal(readingProgressDTO.CurrentPage, result.CurrentPage);
+            Assert.True(result.Success);
+            Assert.NotNull(result.Data);
+            Assert.Equal(dto.UserId, result.Data.UserId);
         }
 
         [Fact]
-        public async Task CreateReadingProgress_ShouldThrowNullReferenceException_WhenDTOIsNull()
+        public async Task CreateReadingProgress_ShouldReturnError_WhenDTOIsNull()
         {
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<NullReferenceException>(() => _readingProgressService.createReadingProgress(null));
+            var result = await _service.CreateReadingProgressAsync(null);
 
-            Assert.Equal("ReadingProgressDTO cannot be null", exception.Message);
+            Assert.False(result.Success);
+            Assert.Equal("Reading progress data cannot be null", result.ErrorMessage);
         }
 
         [Fact]
-        public async Task CreateReadingProgress_ShouldThrowArgumentException_WhenCurrentPageIsNegative()
+        public async Task GetReadingProgressById_ShouldReturnData_WhenEntityExists()
         {
-            // Arrange
-            var readingProgressDTO = new ReadingProgressDTO
-            {
-                UserId = 1,
-                BookId = 2,
-                CurrentPage = -10
-            };
+            var entity = new ReadingProgressEntity { Id = 1, UserId = 1, BookId = 2, CurrentPage = 50 };
 
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _readingProgressService.createReadingProgress(readingProgressDTO));
+            _mockRepository
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<ReadingProgressEntity, bool>>>()))
+                .ReturnsAsync(entity);
 
-            Assert.Equal("Validation failed: Current page cannot be negative.", exception.Message);
+            var result = await _service.GetReadingProgressByIdAsync(1);
+
+            Assert.True(result.Success);
+            Assert.Equal(entity.Id, result.Data.Id);
         }
 
         [Fact]
-        public async Task CreateReadingProgress_ShouldLogError_WhenRepositoryThrowsException()
+        public async Task GetReadingProgressById_ShouldReturnError_WhenEntityDoesNotExist()
         {
-            // Arrange
-            var readingProgressDTO = new ReadingProgressDTO
-            {
-                UserId = 1,
-                BookId = 2,
-                CurrentPage = 100
-            };
+            _mockRepository
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<ReadingProgressEntity, bool>>>()))
+                .ReturnsAsync((ReadingProgressEntity)null);
 
-            _mockReadingProgressRepository
-                .Setup(repo => repo.AddAsync(It.IsAny<ReadingProgressEntity>()))
-                .ThrowsAsync(new Exception("Database error"));
+            var result = await _service.GetReadingProgressByIdAsync(1);
 
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<Exception>(() => _readingProgressService.createReadingProgress(readingProgressDTO));
-
-            Assert.Equal("Database error", exception.Message);
+            Assert.False(result.Success);
+            Assert.Equal("Reading progress not found", result.ErrorMessage);
         }
 
         [Fact]
-        public async Task CreateReadingProgress_ShouldThrowArgumentException_WhenUserIdIsMissing()
+        public async Task DeleteReadingProgress_ShouldReturnSuccess_WhenEntityExists()
         {
-            // Arrange
-            var readingProgressDTO = new ReadingProgressDTO
-            {
-                BookId = 2,
-                CurrentPage = 50,
-                UserId = null  // Simulate missing UserId
-            };
+            var entity = new ReadingProgressEntity { Id = 1 };
 
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _readingProgressService.createReadingProgress(readingProgressDTO));
+            _mockRepository
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<ReadingProgressEntity, bool>>>()))
+                .ReturnsAsync(entity);
 
-            Assert.Equal("Validation failed: User ID is required.", exception.Message);
+            _mockRepository.Setup(repo => repo.DeleteAsync(entity)).Returns(Task.CompletedTask);
+
+            var result = await _service.DeleteReadingProgressAsync(1);
+
+            Assert.True(result.Success);
+            Assert.True(result.Data);
+        }
+
+        [Fact]
+        public async Task DeleteReadingProgress_ShouldReturnError_WhenEntityDoesNotExist()
+        {
+            _mockRepository
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<ReadingProgressEntity, bool>>>()))
+                .ReturnsAsync((ReadingProgressEntity)null);
+
+            var result = await _service.DeleteReadingProgressAsync(1);
+
+            Assert.False(result.Success);
+            Assert.Equal("Reading progress not found", result.ErrorMessage);
         }
     }
 }

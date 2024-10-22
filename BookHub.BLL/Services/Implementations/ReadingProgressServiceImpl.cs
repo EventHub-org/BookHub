@@ -2,7 +2,7 @@
 using BookHub.BLL.Services.Interfaces;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
-using Microsoft.Extensions.Logging;
+using BookHub.BLL.Utils;
 using System.ComponentModel.DataAnnotations;
 using Serilog;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -12,44 +12,57 @@ namespace BookHub.BLL.Services.Implementations
     public class ReadingProgressServiceImpl : IReadingProgressService
     {
         private readonly IReadingProgressRepository _readingProgressRepository;
-        private readonly IMapper _readingProgressMapper;
-        private readonly ILogger<ReadingProgressServiceImpl> _logger;
+        private readonly IMapper _mapper;
 
         public ReadingProgressServiceImpl(
             IReadingProgressRepository readingProgressRepository,
-            IMapper readingProgressMapper
-            )
+            IMapper mapper)
         {
             _readingProgressRepository = readingProgressRepository;
-            _readingProgressMapper = readingProgressMapper;
+            _mapper = mapper;
         }
 
-
-        public async Task<ReadingProgressEntity> createReadingProgress(ReadingProgressDTO readingProgressDTO)
+        public async Task<ServiceResultType<ReadingProgressResponseDTO>> CreateReadingProgressAsync(ReadingProgressDTO readingProgressDTO)
         {
             if (readingProgressDTO == null)
-            {
-                throw new NullReferenceException("ReadingProgressDTO cannot be null");
-            }
+                return ServiceResultType<ReadingProgressResponseDTO>.ErrorResult("Reading progress data cannot be null");
 
-            var validationContext = new ValidationContext(readingProgressDTO, null, null);
             var validationResults = new List<ValidationResult>();
-
+            var validationContext = new ValidationContext(readingProgressDTO);
             bool isValid = Validator.TryValidateObject(readingProgressDTO, validationContext, validationResults, true);
 
             if (!isValid)
             {
-                var validationErrors = string.Join("; ", validationResults.Select(r => r.ErrorMessage));
-                throw new ArgumentException($"Validation failed: {validationErrors}");
+                string errors = string.Join(", ", validationResults.Select(v => v.ErrorMessage));
+                return ServiceResultType<ReadingProgressResponseDTO>.ErrorResult($"Validation failed: {errors}");
             }
 
-            var readingProgressEntity = _readingProgressMapper.Map<ReadingProgressEntity>(readingProgressDTO);
+            var entity = _mapper.Map<ReadingProgressEntity>(readingProgressDTO);
+            await _readingProgressRepository.AddAsync(entity);
 
-            await _readingProgressRepository.AddAsync(readingProgressEntity);
-
-            Log.Information($"Ініціалізовано створення прогресу читання з Id: {readingProgressEntity.Id} о {DateTime.UtcNow}.");
-
-            return readingProgressEntity;
+            var response = _mapper.Map<ReadingProgressResponseDTO>(entity);
+            return ServiceResultType<ReadingProgressResponseDTO>.SuccessResult(response);
         }
+
+        public async Task<ServiceResultType<ReadingProgressResponseDTO>> GetReadingProgressByIdAsync(int id)
+        {
+            var entity = await _readingProgressRepository.GetByIdAsync(e => e.Id == id);  // Use filter expression
+            if (entity == null)
+                return ServiceResultType<ReadingProgressResponseDTO>.ErrorResult("Reading progress not found");
+
+            var response = _mapper.Map<ReadingProgressResponseDTO>(entity);
+            return ServiceResultType<ReadingProgressResponseDTO>.SuccessResult(response);
+        }
+
+        public async Task<ServiceResultType<bool>> DeleteReadingProgressAsync(int id)
+        {
+            var entity = await _readingProgressRepository.GetByIdAsync(e => e.Id == id);  // Use filter expression
+            if (entity == null)
+                return ServiceResultType<bool>.ErrorResult("Reading progress not found");
+
+            await _readingProgressRepository.DeleteAsync(entity);
+            return ServiceResultType<bool>.SuccessResult(true);
+        }
+
     }
 }
