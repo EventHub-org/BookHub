@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BookHub.DAL.DTO;
 
 namespace BookHub.BLL.Utils
 {
     public class PageUtils
     {
         private PageUtils() { }
-        public static void ValidatePage(int size, int page)
+        public static ServiceResultType<PageDto<T>> ValidatePage<T>(int size, int page)
         {
             if (size <= 0)
             {
-                throw new ArgumentException("Page size must be greater than zero.", nameof(size));
+                return ServiceResultType<PageDto<T>>.ErrorResult("Page size must be greater than zero.");
             }
 
-            if (page <= 0)
+            if (page < 0)
             {
-                throw new ArgumentException("Page number must be greater than zero.", nameof(page));
+                return ServiceResultType<PageDto<T>>.ErrorResult("Page number must be greater than or equal to zero.");
             }
+
+            return ServiceResultType<PageDto<T>>.SuccessResult(null);
         }
     }
 }

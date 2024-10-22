@@ -4,6 +4,8 @@ using BookHub.BLL.Services.Interfaces;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
 using BookHub.BLL.Utils;
+using Serilog;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace BookHub.BLL.Services.Implementations
 {
@@ -22,14 +24,11 @@ namespace BookHub.BLL.Services.Implementations
 
         public async Task<ServiceResultType<PageDto<ReviewDto>>> GetPaginatedReviewsAsync(int size, int page)
         {
-            if (size <= 0)
-            {
-                ServiceResultType<PageDto<ReviewDto>>.ErrorResult("Page size must be greater than zero.");
-            }
+            var validationResult = PageUtils.ValidatePage<BookDto>(size, page);
 
-            if (page <= 0)
+            if (!validationResult.Success)
             {
-                ServiceResultType<PageDto<ReviewDto>>.ErrorResult("Page number must be greater than zero.");
+                return ServiceResultType<PageDto<ReviewDto>>.ErrorResult(validationResult.ErrorMessage);
             }
 
             var (reviewEntities, totalElements) = await _reviewRepository.GetPagedAsync(size, page);
@@ -37,6 +36,8 @@ namespace BookHub.BLL.Services.Implementations
             var reviewDtos = _mapper.Map<List<ReviewDto>>(reviewEntities);
 
             var totalPages = (int)Math.Ceiling((double)totalElements / size);
+
+            Log.Information($"Ініціалізовано отримання всіх книг з пагінацією о {DateTime.UtcNow}.");
 
             return ServiceResultType<PageDto<ReviewDto>>.SuccessResult(new PageDto<ReviewDto>
             {
@@ -49,18 +50,32 @@ namespace BookHub.BLL.Services.Implementations
 
         public async Task<ServiceResultType<ReviewDto>> GetReviewAsync(int id)
         {
-            var reviewEntity = await GetReviewEntityAsync(id);
+            var reviewEntityResult = await GetReviewEntityAsync(id);
 
-            var reviewDto = _mapper.Map<ReviewDto>(reviewEntity);
+            if (!reviewEntityResult.Success)
+            {
+                return ServiceResultType<ReviewDto>.ErrorResult(reviewEntityResult.ErrorMessage);
+            }
+
+            var reviewDto = _mapper.Map<ReviewDto>(reviewEntityResult.Data);
+
+            Log.Information($"Ініціалізовано отримання рецензії за Id з Id: {id} о {DateTime.UtcNow}.");
 
             return ServiceResultType<ReviewDto>.SuccessResult(reviewDto);
         }
 
         public async Task<ServiceResultType> DeleteReviewAsync(int id)
         {
-            var reviewEntity = await GetReviewEntityAsync(id);
+            var reviewEntityResult = await GetReviewEntityAsync(id);
 
-            await _repository.DeleteAsync(reviewEntity.Data);
+            if (!reviewEntityResult.Success)
+            {
+                return ServiceResultType.ErrorResult(reviewEntityResult.ErrorMessage);
+            }
+
+            await _repository.DeleteAsync(reviewEntityResult.Data);
+
+            Log.Information($"Ініціалізовано видалення рецензії з Id: {id} о {DateTime.UtcNow}.");
 
             return ServiceResultType.SuccessResult();
         }
@@ -71,9 +86,9 @@ namespace BookHub.BLL.Services.Implementations
 
             if (reviewEntity == null)
             {
-                ServiceResultType<PageDto<ReviewDto>>.ErrorResult($"Review with ID {id} not found.");
+                return ServiceResultType<ReviewEntity>.ErrorResult($"Review with ID {id} not found.");
             }
-
+            Log.Information($"Ініціалізовано отримання рецензії за Id з Id: {id} о {DateTime.UtcNow}.");
             return ServiceResultType<ReviewEntity>.SuccessResult(reviewEntity);
         }
     }

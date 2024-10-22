@@ -17,5 +17,7 @@ namespace BookHub.DAL.Entities
         public string Name { get; set; }
 
         public UserEntity User { get; set; }
+
+        public ICollection<BookEntity> Books { get; set; }
     }
 }
