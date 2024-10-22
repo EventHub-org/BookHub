@@ -39,9 +39,9 @@ namespace BookHub.BLL.Services.Implementations
 
             var userDtos = _mapper.Map<List<UserDto>>(userEntities);
             var totalPages = (int)Math.Ceiling((double)totalElements / pageSize);
-            
-            Log.Information("Отримання всіх користувачів з пагінацією");
-            
+
+            Log.Information($"Ініціалізовано отримання всіх користувачів з пагінацією о {DateTime.UtcNow}.");
+
             var pageDto = new PageDto<UserDto>
             {
                 Items = userDtos,
@@ -61,9 +61,8 @@ namespace BookHub.BLL.Services.Implementations
                 return ServiceResultType<UserDto>.ErrorResult("User not found.");
             }
             
-            Log.Information("Отримання користувача за id");
-            
             var userDto = _mapper.Map<UserDto>(userEntity);
+            Log.Information($"Ініціалізовано отримання користувача за Id з UserId: {userId} о {DateTime.UtcNow}.");
             return ServiceResultType<UserDto>.SuccessResult(userDto);
         }
     }

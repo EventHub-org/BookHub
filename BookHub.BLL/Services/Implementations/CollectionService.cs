@@ -44,7 +44,7 @@ namespace BookHub.BLL.Services.Implementations
             var collectionEntity = _mapper.Map<CollectionEntity>(collectionDto);
             await _collectionRepository.AddAsync(collectionEntity);
 
-            Log.Information("Створення колекції");
+            Log.Information($"Ініціалізовано створення колекції з Id: {collectionEntity.Id} о {DateTime.UtcNow}.");
 
             return ServiceResultType<CollectionDto>.SuccessResult(_mapper.Map<CollectionDto>(collectionEntity)); 
         }
@@ -70,6 +70,7 @@ namespace BookHub.BLL.Services.Implementations
             collectionEntity.Books.Add(bookEntity);
 
             await _collectionRepository.UpdateAsync(collectionEntity);
+            Log.Information($"Ініціалізовано додавання книги з Id: {bookId} до колекції з Id: {collectionId} о {DateTime.UtcNow}.");
 
             return ServiceResultType.SuccessResult();
         }

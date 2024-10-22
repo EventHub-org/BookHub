@@ -5,6 +5,7 @@ using BookHub.DAL.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 using Serilog;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace BookHub.BLL.Services.Implementations
 {
@@ -46,7 +47,7 @@ namespace BookHub.BLL.Services.Implementations
 
             await _readingProgressRepository.AddAsync(readingProgressEntity);
 
-            Log.Information("Створення прогресу читання");
+            Log.Information($"Ініціалізовано створення прогресу читання з Id: {readingProgressEntity.Id} о {DateTime.UtcNow}.");
 
             return readingProgressEntity;
         }

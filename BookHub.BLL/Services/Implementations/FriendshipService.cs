@@ -5,6 +5,7 @@ using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using Serilog;
 
 
 namespace BookHub.BLL.Services.Implementations
@@ -43,6 +44,7 @@ namespace BookHub.BLL.Services.Implementations
             await _friendshipRepository.AddAsync(friendshipEntity);
 
             var resultDto = _mapper.Map<FriendshipDto>(friendshipEntity);
+            Log.Information($"Ініціалізовано створення дружби між User1Id: {friendshipEntity.User1Id} та User2Id: {friendshipEntity.User2Id} о {DateTime.UtcNow}.");
             return ServiceResultType<FriendshipDto>.SuccessResult(resultDto);
         }
 
@@ -59,6 +61,7 @@ namespace BookHub.BLL.Services.Implementations
             await _friendshipRepository.UpdateAsync(friendship);
 
             var friendshipDto = _mapper.Map<FriendshipDto>(friendship);
+            Log.Information($"Ініціалізовано підтвердження дружби між User1Id: {user1Id} та User2Id: {user2Id} о {DateTime.UtcNow}.");
             return ServiceResultType<FriendshipDto>.SuccessResult(friendshipDto);
         }
 
@@ -72,7 +75,7 @@ namespace BookHub.BLL.Services.Implementations
             }
 
             await _friendshipRepository.DeleteAsync(friendship);
-
+            Log.Information($"Ініціалізовано видалення дружби між User1Id: {user1Id} та User2Id: {user2Id} о {DateTime.UtcNow}.");
             return ServiceResultType<bool>.SuccessResult(true); // Повертаємо true для успішного видалення
         }
 
@@ -86,6 +89,7 @@ namespace BookHub.BLL.Services.Implementations
             }
 
             var friendshipDto = _mapper.Map<FriendshipDto>(friendship);
+            Log.Information($"Ініціалізовано отримання дружби за Id між User1Id: {user1Id} та User2Id: {user2Id} о {DateTime.UtcNow}.");
             return ServiceResultType<FriendshipDto>.SuccessResult(friendshipDto);
         }
     }
