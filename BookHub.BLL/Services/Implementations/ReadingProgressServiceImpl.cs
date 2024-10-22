@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using BookHub.BLL.Services.Interfaces;
-using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
+using Serilog;
 
 namespace BookHub.BLL.Services.Implementations
 {
@@ -47,6 +45,8 @@ namespace BookHub.BLL.Services.Implementations
             var readingProgressEntity = _readingProgressMapper.Map<ReadingProgressEntity>(readingProgressDTO);
 
             await _readingProgressRepository.AddAsync(readingProgressEntity);
+
+            Log.Information("Створення прогресу читання");
 
             return readingProgressEntity;
         }

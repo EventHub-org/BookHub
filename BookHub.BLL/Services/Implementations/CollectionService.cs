@@ -7,6 +7,8 @@ using System.ComponentModel.DataAnnotations;
 using BookHub.BLL.Utils;
 using BookHub.DAL.Repositories.Implementations;
 
+using Serilog;
+
 namespace BookHub.BLL.Services.Implementations
 {
     public class CollectionService : ICollectionService 
@@ -41,6 +43,9 @@ namespace BookHub.BLL.Services.Implementations
             // Перетворення DTO в сутність
             var collectionEntity = _mapper.Map<CollectionEntity>(collectionDto);
             await _collectionRepository.AddAsync(collectionEntity);
+
+            Log.Information("Створення колекції");
+
             return ServiceResultType<CollectionDto>.SuccessResult(_mapper.Map<CollectionDto>(collectionEntity)); 
         }
         public async Task<ServiceResultType> AddBookToCollectionAsync(int collectionId, int bookId)
