@@ -34,5 +34,7 @@ namespace BookHub.DAL.Entities
         public string Genre { get; set; }
 
         public ICollection<ReviewEntity> Reviews { get; set; }
+
+        public ICollection<CollectionEntity> Collections { get; set; }
     }
 }
