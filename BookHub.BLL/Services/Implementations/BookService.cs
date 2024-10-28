@@ -3,10 +3,10 @@ using BookHub.BLL.Services.Interfaces;
 using BookHub.BLL.Utils;
 using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
+using BookHub.DAL.Repositories.Implementations;
 using BookHub.DAL.Repositories.Interfaces;
-using Microsoft.VisualBasic.ApplicationServices;
 using Serilog;
-using System.Net;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookHub.BLL.Services.Implementations
 {
@@ -14,12 +14,10 @@ namespace BookHub.BLL.Services.Implementations
     public class BookService : IBookService
     {
         private readonly IBookRepository _bookRepository;
-        private readonly IRepository<BookEntity> _repository;
         private readonly IMapper _mapper;
 
-        public BookService(IRepository<BookEntity> repository, IBookRepository bookRepository, IMapper mapper)
+        public BookService(IBookRepository bookRepository, IMapper mapper)
         {   
-            _repository = repository;
             _bookRepository = bookRepository;
             _mapper = mapper;
         }
@@ -65,6 +63,32 @@ namespace BookHub.BLL.Services.Implementations
                 TotalPages = totalPages
             });
         }
+
+        public async Task<ServiceResultType<BookDto>> CreateBook(BookCreateDto bookCreateDto)
+        {
+            if (bookCreateDto == null)
+            {
+                return ServiceResultType<BookDto>.ErrorResult("Book data cannot be null");
+            }
+
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(bookCreateDto);
+            bool isValid = Validator.TryValidateObject(bookCreateDto, validationContext, validationResults, true);
+
+            if (!isValid)
+            {
+                return ServiceResultType<BookDto>.ErrorResult("Validation failed: " + string.Join(", ", validationResults.Select(v => v.ErrorMessage)));
+            }
+
+            var bookEntity = _mapper.Map<BookEntity>(bookCreateDto); 
+            await _bookRepository.AddAsync(bookEntity);
+
+            Log.Information($"Ініціалізовано створення книги з Id: {bookEntity.Id} о {DateTime.UtcNow}.");
+
+            var bookDto = _mapper.Map<BookDto>(bookEntity);
+            return ServiceResultType<BookDto>.SuccessResult(bookDto);
+        }
+
         public async Task<ServiceResultType> DeleteBookAsync(int id)
         {
             var bookEntityResult = await GetBookEntityAsync(id);
@@ -74,7 +98,7 @@ namespace BookHub.BLL.Services.Implementations
                 return ServiceResultType.ErrorResult(bookEntityResult.ErrorMessage);
             }
 
-            await _repository.DeleteAsync(bookEntityResult.Data);
+            await _bookRepository.DeleteAsync(bookEntityResult.Data);
 
             Log.Information($"Ініціалізовано видалення книги з Id: {id} о {DateTime.UtcNow}.");
 
@@ -83,7 +107,7 @@ namespace BookHub.BLL.Services.Implementations
 
         private async Task<ServiceResultType<BookEntity>> GetBookEntityAsync(int id)
         {
-            var bookEntity = await _repository.GetByIdAsync(b => b.Id == id);
+            var bookEntity = await _bookRepository.GetByIdAsync(b => b.Id == id);
 
             if (bookEntity == null)
             {
