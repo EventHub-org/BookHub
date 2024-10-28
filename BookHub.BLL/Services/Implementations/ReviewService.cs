@@ -5,7 +5,7 @@ using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
 using BookHub.BLL.Utils;
 using Serilog;
-using Microsoft.VisualBasic.ApplicationServices;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookHub.BLL.Services.Implementations
 {
@@ -90,6 +90,30 @@ namespace BookHub.BLL.Services.Implementations
             }
             Log.Information($"Ініціалізовано отримання рецензії за Id з Id: {id} о {DateTime.UtcNow}.");
             return ServiceResultType<ReviewEntity>.SuccessResult(reviewEntity);
+        }
+
+        public async Task<ServiceResultType<ReviewDto>> CreateReviewAsync(ReviewDto reviewDto)
+        {
+            if (reviewDto == null)
+            {
+                return ServiceResultType<ReviewDto>.ErrorResult("Review data cannot be null");
+            }
+
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(reviewDto);
+            bool isValid = Validator.TryValidateObject(reviewDto, validationContext, validationResults, true);
+
+            if (!isValid)
+            {
+                return ServiceResultType<ReviewDto>.ErrorResult("Validation failed: " + string.Join(", ", validationResults.Select(v => v.ErrorMessage)));
+            }
+
+            var reviewEntity = _mapper.Map<ReviewEntity>(reviewDto);
+            await _reviewRepository.AddAsync(reviewEntity);
+
+            Log.Information($"Ініціалізовано створення рецензії з Id: {reviewEntity.Id} о {DateTime.UtcNow}.");
+
+            return ServiceResultType<ReviewDto>.SuccessResult(_mapper.Map<ReviewDto>(reviewEntity));
         }
     }
 }
