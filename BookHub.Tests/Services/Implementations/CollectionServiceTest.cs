@@ -12,7 +12,7 @@ using Xunit;
 
 namespace BookHub.Tests.Services.Impl
 {
-    public class CollectionServiceImplTest
+    public class CollectionServiceTest
     {
 
         private readonly Mock<IRepository<CollectionEntity>> _mockCollectionRepository;
@@ -20,7 +20,7 @@ namespace BookHub.Tests.Services.Impl
         private readonly IMapper _mapper;
         private readonly CollectionService _collectionService;
 
-        public CollectionServiceImplTest()
+        public CollectionServiceTest()
         {
             _mockCollectionRepository = new Mock<IRepository<CollectionEntity>>();
             _mockBookRepository = new Mock<IRepository<BookEntity>>(); 
@@ -193,6 +193,74 @@ namespace BookHub.Tests.Services.Impl
             Assert.False(result.Success);  
             Assert.Equal("Book is already in the collection", result.ErrorMessage); 
         }
+
+        [Fact]
+        public async Task RemoveBookFromCollectionAsync_ShouldReturnError_WhenCollectionNotFound()
+        {
+            // Arrange
+            int collectionId = 1;
+            int bookId = 1;
+            _mockCollectionRepository.Setup(repo => repo.GetByIdAsync(c => c.Id == collectionId))
+                                     .ReturnsAsync((CollectionEntity)null);
+
+            // Act
+            var result = await _collectionService.RemoveBookFromCollectionAsync(collectionId, bookId);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Equal("Collection not found", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task RemoveBookFromCollectionAsync_ShouldReturnError_WhenBookNotFoundInCollection()
+        {
+            // Arrange
+            int collectionId = 1;
+            int bookId = 1;
+            var collectionEntity = new CollectionEntity
+            {
+                Id = collectionId,
+                Books = new List<BookEntity>() // Порожній список книг
+            };
+
+            _mockCollectionRepository.Setup(repo => repo.GetByIdAsync(c => c.Id == collectionId))
+                                     .ReturnsAsync(collectionEntity);
+
+            // Act
+            var result = await _collectionService.RemoveBookFromCollectionAsync(collectionId, bookId);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Equal("Book not found in the collection", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task RemoveBookFromCollectionAsync_ShouldReturnSuccess_WhenBookIsRemoved()
+        {
+            // Arrange
+            int collectionId = 1;
+            int bookId = 1;
+            var bookEntity = new BookEntity { Id = bookId };
+            var collectionEntity = new CollectionEntity
+            {
+                Id = collectionId,
+                Books = new List<BookEntity> { bookEntity } // Книга вже є в колекції
+            };
+
+            _mockCollectionRepository.Setup(repo => repo.GetByIdAsync(c => c.Id == collectionId))
+                                     .ReturnsAsync(collectionEntity);
+            _mockCollectionRepository.Setup(repo => repo.UpdateAsync(It.IsAny<CollectionEntity>()))
+                                     .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _collectionService.RemoveBookFromCollectionAsync(collectionId, bookId);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Null(result.ErrorMessage);
+            _mockCollectionRepository.Verify(repo => repo.UpdateAsync(collectionEntity), Times.Once);
+        }
+
 
     }
 }
