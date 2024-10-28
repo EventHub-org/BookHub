@@ -40,20 +40,20 @@ namespace BookHub.BLL.Services.Implementations
             return ServiceResultType<BookDto>.SuccessResult(bookDto);
         }
 
-        public async Task<ServiceResultType<PageDto<BookDto>>> GetPaginatedBooksAsync(int size, int page) 
+        public async Task<ServiceResultType<PageDto<BookDto>>> GetPaginatedBooksAsync(Pageable pageable) 
         {
-            var validationResult = PageUtils.ValidatePage<BookDto>(size, page);
+            var validationResult = PageUtils.ValidatePage<BookDto>(pageable);
 
             if (!validationResult.Success)
             {
                 return ServiceResultType<PageDto<BookDto>>.ErrorResult(validationResult.ErrorMessage);
             }
 
-            var (bookEntities, totalElements) = await _bookRepository.GetPagedAsync(size, page);
+            var (bookEntities, totalElements) = await _bookRepository.GetPagedAsync(pageable);
 
             var bookDtos = _mapper.Map<List<BookDto>>(bookEntities);
 
-            var totalPages = (int)Math.Ceiling((double)totalElements / size);
+            var totalPages = (int)Math.Ceiling((double)totalElements / pageable.Size);
 
             Log.Information($"Ініціалізовано отримання всіх книг з пагінацією о {DateTime.UtcNow}.");
 
@@ -61,7 +61,7 @@ namespace BookHub.BLL.Services.Implementations
             {
                 Items = bookDtos,
                 TotalElements = totalElements,
-                CurrentPage = page,
+                CurrentPage = pageable.Page,
                 TotalPages = totalPages
             });
         }

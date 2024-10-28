@@ -5,6 +5,7 @@ using BookHub.DAL.Mappers;
 using BookHub.DAL.Repositories.Interfaces;
 using Moq;
 using System.Linq.Expressions;
+using BookHub.DAL.DTO;
 
 namespace BookHub.Tests.Services.Impl
 {
@@ -32,23 +33,21 @@ namespace BookHub.Tests.Services.Impl
         public async Task GetPaginatedReviewsAsync_ShouldThrowArgumentException_WhenSizeIsZero()
         {
             // Arrange
-            int size = 0;
-            int page = 1;
+            var pageable = new Pageable { Size = 0, Page = 1 };
 
             // Act & Assert
-            var exception = await _reviewService.GetPaginatedReviewsAsync(size, page);
+            var exception = await _reviewService.GetPaginatedReviewsAsync(pageable);
             Assert.Equal("Page size must be greater than zero.", exception.ErrorMessage);
         }
 
         [Fact]
-        public async Task GetPaginatedReviewsAsync_ShouldThrowArgumentException_WhenPageIsZero()
+        public async Task GetPaginatedReviewsAsync_ShouldThrowArgumentException_WhenPageIsNegative()
         {
             // Arrange
-            int size = 1;
-            int page = -1;
+            var pageable = new Pageable { Size = 1, Page = -1 };
 
             // Act & Assert
-            var exception = await _reviewService.GetPaginatedReviewsAsync(size, page);
+            var exception = await _reviewService.GetPaginatedReviewsAsync(pageable);
             Assert.Equal("Page number must be greater than or equal to zero.", exception.ErrorMessage);
         }
 
@@ -56,8 +55,7 @@ namespace BookHub.Tests.Services.Impl
         public async Task GetPaginatedReviewsAsync_ShouldReturnPageDto_WhenDataIsValid()
         {
             // Arrange
-            int size = 2;
-            int page = 1;
+            var pageable = new Pageable { Size = 2, Page = 1 };
 
             var reviewEntities = new List<ReviewEntity>
             {
@@ -67,17 +65,17 @@ namespace BookHub.Tests.Services.Impl
 
             var totalElements = 5;
             _mockReviewRepository
-                .Setup(repo => repo.GetPagedAsync(size, page))
+                .Setup(repo => repo.GetPagedAsync(pageable))
                 .ReturnsAsync((reviewEntities, totalElements));
 
             // Act
-            var result = await _reviewService.GetPaginatedReviewsAsync(size, page);
+            var result = await _reviewService.GetPaginatedReviewsAsync(pageable);
 
             // Assert
             Assert.NotNull(result.Data);
             Assert.Equal(totalElements, result.Data.TotalElements);
-            Assert.Equal(page, result.Data.CurrentPage);
-            Assert.Equal((int)Math.Ceiling((double)totalElements / size), result.Data.TotalPages);
+            Assert.Equal(pageable.Page, result.Data.CurrentPage);
+            Assert.Equal((int)Math.Ceiling((double)totalElements / pageable.Size), result.Data.TotalPages);
             Assert.Equal(reviewEntities.Count, result.Data.Items.Count);
         }
 

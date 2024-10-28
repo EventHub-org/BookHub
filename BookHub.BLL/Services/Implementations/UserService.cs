@@ -18,19 +18,17 @@ namespace BookHub.BLL.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<ServiceResultType<PageDto<UserDto>>> GetPaginatedUsersAsync(int pageNumber, int pageSize)
+        public async Task<ServiceResultType<PageDto<UserDto>>> GetPaginatedUsersAsync(Pageable pageable)
         {
-            if (pageSize <= 0)
+            var validationResult = PageUtils.ValidatePage<BookDto>(pageable);
+
+            if (!validationResult.Success)
             {
-                return ServiceResultType<PageDto<UserDto>>.ErrorResult("Page size must be greater than zero.");
+                return ServiceResultType<PageDto<UserDto>>.ErrorResult(validationResult.ErrorMessage);
             }
 
-            if (pageNumber <= 0)
-            {
-                return ServiceResultType<PageDto<UserDto>>.ErrorResult("Page number must be greater than zero.");
-            }
 
-            var (userEntities, totalElements) = await _userRepository.GetPagedAsync(pageSize, pageNumber);
+            var (userEntities, totalElements) = await _userRepository.GetPagedAsync(pageable);
 
             if (userEntities == null || !userEntities.Any())
             {
@@ -38,7 +36,7 @@ namespace BookHub.BLL.Services.Implementations
             }
 
             var userDtos = _mapper.Map<List<UserDto>>(userEntities);
-            var totalPages = (int)Math.Ceiling((double)totalElements / pageSize);
+            var totalPages = (int)Math.Ceiling((double)totalElements / pageable.Size);
 
             Log.Information($"Ініціалізовано отримання всіх користувачів з пагінацією о {DateTime.UtcNow}.");
 
@@ -46,7 +44,7 @@ namespace BookHub.BLL.Services.Implementations
             {
                 Items = userDtos,
                 TotalElements = totalElements,
-                CurrentPage = pageNumber,
+                CurrentPage = pageable.Page,
                 TotalPages = totalPages
             };
 

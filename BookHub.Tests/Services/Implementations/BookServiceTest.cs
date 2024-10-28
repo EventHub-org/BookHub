@@ -3,8 +3,10 @@ using BookHub.BLL.Services.Implementations;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Mappers;
 using BookHub.DAL.Repositories.Interfaces;
+using BookHub.DAL.DTO;
 using Moq;
 using System.Linq.Expressions;
+
 
 namespace BookHub.Tests.Services.Impl
 {
@@ -33,11 +35,10 @@ namespace BookHub.Tests.Services.Impl
         public async Task GetPaginatedBooksAsync_ShouldReturnError_WhenSizeIsZero()
         {
             // Arrange
-            int size = 0;
-            int page = 1;
+            var pageable = new Pageable(size: 0, page: 1);
 
             // Act
-            var result = await _bookService.GetPaginatedBooksAsync(size, page);
+            var result = await _bookService.GetPaginatedBooksAsync(pageable);
 
             // Assert
             Assert.False(result.Success);
@@ -45,14 +46,13 @@ namespace BookHub.Tests.Services.Impl
         }
 
         [Fact]
-        public async Task GetPaginatedBooksAsync_ShouldReturnError_WhenPageIsZero()
+        public async Task GetPaginatedBooksAsync_ShouldReturnError_WhenPageIsNegative()
         {
             // Arrange
-            int size = 1;
-            int page = -1;
+            var pageable = new Pageable(size: 1, page: -1);
 
             // Act
-            var result = await _bookService.GetPaginatedBooksAsync(size, page);
+            var result = await _bookService.GetPaginatedBooksAsync(pageable);
 
             // Assert
             Assert.False(result.Success);
@@ -63,8 +63,7 @@ namespace BookHub.Tests.Services.Impl
         public async Task GetPaginatedBooksAsync_ShouldReturnPageDto_WhenDataIsValid()
         {
             // Arrange
-            int size = 2;
-            int page = 1;
+            var pageable = new Pageable(size: 2, page: 1);
 
             var bookEntities = new List<BookEntity>
             {
@@ -75,18 +74,18 @@ namespace BookHub.Tests.Services.Impl
             var totalElements = 5;
 
             _mockBookRepository
-                .Setup(repo => repo.GetPagedAsync(size, page))
+                .Setup(repo => repo.GetPagedAsync(pageable))
                 .ReturnsAsync((bookEntities, totalElements));
 
             // Act
-            var result = await _bookService.GetPaginatedBooksAsync(size, page);
+            var result = await _bookService.GetPaginatedBooksAsync(pageable);
 
             // Assert
             Assert.True(result.Success);
             Assert.NotNull(result.Data);
             Assert.Equal(totalElements, result.Data.TotalElements);
-            Assert.Equal(page, result.Data.CurrentPage);
-            Assert.Equal((int)Math.Ceiling((double)totalElements / size), result.Data.TotalPages);
+            Assert.Equal(pageable.Page, result.Data.CurrentPage);
+            Assert.Equal((int)Math.Ceiling((double)totalElements / pageable.Size), result.Data.TotalPages);
             Assert.Equal(bookEntities.Count, result.Data.Items.Count);
 
             // Additional assertions to check specific items in the result
