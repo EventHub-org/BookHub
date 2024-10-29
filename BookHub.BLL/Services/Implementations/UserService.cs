@@ -2,6 +2,7 @@
 using BookHub.BLL.Services.Interfaces;
 using BookHub.BLL.Utils;
 using BookHub.DAL.DTO;
+using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
 using Serilog;
 
@@ -63,5 +64,9 @@ namespace BookHub.BLL.Services.Implementations
             Log.Information($"Ініціалізовано отримання користувача за Id з UserId: {userId} о {DateTime.UtcNow}.");
             return ServiceResultType<UserDto>.SuccessResult(userDto);
         }
+
+        
+
+
     }
 }

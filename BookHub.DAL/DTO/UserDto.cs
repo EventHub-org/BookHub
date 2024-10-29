@@ -11,13 +11,7 @@ namespace BookHub.DAL.DTO
    
         public string ProfilePictureUrl { get; set; }
 
-        public UserDto(int id, string name, string profilePictureUrl)
-        {
-            Id = id;
-            Name = name;
-            ProfilePictureUrl = profilePictureUrl;
 
-        }
     }
 
 }

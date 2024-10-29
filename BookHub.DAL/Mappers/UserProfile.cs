@@ -10,8 +10,13 @@ namespace BookHub.DAL.Mappers
         public UserProfile()
         {
             CreateMap<UserEntity, UserDto>()
-                .ConstructUsing(src => new UserDto(src.UserId, src.Name, src.ProfilePicture))
-                .ReverseMap();
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.ProfilePicture))
+                .ReverseMap()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.ProfilePicture, opt => opt.MapFrom(src => src.ProfilePictureUrl));
         }
     }
 }
