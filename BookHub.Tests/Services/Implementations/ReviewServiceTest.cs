@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BookHub.BLL.Services.Implementations;
+using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Mappers;
 using BookHub.DAL.Repositories.Interfaces;
@@ -122,6 +123,51 @@ namespace BookHub.Tests.Services.Impl
 
             // Assert
             _mockRepository.Verify(repo => repo.DeleteAsync(reviewEntity), Times.Once);
+        }
+
+
+        [Fact]
+        public async Task CreateReviewAsync_ShouldThrowArgumentNullException_WhenReviewDtoIsNull()
+        {
+            // Arrange
+            ReviewDto reviewDto = null;
+
+            var test = await _reviewService.CreateReviewAsync(reviewDto);
+            // Act & Assert
+            Assert.Equal("Review data cannot be null", test.ErrorMessage);
+
+        }
+
+        [Fact]
+        public async Task CreateReviewAsync_ShouldThrowValidationException_WhenRatingIsTooShort()
+        {
+            // Arrange
+            var reviewDto = new ReviewDto { Rating = 6, Comment = "Well" }; // Максимальний рейтинг 5
+
+            // Act
+            var test = await _reviewService.CreateReviewAsync(reviewDto);
+
+            // Assert
+            Assert.False(test.Success);
+        }
+
+        [Fact]
+        public async Task CreateReviewAsync_ShouldReturnReviewDto_WhenReviewIsCreated()
+        {
+            // Arrange
+            var reviewDto = new ReviewDto { Rating = 4, Comment = "Well" };
+            var reviewEntity = _mapper.Map<ReviewEntity>(reviewDto);
+
+            _mockReviewRepository
+                .Setup(repo => repo.AddAsync(It.IsAny<ReviewEntity>()))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _reviewService.CreateReviewAsync(reviewDto);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(reviewDto.Rating, result.Data.Rating);
         }
     }
 }
