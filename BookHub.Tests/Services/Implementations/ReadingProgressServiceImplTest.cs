@@ -35,14 +35,17 @@ namespace BookHub.Tests.Services.Impl
         public async Task CreateReadingProgress_ShouldReturnSuccess_WhenValidDTOIsProvided()
         {
             var dto = new ReadingProgressDTO { UserId = 1, BookId = 2, CurrentPage = 100 };
+
             _mockRepository.Setup(repo => repo.AddAsync(It.IsAny<ReadingProgressEntity>())).Returns(Task.CompletedTask);
 
             var result = await _service.CreateReadingProgressAsync(dto);
 
             Assert.True(result.Success);
             Assert.NotNull(result.Data);
+            Assert.IsType<ReadingProgressResponseDTO>(result.Data);
             Assert.Equal(dto.UserId, result.Data.UserId);
         }
+
 
         [Fact]
         public async Task CreateReadingProgress_ShouldReturnError_WhenDTOIsNull()
@@ -65,6 +68,8 @@ namespace BookHub.Tests.Services.Impl
             var result = await _service.GetReadingProgressByIdAsync(1);
 
             Assert.True(result.Success);
+            Assert.NotNull(result.Data);
+            Assert.IsType<ReadingProgressResponseDTO>(result.Data);
             Assert.Equal(entity.Id, result.Data.Id);
         }
 
@@ -80,6 +85,7 @@ namespace BookHub.Tests.Services.Impl
             Assert.False(result.Success);
             Assert.Equal("Reading progress not found", result.ErrorMessage);
         }
+
 
         [Fact]
         public async Task DeleteReadingProgress_ShouldReturnSuccess_WhenEntityExists()
@@ -110,5 +116,50 @@ namespace BookHub.Tests.Services.Impl
             Assert.False(result.Success);
             Assert.Equal("Reading progress not found", result.ErrorMessage);
         }
+
+        [Fact]
+        public async Task UpdateReadingProgress_ShouldReturnSuccess_WhenEntityExistsAndValidDTOIsProvided()
+        {
+            var existingEntity = new ReadingProgressEntity { Id = 1, UserId = 1, BookId = 2, CurrentPage = 50 };
+            var updatedDTO = new ReadingProgressDTO { UserId = 1, BookId = 2, CurrentPage = 100 };
+
+            _mockRepository
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<ReadingProgressEntity, bool>>>()))
+                .ReturnsAsync(existingEntity);
+
+            _mockRepository.Setup(repo => repo.UpdateAsync(existingEntity)).Returns(Task.CompletedTask);
+
+            var result = await _service.UpdateReadingProgressAsync(1, updatedDTO);
+
+            Assert.True(result.Success);
+            Assert.NotNull(result.Data);
+            Assert.IsType<ReadingProgressResponseDTO>(result.Data);
+            Assert.Equal(updatedDTO.CurrentPage, result.Data.CurrentPage);
+        }
+
+        [Fact]
+        public async Task UpdateReadingProgress_ShouldReturnError_WhenDTOIsNull()
+        {
+            var result = await _service.UpdateReadingProgressAsync(1, null);
+
+            Assert.False(result.Success);
+            Assert.Equal("Reading progress data cannot be null", result.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task UpdateReadingProgress_ShouldReturnError_WhenEntityDoesNotExist()
+        {
+            _mockRepository
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<Expression<Func<ReadingProgressEntity, bool>>>()))
+                .ReturnsAsync((ReadingProgressEntity)null);
+
+            var dto = new ReadingProgressDTO { UserId = 1, BookId = 2, CurrentPage = 100 };
+            var result = await _service.UpdateReadingProgressAsync(1, dto);
+
+            Assert.False(result.Success);
+            Assert.Equal("Reading progress not found", result.ErrorMessage);
+        }
+
+
     }
 }
