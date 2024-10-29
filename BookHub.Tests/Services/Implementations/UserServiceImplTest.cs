@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BookHub.BLL.Services.Implementations;
+using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Mappers;
 using BookHub.DAL.Repositories.Interfaces;
@@ -19,8 +20,11 @@ namespace BookHub.Tests.Services.Impl
         {
             _mockUserRepository = new Mock<IUserRepository>();
 
-            var config = new MapperConfiguration(cfg => {
+            var config = new MapperConfiguration(cfg =>
+            {
                 cfg.AddProfile<UserProfile>();
+                
+
             });
             _mapper = config.CreateMapper();
 
@@ -146,6 +150,8 @@ namespace BookHub.Tests.Services.Impl
             Assert.Equal(userEntity.Name, result.Data.Name);
             Assert.Equal(userEntity.ProfilePicture, result.Data.ProfilePictureUrl);
         }
+
+        
     }
 }
 
