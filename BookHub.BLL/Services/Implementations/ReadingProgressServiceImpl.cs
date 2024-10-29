@@ -40,25 +40,50 @@ namespace BookHub.BLL.Services.Implementations
             var entity = _mapper.Map<ReadingProgressEntity>(readingProgressDTO);
             await _readingProgressRepository.AddAsync(entity);
 
-            var response = _mapper.Map<ReadingProgressResponseDTO>(entity);
+            var responseDto = _mapper.Map<ReadingProgressResponseDTO>(entity);
             Log.Information($"Ініціалізовано створення прогресу читання з Id: {entity.Id} о {DateTime.UtcNow}.");
-            return ServiceResultType<ReadingProgressResponseDTO>.SuccessResult(response);
+
+            return ServiceResultType<ReadingProgressResponseDTO>.SuccessResult(responseDto);
         }
+
+
+        public async Task<ServiceResultType<ReadingProgressResponseDTO>> UpdateReadingProgressAsync(int id, ReadingProgressDTO readingProgressDTO)
+        {
+            if (readingProgressDTO == null)
+                return ServiceResultType<ReadingProgressResponseDTO>.ErrorResult("Reading progress data cannot be null");
+
+            var existingEntity = await _readingProgressRepository.GetByIdAsync(e => e.Id == id);
+            if (existingEntity == null)
+                return ServiceResultType<ReadingProgressResponseDTO>.ErrorResult("Reading progress not found");
+
+            _mapper.Map(readingProgressDTO, existingEntity);
+
+            await _readingProgressRepository.UpdateAsync(existingEntity);
+
+            var responseDto = _mapper.Map<ReadingProgressResponseDTO>(existingEntity);
+            Log.Information($"Оновлено прогрес читання з Id: {id} о {DateTime.UtcNow}.");
+
+            return ServiceResultType<ReadingProgressResponseDTO>.SuccessResult(responseDto);
+        }
+
+
 
         public async Task<ServiceResultType<ReadingProgressResponseDTO>> GetReadingProgressByIdAsync(int id)
         {
-            var entity = await _readingProgressRepository.GetByIdAsync(e => e.Id == id);  // Use filter expression
+            var entity = await _readingProgressRepository.GetByIdAsync(e => e.Id == id);
             if (entity == null)
                 return ServiceResultType<ReadingProgressResponseDTO>.ErrorResult("Reading progress not found");
 
-            var response = _mapper.Map<ReadingProgressResponseDTO>(entity);
-            Log.Information($"Ініціалізовано отримання прогресу читання за Id з Id: {id} о {DateTime.UtcNow}.");
-            return ServiceResultType<ReadingProgressResponseDTO>.SuccessResult(response);
+            var responseDto = _mapper.Map<ReadingProgressResponseDTO>(entity);
+            Log.Information($"Отримано прогрес читання з Id: {id} о {DateTime.UtcNow}.");
+
+            return ServiceResultType<ReadingProgressResponseDTO>.SuccessResult(responseDto);
         }
+
 
         public async Task<ServiceResultType<bool>> DeleteReadingProgressAsync(int id)
         {
-            var entity = await _readingProgressRepository.GetByIdAsync(e => e.Id == id);  // Use filter expression
+            var entity = await _readingProgressRepository.GetByIdAsync(e => e.Id == id);
             if (entity == null)
                 return ServiceResultType<bool>.ErrorResult("Reading progress not found");
 
