@@ -40,7 +40,6 @@ namespace BookHub.BLL.Services.Implementations
                 return ServiceResultType<CollectionDto>.ErrorResult("Validation failed: " + string.Join(", ", validationResults.Select(v => v.ErrorMessage)));
             }
 
-            // Перетворення DTO в сутність
             var collectionEntity = _mapper.Map<CollectionEntity>(collectionDto);
             await _collectionRepository.AddAsync(collectionEntity);
 
@@ -74,5 +73,29 @@ namespace BookHub.BLL.Services.Implementations
 
             return ServiceResultType.SuccessResult();
         }
+
+        public async Task<ServiceResultType> RemoveBookFromCollectionAsync(int collectionId, int bookId)
+        {
+            var collectionEntity = await _collectionRepository.GetByIdAsync(c => c.Id == collectionId);
+            if (collectionEntity == null)
+            {
+                return ServiceResultType.ErrorResult("Collection not found");
+            }
+
+            var bookEntity = collectionEntity.Books.FirstOrDefault(b => b.Id == bookId);
+            if (bookEntity == null)
+            {
+                return ServiceResultType.ErrorResult("Book not found in the collection");
+            }
+
+            collectionEntity.Books.Remove(bookEntity);
+
+            await _collectionRepository.UpdateAsync(collectionEntity);
+
+            Log.Information($"Ініціалізовано видалення книги з Id: {bookId} з колекції з Id: {collectionId} о {DateTime.UtcNow}.");
+
+            return ServiceResultType.SuccessResult();
+        }
+
     }
 }
