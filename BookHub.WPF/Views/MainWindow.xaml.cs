@@ -1,24 +1,15 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using BookHub.BLL.Services.Interfaces;
+using BookHub.WPF.ViewModels;
 
 namespace BookHub.WPF.Views
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(IBookService bookService)
         {
             InitializeComponent();
+            DataContext = new MainViewModel(bookService);
         }
     }
 }

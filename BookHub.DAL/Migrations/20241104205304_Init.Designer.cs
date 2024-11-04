@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookHub.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241008101418_AddFriendship")]
-    partial class AddFriendship
+    [Migration("20241104205304_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace BookHub.DAL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AchievmentEntityUserEntity", b =>
+            modelBuilder.Entity("AchievementEntityUserEntity", b =>
                 {
                     b.Property<int>("AchievmentsId")
                         .HasColumnType("int");
@@ -43,7 +43,22 @@ namespace BookHub.DAL.Migrations
                     b.ToTable("UsersAchievments", (string)null);
                 });
 
-            modelBuilder.Entity("BookHub.DAL.Entities.AchievmentEntity", b =>
+            modelBuilder.Entity("BookEntityCollectionEntity", b =>
+                {
+                    b.Property<int>("BooksId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CollectionsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BooksId", "CollectionsId");
+
+                    b.HasIndex("CollectionsId");
+
+                    b.ToTable("BookEntityCollectionEntity");
+                });
+
+            modelBuilder.Entity("BookHub.DAL.Entities.AchievementEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -63,7 +78,7 @@ namespace BookHub.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Achievments");
+                    b.ToTable("Achievements");
                 });
 
             modelBuilder.Entity("BookHub.DAL.Entities.BookEntity", b =>
@@ -249,9 +264,9 @@ namespace BookHub.DAL.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("AchievmentEntityUserEntity", b =>
+            modelBuilder.Entity("AchievementEntityUserEntity", b =>
                 {
-                    b.HasOne("BookHub.DAL.Entities.AchievmentEntity", null)
+                    b.HasOne("BookHub.DAL.Entities.AchievementEntity", null)
                         .WithMany()
                         .HasForeignKey("AchievmentsId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -260,6 +275,21 @@ namespace BookHub.DAL.Migrations
                     b.HasOne("BookHub.DAL.Entities.UserEntity", null)
                         .WithMany()
                         .HasForeignKey("UsersUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BookEntityCollectionEntity", b =>
+                {
+                    b.HasOne("BookHub.DAL.Entities.BookEntity", null)
+                        .WithMany()
+                        .HasForeignKey("BooksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookHub.DAL.Entities.CollectionEntity", null)
+                        .WithMany()
+                        .HasForeignKey("CollectionsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
