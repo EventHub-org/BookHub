@@ -1,5 +1,4 @@
-﻿using BookHub.WPF.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,15 +15,13 @@ using System.Windows.Shapes;
 namespace BookHub.WPF.Views
 {
     /// <summary>
-    /// Interaction logic for BooksView.xaml
+    /// Interaction logic for UserProfileView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class UserProfileView : Window
     {
-        public MainWindow()
+        public UserProfileView()
         {
             InitializeComponent();
-            //DataContext = viewModel;
         }
     }
-
 }
