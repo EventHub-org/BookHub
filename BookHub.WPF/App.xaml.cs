@@ -12,6 +12,7 @@ using BookHub.DAL.Repositories.Implementations;
 using BookHub.DAL.Repositories.Interfaces;
 using BookHub.DAL.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using BookHub.DAL.Entities;
 
 namespace BookHub.WPF
 {
@@ -44,7 +45,7 @@ namespace BookHub.WPF
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile<BookProfile>();
+                cfg.AddProfile<MappingProfile>();
             });
 
             _mapper = config.CreateMapper();
@@ -73,6 +74,12 @@ namespace BookHub.WPF
             // Реєстрація репозиторіїв та сервісів
             builder.RegisterType<BookRepository>().As<IBookRepository>();
             builder.RegisterType<BookService>().As<IBookService>();
+
+            builder.RegisterType<BookRepository>().As<IRepository<BookEntity>>();
+
+            builder.RegisterType<CollectionRepository>().As<IRepository<CollectionEntity>>();
+
+            builder.RegisterType<CollectionService>().As<ICollectionService>();
 
             // Реєстрація ViewModels та Views
             builder.RegisterType<BooksViewModel>();

@@ -6,15 +6,16 @@
         mc:Ignorable="d"
         Title="Books" Height="600" Width="800">
     <Grid>
+        <!-- Відокремлений верхній блок для кнопок -->
         <Border Background="LightGray" Margin="0,0,0,10">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <Button Content="Coввllections" Margin="5" Padding="5" Width="100" />
-                <Button Content="Profile" Margin="5" Padding="5" Width="100" />
+                <Button Content="Collections" Margin="5" Padding="5" Width="100" Click="CollectionsButton_Click"/>
+                <Button Content="Profile" Margin="5" Padding="5" Width="100"/>
             </StackPanel>
         </Border>
 
-        <!-- Centered Main Content -->
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <!-- Основний контент -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="0,60,0,0">
             <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
                 <ItemsControl ItemsSource="{Binding Books}">
                     <ItemsControl.ItemTemplate>
@@ -31,18 +32,6 @@
                                     <TextBlock Text="Author:" FontWeight="Bold"/>
                                     <TextBlock Text="{Binding Author}" TextWrapping="Wrap" Margin="0,0,0,5"/>
 
-                                    <!-- Genre -->
-                                    <TextBlock Text="Genre:" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding Genre}" TextWrapping="Wrap" Margin="0,0,0,5"/>
-
-                                    <!-- Published Date -->
-                                    <TextBlock Text="Published Date:" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding PublishedDate, StringFormat=\{0:yyyy-MM-dd\}}" Margin="0,0,0,5"/>
-
-                                    <!-- Number of Pages -->
-                                    <TextBlock Text="Pages:" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding NumberOfPages}" Margin="0,0,0,5"/>
-
                                     <!-- Rating -->
                                     <TextBlock Text="Rating:" FontWeight="Bold"/>
                                     <TextBlock Text="{Binding Rating}" Margin="0,0,0,5"/>
@@ -53,5 +42,11 @@
                 </ItemsControl>
             </WrapPanel>
         </ScrollViewer>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10">
+            <Button Content="&#x25C0;" Width="50" Margin="5" Padding="5" Command="{Binding PreviousPageCommand}" />
+            <TextBlock Text="{Binding CurrentPage}" VerticalAlignment="Center" Margin="5" />
+            <Button Content="&#x25B6;" Width="50" Margin="5" Padding="5" Command="{Binding NextPageCommand}" />
+        </StackPanel>
     </Grid>
 </Window>

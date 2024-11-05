@@ -1,4 +1,7 @@
-﻿using BookHub.WPF.ViewModels;
+﻿using BookHub.BLL.Services.Implementations;
+using BookHub.BLL.Services.Interfaces;
+using BookHub.WPF.ViewModels;
+using BookHub.WPF.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,10 +23,20 @@ namespace BookHub.WPF.Views
     /// </summary>
     public partial class BooksView : Window
     {
-        public BooksView(BooksViewModel viewModel)
+        private readonly ICollectionService _collectionService; 
+
+        public BooksView(BooksViewModel viewModel, ICollectionService collectionService)
         {
             InitializeComponent();
             DataContext = viewModel;
+            _collectionService = collectionService;
+        }
+        private void CollectionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var collectionsViewModel = new CollectionsViewModel(_collectionService);
+            var collectionsView = new CollectionsView(collectionsViewModel);
+            collectionsView.Show(); 
+            this.Close(); 
         }
     }
 
