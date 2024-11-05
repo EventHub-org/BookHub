@@ -1,7 +1,17 @@
 using AutoMapper;
+using BookHub.BLL.Services.Implementations;
+using BookHub.BLL.Services.Interfaces;
 using BookHub.DAL.Mappers;
+using BookHub.WPF.ViewModels;
 using Serilog;
+using System.ComponentModel;
 using System.Windows;
+using BookHub.WPF.Views;
+using Autofac;
+using BookHub.DAL.Repositories.Implementations;
+using BookHub.DAL.Repositories.Interfaces;
+using BookHub.DAL.DataAccess;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookHub.WPF
 {
@@ -11,12 +21,12 @@ namespace BookHub.WPF
     public partial class App : Application
     {
         private IMapper _mapper;
+        private Autofac.IContainer _container;
 
         public App()
         {
             ConfigureLogging();
         }
-
         private void ConfigureLogging()
         {
             var URL = "http://localhost:5341";
@@ -44,17 +54,40 @@ namespace BookHub.WPF
         {
             base.OnStartup(e);
 
-            // Відловлюємо виключення
-            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
-                Log.Fatal(args.ExceptionObject as Exception, "Невловима помилка");
+            var builder = new ContainerBuilder();
 
-            Log.Information("Додаток запущено");
+            ConfigureAutoMapper();
+
+
+            // Реєстрація IMapper в контейнері
+            builder.RegisterInstance(_mapper).As<IMapper>().SingleInstance();
+
+            string connectionString = "\"Server=LAPTOP-9SF7UDGK\\BOOKHUB;Database=BookHub;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;\"";
+            builder.Register(db =>
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+                optionsBuilder.UseSqlServer(connectionString); // або UseSqlite, UseNpgsql і т.д. залежно від вашої бази даних
+                return new AppDbContext(optionsBuilder.Options);
+            }).AsSelf().InstancePerLifetimeScope();
+
+            // Реєстрація репозиторіїв та сервісів
+            builder.RegisterType<BookRepository>().As<IBookRepository>();
+            builder.RegisterType<BookService>().As<IBookService>();
+
+            // Реєстрація ViewModels та Views
+            builder.RegisterType<BooksViewModel>();
+            builder.RegisterType<BooksView>();
+
+            _container = builder.Build();
+
+            // Resolve the main window and show it
+            var mainView = _container.Resolve<BooksView>();
+            mainView.Show();
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
-            Log.Information("Додаток закрито");
-            Log.CloseAndFlush(); // Закриваємо логування перед завершенням додатка
+            _container.Dispose();
             base.OnExit(e);
         }
     }
