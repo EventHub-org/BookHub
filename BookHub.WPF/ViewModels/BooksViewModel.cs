@@ -3,6 +3,7 @@ using BookHub.DAL.DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Serilog;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -44,12 +45,26 @@ namespace BookHub.WPF.ViewModels
 
         private async Task LoadBooksAsync()
         {
-            var result = await _bookService.GetPaginatedBooksAsync(new Pageable { Page = 1, Size = 10 });
-            if (result.Success)
+            Log.Information("Початок завантаження книг..."); // Логування початку завантаження
+            try
             {
-                Books = new ObservableCollection<BookDto>(result.Data.Items);
+                var result = await _bookService.GetPaginatedBooksAsync(new Pageable { Page = 1, Size = 2 });
+                if (result.Success)
+                {
+                    Books = new ObservableCollection<BookDto>(result.Data.Items);
+                    Log.Information($"Завантажено {result.Data.Items.Count} книг."); // Логування кількості завантажених книг
+                }
+                else
+                {
+                    Log.Error($"Не вдалося завантажити книги: {result.ErrorMessage}"); // Логування помилки
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Виникла помилка під час завантаження книг."); // Логування виключення
             }
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
