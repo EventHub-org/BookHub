@@ -1,0 +1,17 @@
+﻿<Window x:Class="BookHub.WPF.Views.UserProfileView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="User Profile" Height="400" Width="600">
+    <Grid>
+        <StackPanel Margin="20">
+            <TextBlock Text="User Profile" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+
+            <!-- Profile Picture -->
+            <Image Source="{Binding ProfilePictureUrl}" Height="100" Width="100" Stretch="UniformToFill" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Name:" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Name}" Margin="0,0,0,10"/>
+
+        </StackPanel>
+    </Grid>
+</Window>

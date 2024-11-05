@@ -6,15 +6,16 @@
         mc:Ignorable="d"
         Title="Books" Height="600" Width="800">
     <Grid>
+        <!-- Відокремлений верхній блок для кнопок -->
         <Border Background="LightGray" Margin="0,0,0,10">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top">
                 <Button Content="Collections" Margin="5" Padding="5" Width="100" />
-                <Button Content="Profile" Margin="5" Padding="5" Width="100" />
+                <Button Content="Profile" Margin="5" Padding="5" Width="100" Click="ProfileButton_Click"/>
             </StackPanel>
         </Border>
 
-        <!-- Centered Main Content -->
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <!-- Основний контент -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="0,60,0,0">
             <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
                 <ItemsControl ItemsSource="{Binding Books}">
                     <ItemsControl.ItemTemplate>
@@ -47,6 +48,5 @@
             <TextBlock Text="{Binding CurrentPage}" VerticalAlignment="Center" Margin="5" />
             <Button Content="&#x25B6;" Width="50" Margin="5" Padding="5" Command="{Binding NextPageCommand}" />
         </StackPanel>
-
     </Grid>
 </Window>

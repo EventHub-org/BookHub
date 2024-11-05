@@ -44,7 +44,8 @@ namespace BookHub.WPF
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile<BookProfile>();
+                //cfg.AddProfile<BookProfile>();
+                cfg.AddProfile<MappingProfile>();
             });
 
             _mapper = config.CreateMapper();
@@ -72,11 +73,17 @@ namespace BookHub.WPF
 
             // Реєстрація репозиторіїв та сервісів
             builder.RegisterType<BookRepository>().As<IBookRepository>();
+            builder.RegisterType<UserRepository>().As<IUserRepository>();
+
             builder.RegisterType<BookService>().As<IBookService>();
+            builder.RegisterType<UserService>().As<IUserService>();
 
             // Реєстрація ViewModels та Views
             builder.RegisterType<BooksViewModel>();
+            builder.RegisterType<UserProfileViewModel>();
+
             builder.RegisterType<BooksView>();
+            builder.RegisterType<UserProfileView>();
 
             _container = builder.Build();
 

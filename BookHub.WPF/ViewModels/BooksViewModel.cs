@@ -14,19 +14,28 @@ namespace BookHub.WPF.ViewModels
     public class BooksViewModel : INotifyPropertyChanged
     {
         private readonly IBookService _bookService;
+        private readonly IUserService _userService; // Додаємо IUserService
         private ObservableCollection<BookDto> _books;
         private BookDto _selectedBook;
         private int _currentPage;
         private const int _pageSize = 3; // Кількість книг на сторінці
         private int _totalPages;
 
-        public BooksViewModel(IBookService bookService)
+        public BooksViewModel(IBookService bookService, IUserService userService)
         {
             _bookService = bookService;
+            _userService = userService; // Ініціалізуємо IUserService
             CurrentPage = 1;
             LoadBooksAsync().ConfigureAwait(false);
             PreviousPageCommand = new RelayCommand(PreviousPage, CanGoToPreviousPage);
             NextPageCommand = new RelayCommand(NextPage, CanGoToNextPage);
+        }
+
+        // Метод для отримання користувача
+        public async Task<UserDto> GetUserByIdAsync(int userId)
+        {
+            var result = await _userService.GetUserByIdAsync(userId);
+            return result.Success ? result.Data : null;
         }
 
         public ObservableCollection<BookDto> Books
