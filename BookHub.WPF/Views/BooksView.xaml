@@ -31,18 +31,6 @@
                                     <TextBlock Text="Author:" FontWeight="Bold"/>
                                     <TextBlock Text="{Binding Author}" TextWrapping="Wrap" Margin="0,0,0,5"/>
 
-                                    <!-- Genre -->
-                                    <TextBlock Text="Genre:" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding Genre}" TextWrapping="Wrap" Margin="0,0,0,5"/>
-
-                                    <!-- Published Date -->
-                                    <TextBlock Text="Published Date:" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding PublishedDate, StringFormat=\{0:yyyy-MM-dd\}}" Margin="0,0,0,5"/>
-
-                                    <!-- Number of Pages -->
-                                    <TextBlock Text="Pages:" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding NumberOfPages}" Margin="0,0,0,5"/>
-
                                     <!-- Rating -->
                                     <TextBlock Text="Rating:" FontWeight="Bold"/>
                                     <TextBlock Text="{Binding Rating}" Margin="0,0,0,5"/>
@@ -53,5 +41,12 @@
                 </ItemsControl>
             </WrapPanel>
         </ScrollViewer>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10">
+            <Button Content="&#x25C0;" Width="50" Margin="5" Padding="5" Command="{Binding PreviousPageCommand}" />
+            <TextBlock Text="{Binding CurrentPage}" VerticalAlignment="Center" Margin="5" />
+            <Button Content="&#x25B6;" Width="50" Margin="5" Padding="5" Command="{Binding NextPageCommand}" />
+        </StackPanel>
+
     </Grid>
 </Window>
