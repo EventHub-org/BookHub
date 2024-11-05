@@ -1,17 +1,57 @@
 ﻿<Window x:Class="BookHub.WPF.Views.BooksView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:av="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="av" 
-        Title="Books" av:DesignHeight="145.395" av:DesignWidth="412.205">
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        mc:Ignorable="d"
+        Title="Books" Height="600" Width="800">
     <Grid>
-        <ListView ItemsSource="{Binding Books}" SelectedItem="{Binding SelectedBook}">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Id}" />
-                    <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" />
-                    <GridViewColumn Header="Author" DisplayMemberBinding="{Binding Author}" />
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <Border Background="LightGray" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                <Button Content="Collections" Margin="5" Padding="5" Width="100" />
+                <Button Content="Profile" Margin="5" Padding="5" Width="100" />
+            </StackPanel>
+        </Border>
+
+        <!-- Centered Main Content -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+                <ItemsControl ItemsSource="{Binding Books}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Margin="5" Padding="10" Background="White" Width="250">
+                                <StackPanel>
+                                    <!-- Cover Image -->
+                                    <Image Source="{Binding CoverImageUrl}" Height="150" Width="150" Stretch="UniformToFill" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+                                    <!-- Book Title -->
+                                    <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="Bold" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+
+                                    <!-- Author -->
+                                    <TextBlock Text="Author:" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Author}" TextWrapping="Wrap" Margin="0,0,0,5"/>
+
+                                    <!-- Genre -->
+                                    <TextBlock Text="Genre:" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Genre}" TextWrapping="Wrap" Margin="0,0,0,5"/>
+
+                                    <!-- Published Date -->
+                                    <TextBlock Text="Published Date:" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding PublishedDate, StringFormat=\{0:yyyy-MM-dd\}}" Margin="0,0,0,5"/>
+
+                                    <!-- Number of Pages -->
+                                    <TextBlock Text="Pages:" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding NumberOfPages}" Margin="0,0,0,5"/>
+
+                                    <!-- Rating -->
+                                    <TextBlock Text="Rating:" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Rating}" Margin="0,0,0,5"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </WrapPanel>
+        </ScrollViewer>
     </Grid>
 </Window>

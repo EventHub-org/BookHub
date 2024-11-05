@@ -62,7 +62,7 @@ namespace BookHub.WPF
             // Реєстрація IMapper в контейнері
             builder.RegisterInstance(_mapper).As<IMapper>().SingleInstance();
 
-            string connectionString = "\"Server=LAPTOP-9SF7UDGK\\BOOKHUB;Database=BookHub;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;\"";
+            string connectionString = "Server=STANISLAV;Database=BookHub;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;";
             builder.Register(db =>
             {
                 var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
