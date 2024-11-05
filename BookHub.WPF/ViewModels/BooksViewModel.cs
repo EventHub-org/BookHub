@@ -8,19 +8,35 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace BookHub.WPF.ViewModels
 {
     public class BooksViewModel : INotifyPropertyChanged
     {
         private readonly IBookService _bookService;
+        private readonly IUserService _userService; // Додаємо IUserService
         private ObservableCollection<BookDto> _books;
         private BookDto _selectedBook;
+        private int _currentPage;
+        private const int _pageSize = 3; // Кількість книг на сторінці
+        private int _totalPages;
 
-        public BooksViewModel(IBookService bookService)
+        public BooksViewModel(IBookService bookService, IUserService userService)
         {
             _bookService = bookService;
+            _userService = userService; // Ініціалізуємо IUserService
+            CurrentPage = 1;
             LoadBooksAsync().ConfigureAwait(false);
+            PreviousPageCommand = new RelayCommand(PreviousPage, CanGoToPreviousPage);
+            NextPageCommand = new RelayCommand(NextPage, CanGoToNextPage);
+        }
+
+        // Метод для отримання користувача
+        public async Task<UserDto> GetUserByIdAsync(int userId)
+        {
+            var result = await _userService.GetUserByIdAsync(userId);
+            return result.Success ? result.Data : null;
         }
 
         public ObservableCollection<BookDto> Books
@@ -43,28 +59,60 @@ namespace BookHub.WPF.ViewModels
             }
         }
 
-        private async Task LoadBooksAsync()
+        public int CurrentPage
         {
-            Log.Information("Початок завантаження книг..."); // Логування початку завантаження
-            try
+            get => _currentPage;
+            set
             {
-                var result = await _bookService.GetPaginatedBooksAsync(new Pageable { Page = 1, Size = 2 });
-                if (result.Success)
-                {
-                    Books = new ObservableCollection<BookDto>(result.Data.Items);
-                    Log.Information($"Завантажено {result.Data.Items.Count} книг."); // Логування кількості завантажених книг
-                }
-                else
-                {
-                    Log.Error($"Не вдалося завантажити книги: {result.ErrorMessage}"); // Логування помилки
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Виникла помилка під час завантаження книг."); // Логування виключення
+                _currentPage = value;
+                OnPropertyChanged(nameof(CurrentPage));
+                LoadBooksAsync().ConfigureAwait(false);
             }
         }
 
+        public int TotalPages
+        {
+            get => _totalPages;
+            private set
+            {
+                _totalPages = value;
+                OnPropertyChanged(nameof(TotalPages));
+            }
+        }
+
+        public ICommand PreviousPageCommand { get; }
+        public ICommand NextPageCommand { get; }
+
+        private async Task LoadBooksAsync()
+        {
+
+            var result = await _bookService.GetPaginatedBooksAsync(new Pageable { Page = CurrentPage, Size = _pageSize });
+            if (result.Success)
+            {
+                Books = new ObservableCollection<BookDto>(result.Data.Items);
+                TotalPages = result.Data.TotalPages; // Припустимо, ваш сервіс повертає загальну кількість сторінок
+            }
+        }
+
+        private void PreviousPage()
+        {
+            if (CanGoToPreviousPage())
+            {
+                CurrentPage--;
+            }
+        }
+
+        private void NextPage()
+        {
+            if (CanGoToNextPage())
+            {
+                CurrentPage++;
+            }
+        }
+
+        private bool CanGoToPreviousPage() => CurrentPage > 1;
+
+        private bool CanGoToNextPage() => CurrentPage < TotalPages;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -73,5 +121,4 @@ namespace BookHub.WPF.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
 }

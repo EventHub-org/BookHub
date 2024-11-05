@@ -2,6 +2,7 @@
 using BookHub.BLL.Services.Interfaces;
 using BookHub.WPF.ViewModels;
 using BookHub.WPF.Views;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +38,27 @@ namespace BookHub.WPF.Views
             var collectionsView = new CollectionsView(collectionsViewModel);
             collectionsView.Show(); 
             this.Close(); 
+        }
+
+        private async void ProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            int userId = 1; // Отримайте реальний ID користувача, як вам потрібно
+            var user = await ((BooksViewModel)DataContext).GetUserByIdAsync(userId);
+
+            if (user != null)
+            {
+                // Тільки якщо user не null, створюємо ViewModel
+                var userProfileViewModel = new UserProfileViewModel(user);
+                var userProfileView = new UserProfileView
+                {
+                    DataContext = userProfileViewModel
+                };
+                userProfileView.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("User not found.");
+            }
         }
     }
 
