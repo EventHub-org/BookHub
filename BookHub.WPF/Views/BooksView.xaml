@@ -37,6 +37,12 @@
                                     <!-- Rating -->
                                     <TextBlock Text="Rating:" FontWeight="Bold"/>
                                     <TextBlock Text="{Binding Rating}" Margin="0,0,0,5"/>
+
+                                    <!-- Button to open book details -->
+                                    <Button Content="View Details" Command="{Binding DataContext.OpenBookDetailsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                        CommandParameter="{Binding Id}" Margin="0,10,0,0" />
+
+
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
