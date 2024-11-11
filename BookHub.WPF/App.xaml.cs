@@ -13,6 +13,9 @@ using BookHub.DAL.Repositories.Interfaces;
 using BookHub.DAL.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using BookHub.DAL.Entities;
+using DotNetEnv;
+using System.IO;
+using BookHub.DAL.DTO;
 
 
 namespace BookHub.WPF
@@ -68,9 +71,14 @@ namespace BookHub.WPF
             builder.RegisterInstance(_mapper).As<IMapper>().SingleInstance();
 
 
-            //string connectionString = "Server=STANISLAV;Database=BookHub;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;";
 
-            string connectionString = "Server=LAPTOP-9SF7UDGK\\BOOKHUB;Database=BookHub;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;";
+            string envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\.env");
+
+            DotNetEnv.Env.Load(envPath);
+            Env.Load();
+            Log.Information(envPath);
+
+            var connectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING");
 
             builder.Register(db =>
             {
