@@ -94,6 +94,10 @@ namespace BookHub.WPF
             builder.RegisterType<BookService>().As<IBookService>();
             builder.RegisterType<UserService>().As<IUserService>();
 
+            builder.RegisterType<JournalViewModel>();
+            builder.RegisterType<JournalView>();
+
+
 
             builder.RegisterType<BookRepository>().As<IRepository<BookEntity>>();
 

@@ -1,40 +1,38 @@
 ﻿using BookHub.BLL.Services.Interfaces;
 using BookHub.DAL.DTO;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
-using Serilog;
-
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using BookHub.WPF.Views;
+using AutoMapper;  // Import AutoMapper
 
 namespace BookHub.WPF.ViewModels
 {
     public class BooksViewModel : INotifyPropertyChanged
     {
         private readonly IBookService _bookService;
-        private readonly IUserService _userService; // Додаємо IUserService
+        private readonly IUserService _userService; // Inject IUserService
+        private readonly IMapper _mapper;  // Inject IMapper
         private ObservableCollection<BookDto> _books;
         private BookDto _selectedBook;
         private int _currentPage;
-        private const int _pageSize = 3; // Кількість книг на сторінці
+        private const int _pageSize = 3; // Number of books per page
         private int _totalPages;
 
-        public BooksViewModel(IBookService bookService, IUserService userService)
+        public BooksViewModel(IBookService bookService, IUserService userService, IMapper mapper)
         {
             _bookService = bookService;
-            _userService = userService; // Ініціалізуємо IUserService
+            _userService = userService; // Initialize IUserService
+            _mapper = mapper; // Initialize IMapper
             CurrentPage = 1;
             LoadBooksAsync().ConfigureAwait(false);
             PreviousPageCommand = new RelayCommand(PreviousPage, CanGoToPreviousPage);
             NextPageCommand = new RelayCommand(NextPage, CanGoToNextPage);
         }
 
-        // Метод для отримання користувача
+        // Method to get user by ID
         public async Task<UserDto> GetUserByIdAsync(int userId)
         {
             var result = await _userService.GetUserByIdAsync(userId);
@@ -87,12 +85,11 @@ namespace BookHub.WPF.ViewModels
 
         private async Task LoadBooksAsync()
         {
-
             var result = await _bookService.GetPaginatedBooksAsync(new Pageable { Page = CurrentPage, Size = _pageSize });
             if (result.Success)
             {
                 Books = new ObservableCollection<BookDto>(result.Data.Items);
-                TotalPages = result.Data.TotalPages; // Припустимо, ваш сервіс повертає загальну кількість сторінок
+                TotalPages = result.Data.TotalPages; // Assuming your service returns total pages
             }
         }
 
@@ -122,5 +119,18 @@ namespace BookHub.WPF.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+
+        // Open Journal Command
+        public ICommand OpenJournalCommand => new RelayCommand(OpenJournal);
+
+        private void OpenJournal()
+        {
+            // Now using _mapper for mapping
+            var journalViewModel = new JournalViewModel(_bookService, _mapper);
+            var journalView = new JournalView(journalViewModel);
+            journalView.Show();
+        }
+
     }
 }
