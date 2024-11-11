@@ -6,8 +6,13 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<UserEntity, UserDto>();
+
+
         CreateMap<BookEntity, BookDto>();
-        // Add other mappings if necessary
+
+        CreateMap<CollectionEntity, CollectionDto>(); 
+
+        CreateMap<UserEntity, UserDto>();
+
     }
 }

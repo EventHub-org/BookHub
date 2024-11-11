@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 
+using Microsoft.EntityFrameworkCore;
 namespace BookHub.DAL.Repositories.Implementations
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
@@ -36,7 +37,7 @@ namespace BookHub.DAL.Repositories.Implementations
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
             IQueryable<TEntity> query = dbSet;
-            return query.ToList();
+            return await query.ToListAsync(); // Use await here for asynchronous operation
         }
 
         public async Task<TEntity> GetByIdAsync(Expression<Func<TEntity, bool>> filter)

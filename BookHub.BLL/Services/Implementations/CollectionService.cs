@@ -96,6 +96,22 @@ namespace BookHub.BLL.Services.Implementations
 
             return ServiceResultType.SuccessResult();
         }
+        public async Task<ServiceResultType<List<CollectionDto>>> GetAllCollectionsAsync()
+        {
+            Log.Information("Початок отримання всіх колекцій..."); 
+            try
+            {
+                var collectionEntities = await _collectionRepository.GetAllAsync(); 
+                var collectionDtos = _mapper.Map<List<CollectionDto>>(collectionEntities); 
+                Log.Information($"Завантажено {collectionDtos.Count} колекцій."); 
+                return ServiceResultType<List<CollectionDto>>.SuccessResult(collectionDtos); 
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Виникла помилка під час отримання колекцій."); // Log exception
+                return ServiceResultType<List<CollectionDto>>.ErrorResult("Failed to retrieve collections."); // Return error
+            }
+        }
 
     }
 }

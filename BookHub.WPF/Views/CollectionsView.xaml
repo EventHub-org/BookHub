@@ -1,0 +1,34 @@
+﻿<Window x:Class="BookHub.WPF.Views.CollectionsView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BookHub.WPF.Views"
+        mc:Ignorable="d"
+        Title="CollectionsView" Height="600" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- For button -->
+            <RowDefinition Height="*"/>
+            <!-- For scrollable area -->
+        </Grid.RowDefinitions>
+
+        <Button Content="Create New Collection" Click="CreateNewCollection_Click" Margin="10" Grid.Row="0"/>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="10" Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding Collections}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Margin="5" Padding="10" Background="White" Width="250">
+                            <StackPanel>
+                                <TextBlock FontSize="16" FontWeight="Bold" Text="{Binding Name}" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                                <TextBlock Text="{Binding BookCount, StringFormat='Books: {0}'}" HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</Window>

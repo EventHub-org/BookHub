@@ -12,6 +12,8 @@ using BookHub.DAL.Repositories.Implementations;
 using BookHub.DAL.Repositories.Interfaces;
 using BookHub.DAL.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using BookHub.DAL.Entities;
+
 
 namespace BookHub.WPF
 {
@@ -44,7 +46,9 @@ namespace BookHub.WPF
         {
             var config = new MapperConfiguration(cfg =>
             {
+
                 //cfg.AddProfile<BookProfile>();
+
                 cfg.AddProfile<MappingProfile>();
             });
 
@@ -63,7 +67,11 @@ namespace BookHub.WPF
             // Реєстрація IMapper в контейнері
             builder.RegisterInstance(_mapper).As<IMapper>().SingleInstance();
 
-            string connectionString = "Server=STANISLAV;Database=BookHub;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;";
+
+            //string connectionString = "Server=STANISLAV;Database=BookHub;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;";
+
+            string connectionString = "Server=LAPTOP-9SF7UDGK\\BOOKHUB;Database=BookHub;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;";
+
             builder.Register(db =>
             {
                 var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
@@ -77,6 +85,13 @@ namespace BookHub.WPF
 
             builder.RegisterType<BookService>().As<IBookService>();
             builder.RegisterType<UserService>().As<IUserService>();
+
+
+            builder.RegisterType<BookRepository>().As<IRepository<BookEntity>>();
+
+            builder.RegisterType<CollectionRepository>().As<IRepository<CollectionEntity>>();
+
+            builder.RegisterType<CollectionService>().As<ICollectionService>();
 
             // Реєстрація ViewModels та Views
             builder.RegisterType<BooksViewModel>();
