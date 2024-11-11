@@ -1,3 +1,6 @@
+
+﻿using BookHub.DAL.Entities;
+
 ﻿using BookHub.BLL.Services.Implementations;
 using BookHub.BLL.Services.Interfaces;
 using BookHub.WPF.ViewModels;
@@ -24,6 +27,7 @@ namespace BookHub.WPF.Views
     /// </summary>
     public partial class BooksView : Window
     {
+
         private readonly ICollectionService _collectionService; 
 
         public BooksView(BooksViewModel viewModel, ICollectionService collectionService)
@@ -38,6 +42,7 @@ namespace BookHub.WPF.Views
             var collectionsView = new CollectionsView(collectionsViewModel);
             collectionsView.Show(); 
             this.Close(); 
+
         }
 
         private async void ProfileButton_Click(object sender, RoutedEventArgs e)
