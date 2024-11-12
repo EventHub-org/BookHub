@@ -18,5 +18,7 @@ public class MappingProfile : Profile
 
         CreateMap<UserEntity, UserDto>();
 
+        CreateMap<ReviewEntity, ReviewDto>().ReverseMap();
+
     }
 }

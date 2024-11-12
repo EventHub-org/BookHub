@@ -17,12 +17,14 @@ namespace BookHub.WPF.Views
 
         // Constructor with dependency injection
         public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IUserService userService)
+
         {
             InitializeComponent();
             DataContext = viewModel;
             _collectionService = collectionService;
             _userService = userService;
         }
+
 
         // Button to navigate to Collections view
         private void CollectionsButton_Click(object sender, RoutedEventArgs e)
@@ -36,16 +38,13 @@ namespace BookHub.WPF.Views
         // Button to navigate to User Profile view
         private async void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            int userId = 1; // Ideally, fetch this from session/context or login
-
-            // Fetch user data asynchronously using the IUserService
-            var user = await _userService.GetUserByIdAsync(userId);
+            int userId = 1; // Replace with actual logic to retrieve user ID
+            var user = await ((BooksViewModel)DataContext).GetUserByIdAsync(userId);
 
             if (user != null)
             {
-                // Create UserProfileViewModel only if user exists
-                var userProfileViewModel = new UserProfileViewModel(_userService, user.Data);
-                var userProfileView = new UserProfileView(_userService, user.Data)
+                var userProfileViewModel = new UserProfileViewModel(user);
+                var userProfileView = new UserProfileView
                 {
                     DataContext = userProfileViewModel
                 };
@@ -55,6 +54,13 @@ namespace BookHub.WPF.Views
             {
                 MessageBox.Show("User not found.");
             }
+        }
+
+        public void NavigateToPage(Page page)
+        {
+            var frame = new Frame();
+            Content = frame;
+            frame.Navigate(page);
         }
     }
 }
