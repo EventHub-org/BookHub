@@ -1,7 +1,7 @@
 ﻿<Window x:Class="BookHub.WPF.Views.UserProfileView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="User Profile" Height="600" Width="900" Background="#EFEFEF">
+        Title="User Profile" Height="650" Width="900" Background="#EFEFEF">
 
     <Window.Resources>
         <!-- Enhanced button style with gradient background and rounded corners -->
@@ -56,14 +56,17 @@
 
     <Grid Margin="15">
         <!-- Navigation Buttons -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0">
             <Button Content="Books" Command="{Binding NavigateToBooksCommand}" Style="{StaticResource NavButtonStyle}" />
             <Button Content="Collections" Command="{Binding NavigateToCollectionsCommand}" Style="{StaticResource NavButtonStyle}" />
             <Button Content="Friends" Command="{Binding NavigateToFriendsCommand}" Style="{StaticResource NavButtonStyle}" />
         </StackPanel>
 
+        <!-- Title for Selected User Profile -->
+        <TextBlock Text="Your Profile" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,50,0,10"/>
+
         <!-- Top Section for Selected User Profile -->
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,50,0,0">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,60,0,0">
             <Border Style="{StaticResource ProfileCardStyle}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image Source="{Binding SelectedUser.ProfilePictureUrl}" Height="100" Width="100" Stretch="UniformToFill" Margin="0,10"/>
@@ -72,8 +75,11 @@
             </Border>
         </StackPanel>
 
+        <!-- Title for Other Users Section -->
+        <TextBlock Text="Other Users You May Know" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,280,0,10"/>
+
         <!-- Section for Other Users - Horizontal Scroll -->
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="20,250,20,0">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="20,300,20,0">
             <ItemsControl ItemsSource="{Binding OtherUsers}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
