@@ -1,24 +1,9 @@
-
-﻿using BookHub.DAL.Entities;
-
-﻿using BookHub.BLL.Services.Implementations;
 using BookHub.BLL.Services.Interfaces;
 using BookHub.WPF.ViewModels;
 using BookHub.WPF.Views;
-
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Threading.Tasks;
 
 namespace BookHub.WPF.Views
 {
@@ -27,33 +12,40 @@ namespace BookHub.WPF.Views
     /// </summary>
     public partial class BooksView : Window
     {
+        private readonly ICollectionService _collectionService;
+        private readonly IUserService _userService;
 
-        private readonly ICollectionService _collectionService; 
-
-        public BooksView(BooksViewModel viewModel, ICollectionService collectionService)
+        // Constructor with dependency injection
+        public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IUserService userService)
         {
             InitializeComponent();
             DataContext = viewModel;
             _collectionService = collectionService;
+            _userService = userService;
         }
+
+        // Button to navigate to Collections view
         private void CollectionsButton_Click(object sender, RoutedEventArgs e)
         {
             var collectionsViewModel = new CollectionsViewModel(_collectionService);
             var collectionsView = new CollectionsView(collectionsViewModel);
-            collectionsView.Show(); 
-            this.Close(); 
-
+            collectionsView.Show();
+            this.Close();
         }
 
+        // Button to navigate to User Profile view
         private async void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            int userId = 1; 
-            var user = await ((BooksViewModel)DataContext).GetUserByIdAsync(userId);
+            int userId = 1; // Ideally, fetch this from session/context or login
+
+            // Fetch user data asynchronously using the IUserService
+            var user = await _userService.GetUserByIdAsync(userId);
 
             if (user != null)
             {
-                var userProfileViewModel = new UserProfileViewModel(user);
-                var userProfileView = new UserProfileView
+                // Create UserProfileViewModel only if user exists
+                var userProfileViewModel = new UserProfileViewModel(_userService, user.Data);
+                var userProfileView = new UserProfileView(_userService, user.Data)
                 {
                     DataContext = userProfileViewModel
                 };
@@ -65,5 +57,4 @@ namespace BookHub.WPF.Views
             }
         }
     }
-
 }
