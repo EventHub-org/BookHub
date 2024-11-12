@@ -3,20 +3,40 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BookHub.WPF.Views"
         mc:Ignorable="d"
         Title="CollectionsView" Height="600" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- For button -->
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <!-- For scrollable area -->
         </Grid.RowDefinitions>
 
+        <!-- Button to open the new collection input field -->
         <Button Content="Create New Collection" Click="CreateNewCollection_Click" Margin="10" Grid.Row="0"/>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="10" Grid.Row="1">
+        <!-- Panel for creating a new collection, initially collapsed -->
+        <StackPanel x:Name="CreateCollectionPanel" Margin="10"
+                    MouseDown="CreateCollectionPanel_MouseDown">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsCollectionPanelVisible}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+            <!-- Додатковий контент панелі, наприклад, TextBox для назви колекції -->
+            <TextBox x:Name="CollectionNameTextBox" Width="200" Margin="0,5"/>
+            <TextBlock Height="10"/>
+            <Button Content="Save" Click="SaveNewCollection_Click" Margin="5"/>
+        </StackPanel>
+
+
+        <!-- Scrollable area for displaying collections -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="10" Grid.Row="2">
             <ItemsControl ItemsSource="{Binding Collections}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
