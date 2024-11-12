@@ -22,9 +22,10 @@ namespace BookHub.WPF.Views
     {
         private readonly ICollectionService _collectionService;
         private readonly IUserService _userService;
-
+        
         private readonly IReadingProgressService _readingProgressService;
         private readonly IBookService _bookService;
+
 
         public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IUserService userService, IReadingProgressService readingProgressService, IBookService bookService)
         {
@@ -35,6 +36,7 @@ namespace BookHub.WPF.Views
             _bookService = bookService;
             _userService = userService;
         }
+
 
         // Button to navigate to Collections view
         private void CollectionsButton_Click(object sender, RoutedEventArgs e)
@@ -91,6 +93,14 @@ namespace BookHub.WPF.Views
             {
                 MessageBox.Show("User not found.");
             }
+        }
+
+
+        public void NavigateToPage(Page page)
+        {
+            var frame = new Frame();
+            Content = frame;
+            frame.Navigate(page);
         }
 
     }

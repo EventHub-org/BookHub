@@ -88,15 +88,22 @@ namespace BookHub.WPF
             builder.RegisterType<BookRepository>().As<IBookRepository>();
             builder.RegisterType<ReadingProgressRepository>().As<IReadingProgressRepository>();
             builder.RegisterType<UserRepository>().As<IUserRepository>();
+            builder.RegisterType<ReviewRepository>().As<IReviewRepository>();
 
             builder.RegisterType<BookService>().As<IBookService>();
             builder.RegisterType<UserService>().As<IUserService>();
+            builder.RegisterType<ReviewService>().As<IReviewService>();
             builder.RegisterType<ReadingProgressServiceImpl>().As<IReadingProgressService>();
 
 
             builder.RegisterType<BookRepository>().As<IRepository<BookEntity>>();
 
+
+            builder.RegisterType<CollectionRepository>().As<IRepository<CollectionEntity>>();
+            builder.RegisterType<ReviewRepository>().As<IRepository<ReviewEntity>>();
+
             builder.RegisterType<CollectionRepository>().As<ICollectionRepository>();
+
 
             builder.RegisterType<CollectionService>().As<ICollectionService>();
             //builder.RegisterType<CollectionRepository>().As<ICollectionRepository>();

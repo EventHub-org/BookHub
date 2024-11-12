@@ -30,6 +30,7 @@ namespace BookHub.DAL.Entities
         [MaxLength(255, ErrorMessage = "Author name cannot exceed 255 characters.")]
         public string Author { get; set; }
 
+
         [MaxLength(255, ErrorMessage = "Genre cannot exceed 255 characters.")]
         public string Genre { get; set; }
 
