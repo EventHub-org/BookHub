@@ -1,24 +1,9 @@
-
-﻿using BookHub.DAL.Entities;
-
-﻿using BookHub.BLL.Services.Implementations;
 using BookHub.BLL.Services.Interfaces;
 using BookHub.WPF.ViewModels;
 using BookHub.WPF.Views;
-
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Threading.Tasks;
 
 namespace BookHub.WPF.Views
 {
@@ -28,14 +13,20 @@ namespace BookHub.WPF.Views
     public partial class BooksView : Window
     {
         private readonly ICollectionService _collectionService;
+        private readonly IUserService _userService;
 
-        public BooksView(BooksViewModel viewModel, ICollectionService collectionService)
+        // Constructor with dependency injection
+        public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IUserService userService)
+
         {
             InitializeComponent();
             DataContext = viewModel;
             _collectionService = collectionService;
+            _userService = userService;
         }
 
+
+        // Button to navigate to Collections view
         private void CollectionsButton_Click(object sender, RoutedEventArgs e)
         {
             var collectionsViewModel = new CollectionsViewModel(_collectionService);
@@ -44,6 +35,7 @@ namespace BookHub.WPF.Views
             this.Close();
         }
 
+        // Button to navigate to User Profile view
         private async void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
             int userId = 1; // Replace with actual logic to retrieve user ID
@@ -71,5 +63,4 @@ namespace BookHub.WPF.Views
             frame.Navigate(page);
         }
     }
-
 }

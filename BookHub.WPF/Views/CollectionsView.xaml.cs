@@ -21,25 +21,46 @@ namespace BookHub.WPF.Views
     /// </summary>
     public partial class CollectionsView : Window
     {
-        private readonly CollectionsViewModel _viewModel; // Keep a reference to the ViewModel
+        private readonly CollectionsViewModel _viewModel; 
 
         public CollectionsView(CollectionsViewModel viewModel)
         {
             InitializeComponent();
-            DataContext = viewModel; // Set the DataContext
-            _viewModel = viewModel; // Store the ViewModel for later use
+            DataContext = viewModel; 
+            _viewModel = viewModel; 
         }
 
+
+        private async void SaveNewCollection_Click(object sender, RoutedEventArgs e)
+        {
+            var collectionName = CollectionNameTextBox.Text.Trim();
+
+            if (!string.IsNullOrWhiteSpace(collectionName))
+            {
+
+                // Додаємо колекцію в базу даних за допомогою асинхронного методу
+                await _viewModel.CreateCollectionAsync(collectionName);
+
+                // Оновлюємо список на інтерфейсі
+                await _viewModel.RefreshCollectionsAsync();
+
+                // Сховати панель і очистити текстове поле
+                CreateCollectionPanel.Visibility = Visibility.Collapsed;
+                CollectionNameTextBox.Clear();
+            }
+            else
+            {
+                MessageBox.Show("Please enter a collection name.");
+            }
+        }
+        private void CreateCollectionPanel_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            CreateCollectionPanel.Visibility = Visibility.Collapsed;
+
+        }
         private void CreateNewCollection_Click(object sender, RoutedEventArgs e)
         {
-            // Logic for creating a new collection goes here
-            var newCollection = new CollectionDto(); // Create a new CollectionDto
-            // Here you can prompt the user for details, for example through a dialog.
-
-            // Add the new collection to the ObservableCollection in your ViewModel
-            _viewModel.Collections.Add(newCollection);
-            // You can also handle showing a dialog or a form to fill in details for the new collection.
-
+            CreateCollectionPanel.Visibility = Visibility.Visible; 
         }
     }
 

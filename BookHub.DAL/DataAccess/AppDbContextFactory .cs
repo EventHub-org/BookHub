@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using DotNetEnv;
-using System.IO; 
+using System.IO;
+using Serilog;
 
 namespace BookHub.DAL.DataAccess
 {
@@ -17,12 +18,14 @@ namespace BookHub.DAL.DataAccess
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
             var connectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING");
+
+           
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new InvalidOperationException("Connection string not found in environment variables.");
             }
 
-            optionsBuilder.UseSqlServer(connectionString); 
+            optionsBuilder.UseSqlServer(connectionString);
 
             return new AppDbContext(optionsBuilder.Options);
         }

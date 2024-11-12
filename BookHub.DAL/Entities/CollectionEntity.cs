@@ -16,6 +16,8 @@ namespace BookHub.DAL.Entities
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 50 characters.")]
         public string Name { get; set; }
 
+        public int UserId { get; set; }
+
         public UserEntity User { get; set; }
 
         public ICollection<BookEntity> Books { get; set; }

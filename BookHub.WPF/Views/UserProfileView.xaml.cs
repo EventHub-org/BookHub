@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BookHub.BLL.Services.Interfaces;
+using BookHub.WPF.ViewModels;
+using BookHub.DAL.DTO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using BookHub.BLL.Services.Implementations;
 
 namespace BookHub.WPF.Views
 {
@@ -19,9 +11,28 @@ namespace BookHub.WPF.Views
     /// </summary>
     public partial class UserProfileView : Window
     {
-        public UserProfileView()
+        private readonly ICollectionService _collectionService;
+        // Constructor that initializes UserProfileView
+        public UserProfileView(IUserService userService, UserDto selectedUserDto)
         {
             InitializeComponent();
+
+            // Initialize the ViewModel and set it as DataContext
+            var userProfileViewModel = new UserProfileViewModel(userService, selectedUserDto);
+            DataContext = userProfileViewModel;
+        }
+
+        private void CollectionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var collectionsViewModel = new CollectionsViewModel(_collectionService);
+            var collectionsView = new CollectionsView(collectionsViewModel);
+            collectionsView.Show();
+            this.Close();
+        }
+
+        private void BooksButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Navigate to the Books view
         }
     }
 }

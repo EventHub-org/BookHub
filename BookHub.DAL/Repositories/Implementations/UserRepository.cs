@@ -14,7 +14,10 @@ namespace BookHub.DAL.Repositories.Implementations
         {
             _context = context;
         }
-
+        public async Task<bool> ExistsAsync(int userId)
+        {
+            return await _context.Users.AnyAsync(u => u.UserId == userId);
+        }
 
         public async Task<(List<UserEntity> Items, long TotalCount)> GetPagedAsync(Pageable pageable)
         {
