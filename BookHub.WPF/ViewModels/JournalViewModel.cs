@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BookHub.BLL.Services.Interfaces;
+using BookHub.BLL.Utils;
 using BookHub.DAL.DTO;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,14 +17,22 @@ public class JournalViewModel : INotifyPropertyChanged
     private const int _pageSize = 3;
     private int _totalPages;
 
-    public JournalViewModel(UserDto user, IReadingProgressService readingProgressService, IBookService bookService)
+    //public JournalViewModel(UserDto user, IReadingProgressService readingProgressService, IBookService bookService)
+    //{
+    //    _readingProgressService = readingProgressService;
+    //    CurrentPage = 1;
+    //    _bookService = bookService;
+    //    //LoadJournalAsync().ConfigureAwait(false);
+    //    PreviousPageCommand = new RelayCommand(PreviousPage, CanGoToPreviousPage);
+    //    NextPageCommand = new RelayCommand(NextPage, CanGoToNextPage);
+    //}
+
+    public JournalViewModel(UserDto userDto, IReadingProgressService readingProgressService, IBookService bookService)
     {
-        _readingProgressService = readingProgressService;
-        CurrentPage = 1;
-        _bookService = bookService;
-        //LoadJournalAsync().ConfigureAwait(false);
-        PreviousPageCommand = new RelayCommand(PreviousPage, CanGoToPreviousPage);
-        NextPageCommand = new RelayCommand(NextPage, CanGoToNextPage);
+        this._userDto = userDto;
+        this._readingProgressService = readingProgressService;
+        this._bookService = bookService;
+        LoadJournalAsync().ConfigureAwait(false);
     }
 
     public ObservableCollection<JournalEntryDto> JournalEntries
@@ -62,7 +71,7 @@ public class JournalViewModel : INotifyPropertyChanged
 
     private async Task LoadJournalAsync()
     {
-        var result = await _readingProgressService.GetReadingProgressByUserIdAsync(_userDto.Id);
+        var result = await _readingProgressService.GetReadingProgressByUserIdAsync(1);
 
         if (result.Success)
         {
@@ -91,10 +100,12 @@ public class JournalViewModel : INotifyPropertyChanged
                     // Add the created JournalEntryDto to the list
                     journalEntries.Add(journalEntry);
                 }
+            
             }
 
             // Assign the populated list to JournalEntries as an ObservableCollection
             JournalEntries = new ObservableCollection<JournalEntryDto>(journalEntries);
+
         }
     }
 

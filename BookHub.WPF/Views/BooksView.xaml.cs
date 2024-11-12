@@ -23,13 +23,10 @@ namespace BookHub.WPF.Views
         private readonly ICollectionService _collectionService;
         private readonly IUserService _userService;
 
-        private readonly ICollectionService _collectionService;
         private readonly IReadingProgressService _readingProgressService;
         private readonly IBookService _bookService;
 
-        public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IReadingProgressService readingProgressService, IBookService bookService)
-        // Constructor with dependency injection
-        public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IUserService userService)
+        public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IUserService userService, IReadingProgressService readingProgressService, IBookService bookService)
         {
             InitializeComponent();
             DataContext = viewModel;
@@ -75,20 +72,20 @@ namespace BookHub.WPF.Views
         private async void Journal_Click(object sender, RoutedEventArgs e)
         {
             int userId = 1; // Replace with actual logic to get the user ID
-            var user = await ((BooksViewModel)DataContext).GetUserByIdAsync(userId);
+            var user = await _userService.GetUserByIdAsync(userId);
 
             if (user != null)
             {
                 // Initialize the JournalViewModel directly with dependencies
                 var journalViewModel = new JournalViewModel(
-                    user,
+                    user.Data,
                     _readingProgressService,
                     _bookService
                 );
 
                 // Create and show the JournalView window with the view model
                 var journalView = new JournalView(journalViewModel);
-                journalView.ShowDialog();
+                journalView.Show();
             }
             else
             {

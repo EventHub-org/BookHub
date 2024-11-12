@@ -94,19 +94,38 @@ namespace BookHub.BLL.Services.Implementations
 
         public async Task<ServiceResultType<List<ReadingProgressResponseDTO>>> GetReadingProgressByUserIdAsync(int userId)
         {
-            var readingProgressEntities = await _readingProgressRepository.GetByUserIdAsync(userId);
-
-            if (readingProgressEntities == null || !readingProgressEntities.Any())
+            try
             {
-                return ServiceResultType<List<ReadingProgressResponseDTO>>.ErrorResult($"No reading progress found for User ID {userId}.");
+                var readingProgressEntities = await _readingProgressRepository.GetByUserIdAsync(userId);
+
+                if (readingProgressEntities == null || !readingProgressEntities.Any())
+                {
+                    return ServiceResultType<List<ReadingProgressResponseDTO>>.ErrorResult($"No reading progress found for User ID {userId}.");
+                }
+
+
+                var readingProgressDtos = readingProgressEntities.Select(entity => new ReadingProgressResponseDTO
+                {
+                    Id = entity.Id,
+                    UserId = entity.UserId,
+                    BookId = entity.BookId,
+                    CurrentPage = entity.CurrentPage,
+                    Status = entity.Status ?? "InProgress",
+                    DateFinished = entity.DateFinished
+                }).ToList();
+
+                Log.Information($"Retrieved reading progress for User ID: {userId} at {DateTime.UtcNow}.");
+
+                return ServiceResultType<List<ReadingProgressResponseDTO>>.SuccessResult(readingProgressDtos);
             }
-
-            var readingProgressDtos = _mapper.Map<List<ReadingProgressResponseDTO>>(readingProgressEntities);
-
-            Log.Information($"Retrieved reading progress for User ID: {userId} at {DateTime.UtcNow}.");
-
-            return ServiceResultType<List<ReadingProgressResponseDTO>>.SuccessResult(readingProgressDtos);
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"An error occurred while retrieving reading progress for User ID: {userId}");
+                return ServiceResultType<List<ReadingProgressResponseDTO>>.ErrorResult("An error occurred while processing your request.");
+            }
         }
+
+
 
 
     }
