@@ -40,36 +40,26 @@ namespace BookHub.WPF.ViewModels
                 OnPropertyChanged(nameof(SelectedCollection));
             }
         }
-        private bool _isCollectionPanelVisible;
-        public bool IsCollectionPanelVisible
-        {
-            get => _isCollectionPanelVisible;
-            set
-            {
-                _isCollectionPanelVisible = value;
-                OnPropertyChanged(nameof(IsCollectionPanelVisible));
-            }
-        }
+        
 
         private async Task LoadCollectionsAsync(int userId = 1)
         {
-            Log.Information("Starting to load collections..."); // Log start of loading
             try
             {
-                var result = await _collectionService.GetAllCollectionsAsync(userId); // Use the new method to get all collections
+                var result = await _collectionService.GetAllCollectionsAsync(userId); 
                 if (result.Success)
                 {
-                    Collections = new ObservableCollection<CollectionDto>(result.Data); // Bind data to the collection
-                    Log.Information($"Loaded {result.Data.Count} collections."); // Log the number of loaded collections
+                    Collections = new ObservableCollection<CollectionDto>(result.Data); 
+                    Log.Information($"Loaded {result.Data.Count} collections."); 
                 }
                 else
                 {
-                    Log.Error($"Failed to load collections: {result.ErrorMessage}"); // Log error
+                    Log.Error($"Failed to load collections: {result.ErrorMessage}"); 
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "An error occurred while loading collections."); // Log exception
+                Log.Error(ex, "An error occurred while loading collections."); 
             }
         }
         public async Task CreateCollectionAsync(string collectionName, int userId = 1)
@@ -83,7 +73,6 @@ namespace BookHub.WPF.ViewModels
 
                 if (result.Success)
                 {
-                    // Update the local collection list with the newly created collection
                     Collections.Add(newCollection);
                     Log.Information($"New collection '{collectionName}' created successfully.");
                 }

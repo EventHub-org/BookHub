@@ -16,7 +16,8 @@
         <Button Content="Create New Collection" Click="CreateNewCollection_Click" Margin="10" Grid.Row="0"/>
 
         <!-- Panel for creating a new collection, initially collapsed -->
-        <StackPanel x:Name="CreateCollectionPanel" Margin="10">
+        <StackPanel x:Name="CreateCollectionPanel" Margin="10"
+                    MouseDown="CreateCollectionPanel_MouseDown">
             <StackPanel.Style>
                 <Style TargetType="StackPanel">
                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -29,6 +30,7 @@
             </StackPanel.Style>
             <!-- Додатковий контент панелі, наприклад, TextBox для назви колекції -->
             <TextBox x:Name="CollectionNameTextBox" Width="200" Margin="0,5"/>
+            <TextBlock Height="10"/>
             <Button Content="Save" Click="SaveNewCollection_Click" Margin="5"/>
         </StackPanel>
 

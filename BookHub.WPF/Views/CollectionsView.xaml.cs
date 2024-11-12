@@ -53,10 +53,14 @@ namespace BookHub.WPF.Views
                 MessageBox.Show("Please enter a collection name.");
             }
         }
+        private void CreateCollectionPanel_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            CreateCollectionPanel.Visibility = Visibility.Collapsed;
 
+        }
         private void CreateNewCollection_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.IsCollectionPanelVisible = true; // Відкрити панель
+            CreateCollectionPanel.Visibility = Visibility.Visible; 
         }
     }
 
