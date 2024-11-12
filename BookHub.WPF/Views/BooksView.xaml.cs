@@ -27,8 +27,7 @@ namespace BookHub.WPF.Views
     /// </summary>
     public partial class BooksView : Window
     {
-
-        private readonly ICollectionService _collectionService; 
+        private readonly ICollectionService _collectionService;
 
         public BooksView(BooksViewModel viewModel, ICollectionService collectionService)
         {
@@ -36,23 +35,22 @@ namespace BookHub.WPF.Views
             DataContext = viewModel;
             _collectionService = collectionService;
         }
+
         private void CollectionsButton_Click(object sender, RoutedEventArgs e)
         {
             var collectionsViewModel = new CollectionsViewModel(_collectionService);
             var collectionsView = new CollectionsView(collectionsViewModel);
-            collectionsView.Show(); 
-            this.Close(); 
-
+            collectionsView.Show();
+            this.Close();
         }
 
         private async void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            int userId = 1; // Отримайте реальний ID користувача, як вам потрібно
+            int userId = 1; // Replace with actual logic to retrieve user ID
             var user = await ((BooksViewModel)DataContext).GetUserByIdAsync(userId);
 
             if (user != null)
             {
-                // Тільки якщо user не null, створюємо ViewModel
                 var userProfileViewModel = new UserProfileViewModel(user);
                 var userProfileView = new UserProfileView
                 {
@@ -64,6 +62,13 @@ namespace BookHub.WPF.Views
             {
                 MessageBox.Show("User not found.");
             }
+        }
+
+        public void NavigateToPage(Page page)
+        {
+            var frame = new Frame();
+            Content = frame;
+            frame.Navigate(page);
         }
     }
 

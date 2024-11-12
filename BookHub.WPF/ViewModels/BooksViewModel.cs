@@ -3,6 +3,8 @@ using BookHub.DAL.DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Controls;
+using System.Windows;
 
 using Serilog;
 
@@ -108,8 +110,16 @@ namespace BookHub.WPF.ViewModels
             {
                 DataContext = bookDetailsViewModel
             };
-            bookDetailsView.ShowDialog();
+
+            NavigateToPage(bookDetailsView);
         }
+
+        private void NavigateToPage(Page page)
+        {
+            var booksView = Application.Current.MainWindow as BooksView;
+            booksView?.NavigateToPage(page);
+        }
+
 
         private void PreviousPage()
         {

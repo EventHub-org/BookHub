@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace BookHub.WPF.Views
@@ -17,7 +18,7 @@ namespace BookHub.WPF.Views
     /// <summary>
     /// Interaction logic for BookDetailsView.xaml
     /// </summary>
-    public partial class BookDetailsView : Window
+    public partial class BookDetailsView : Page
     {
         public BookDetailsView()
         {
