@@ -37,7 +37,7 @@ namespace BookHub.BLL.Services.Implementations
 
             var totalPages = (int)Math.Ceiling((double)totalElements / pageable.Size);
 
-            Log.Information($"Ініціалізовано отримання всіх книг з пагінацією о {DateTime.UtcNow}.");
+            Log.Information($"Ініціалізовано отримання всіх рецензій з пагінацією о {DateTime.UtcNow}.");
 
             return ServiceResultType<PageDto<ReviewDto>>.SuccessResult(new PageDto<ReviewDto>
             {
@@ -115,5 +115,40 @@ namespace BookHub.BLL.Services.Implementations
 
             return ServiceResultType<ReviewDto>.SuccessResult(_mapper.Map<ReviewDto>(reviewEntity));
         }
+
+
+        public async Task<ServiceResultType<PageDto<ReviewDto>>> GetPaginatedReviewsByBookIdAsync(int bookId, Pageable pageable)
+        {
+            // Отримуємо всі рев'ю, що відповідають bookId, за допомогою репозиторію
+            var allReviews = await _reviewRepository.GetAllAsync();
+
+            // Фільтруємо рев'ю за bookId
+            var filteredReviews = allReviews.Where(r => r.BookId == bookId);
+
+            // Розраховуємо загальну кількість елементів
+            var totalItems = filteredReviews.Count();
+
+            // Застосовуємо пагінацію вручну
+            var paginatedReviews = filteredReviews
+                .Skip((pageable.Page - 1) * pageable.Size)
+                .Take(pageable.Size)
+                .ToList();
+
+            // Мапимо отримані ReviewEntity до ReviewDto
+            var reviewDtos = _mapper.Map<List<ReviewDto>>(paginatedReviews);
+
+            // Формуємо об'єкт PageDto
+            var pageDto = new PageDto<ReviewDto>
+            {
+                Items = reviewDtos,
+                TotalElements = totalItems,
+                TotalPages = (int)Math.Ceiling((double)totalItems / pageable.Size)
+            };
+
+            // Повертаємо результат
+            return ServiceResultType<PageDto<ReviewDto>>.SuccessResult(pageDto);
+        }
+
+
     }
 }

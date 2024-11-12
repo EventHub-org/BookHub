@@ -7,6 +7,7 @@ namespace BookHub.BLL.Services.Interfaces
     {
         Task<ServiceResultType<ReviewDto>> GetReviewAsync(int id);
         Task<ServiceResultType<PageDto<ReviewDto>>> GetPaginatedReviewsAsync(Pageable pageable);
+        Task<ServiceResultType<PageDto<ReviewDto>>> GetPaginatedReviewsByBookIdAsync(int bookId, Pageable pageable);
         Task<ServiceResultType> DeleteReviewAsync(int id);
         Task<ServiceResultType<ReviewDto>> CreateReviewAsync(ReviewDto reviewDto);
     }

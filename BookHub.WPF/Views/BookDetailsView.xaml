@@ -1,0 +1,104 @@
+﻿<Page x:Class="BookHub.WPF.Views.BookDetailsView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="BookDetails">
+
+    <Grid Background="#F5F5DC">
+
+        <Border Background="White" Margin="64" Padding="32" BorderThickness="1" BorderBrush="#979797" CornerRadius="16">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                    <!-- WrapPanel with Book Details -->
+                    <WrapPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <!-- Cover Image Section -->
+                        <Border Background="White" CornerRadius="8" Height="433">
+                            <Border.Effect>
+                                <DropShadowEffect Color="Black" 
+                                  ShadowDepth="1" 
+                                  BlurRadius="10" 
+                                  Opacity="0.5"/>
+                            </Border.Effect>
+                            <Image Source="{Binding Book.CoverImageUrl}" Height="433" Width="300" Stretch="UniformToFill" 
+                               HorizontalAlignment="Center" Margin="0,10,0,10"/>
+                        </Border>
+
+                        <!-- Book Details Section -->
+                        <StackPanel Margin="32, 0, 0, 0">
+                            <TextBlock Text="{Binding Book.Title}" FontSize="36" FontWeight="Bold" Margin="0,0,0,10"/>
+                            <TextBlock Text="{Binding Book.Author}" TextWrapping="Wrap" FontSize="20" Margin="0,0,0,10" Foreground="#979797"/>
+
+                            <TextBlock FontSize="20" Margin="0,0,0,10">
+                                <Run Text="Дата виходу: " FontWeight="Bold"/>
+                                <Run Text="{Binding Book.PublishedDate, StringFormat=d}"/>
+                            </TextBlock>
+
+                            <TextBlock FontSize="20" Margin="0,0,0,10">
+                                <Run Text="Сторінок: " FontWeight="Bold"/>
+                                <Run Text="{Binding Book.NumberOfPages, StringFormat=d}"/>
+                            </TextBlock>
+
+                            <Border BorderThickness="1" BorderBrush="#979797" CornerRadius="4" Background="#E9E9E9" HorizontalAlignment="Left">
+                                <WrapPanel HorizontalAlignment="Left">
+                                    <TextBlock Text="{Binding Book.Genre}" Foreground="#979797" FontSize="20" Margin="8,5,8,5"/>
+                                </WrapPanel>
+                            </Border>
+
+                            
+
+                            <Button Content="Додати до списку читання" FontWeight="Bold" FontSize="24" Foreground="White">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="#865F20"
+                                                Padding="16,12"
+                                                Margin="0, 16"
+                                                CornerRadius="8">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
+                    </WrapPanel>
+
+                    <StackPanel Margin="0,20,0,0">
+                        <TextBlock FontSize="28" Margin="0,20,0,10">
+                            <Run Text="Рецензії: " FontWeight="Bold"/>
+                            <Run Text="{Binding Book.Rating}"/>
+                            <Run Text="/5"/>
+                        </TextBlock>
+                    
+
+
+                        <ItemsControl ItemsSource="{Binding Reviews}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,5,0,5" Padding="10" Background="#EFEFEF" CornerRadius="8" BorderBrush="#979797" BorderThickness="1">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Comment}" TextWrapping="Wrap" Margin="0,5,0,0"/>
+                                            <TextBlock Text="{Binding CreatedAt, StringFormat=d}" FontSize="12" Foreground="#979797"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                            <Button Content="Попередня" Command="{Binding LoadPreviousReviewsCommand}" Margin="5"/>
+                            <Button Content="Наступна" Command="{Binding LoadNextReviewsCommand}" Margin="5"/>
+                        </StackPanel>
+                    </StackPanel>
+
+
+
+
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Page>

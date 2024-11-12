@@ -1,27 +1,38 @@
-﻿using BookHub.BLL.Services.Interfaces;
+using BookHub.BLL.Services.Interfaces;
 using BookHub.DAL.DTO;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Controls;
+using System.Windows;
+using Serilog;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using BookHub.WPF.Views;
-using AutoMapper;  // Import AutoMapper
+using AutoMapper;
+
 
 namespace BookHub.WPF.ViewModels
 {
     public class BooksViewModel : INotifyPropertyChanged
     {
+
         private readonly IBookService _bookService;
-        private readonly IUserService _userService; // Inject IUserService
-        private readonly IMapper _mapper;  // Inject IMapper
+        private readonly IUserService _userService;
+        private readonly IReviewService _reviewService;
+        private readonly IMapper _mapper;
+        public ICommand OpenBookDetailsCommand { get; }
         private ObservableCollection<BookDto> _books;
         private BookDto _selectedBook;
         private int _currentPage;
-        private const int _pageSize = 3; // Number of books per page
+        private const int _pageSize = 3;
         private int _totalPages;
 
-        public BooksViewModel(IBookService bookService, IUserService userService, IMapper mapper)
+
+        public BooksViewModel(IBookService bookService, IUserService userService, IReviewService reviewService, IMapper mapper)
         {
             _bookService = bookService;
             _userService = userService; // Initialize IUserService
@@ -30,6 +41,8 @@ namespace BookHub.WPF.ViewModels
             LoadBooksAsync().ConfigureAwait(false);
             PreviousPageCommand = new RelayCommand(PreviousPage, CanGoToPreviousPage);
             NextPageCommand = new RelayCommand(NextPage, CanGoToNextPage);
+            OpenBookDetailsCommand = new RelayCommand<int>(async (bookId) => await OpenBookDetailsAsync(bookId));
+            _reviewService = reviewService;
         }
 
         // Method to get user by ID
@@ -92,6 +105,26 @@ namespace BookHub.WPF.ViewModels
                 TotalPages = result.Data.TotalPages; // Assuming your service returns total pages
             }
         }
+
+        private async Task OpenBookDetailsAsync(int bookId)
+        {
+            var bookDetailsViewModel = new BookDetailsViewModel(_bookService, _reviewService); // Передаємо обидві залежності
+            await bookDetailsViewModel.LoadBookAsync(bookId);
+
+            var bookDetailsView = new BookDetailsView
+            {
+                DataContext = bookDetailsViewModel
+            };
+
+            NavigateToPage(bookDetailsView);
+        }
+
+        private void NavigateToPage(Page page)
+        {
+            var booksView = Application.Current.MainWindow as BooksView;
+            booksView?.NavigateToPage(page);
+        }
+
 
         private void PreviousPage()
         {
