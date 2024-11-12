@@ -15,23 +15,28 @@ namespace BookHub.Tests.Services.Impl
     public class CollectionServiceTest
     {
 
-        private readonly Mock<IRepository<CollectionEntity>> _mockCollectionRepository;
+        private readonly Mock<ICollectionRepository> _mockCollectionRepository;
         private readonly Mock<IRepository<BookEntity>> _mockBookRepository; 
         private readonly IMapper _mapper;
         private readonly CollectionService _collectionService;
+        private readonly Mock<IUserRepository> _mockUserRepository;
 
         public CollectionServiceTest()
         {
-            _mockCollectionRepository = new Mock<IRepository<CollectionEntity>>();
-            _mockBookRepository = new Mock<IRepository<BookEntity>>(); 
-
+            _mockCollectionRepository = new Mock<ICollectionRepository>();
+            _mockBookRepository = new Mock<IRepository<BookEntity>>();
+            _mockUserRepository = new Mock<IUserRepository>();
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<CollectionEntity, CollectionDto>().ReverseMap();
             });
             _mapper = config.CreateMapper();
 
-            _collectionService = new CollectionService(_mockCollectionRepository.Object, _mockBookRepository.Object, _mapper);
+            _collectionService = new CollectionService(
+                        _mockUserRepository.Object,  // Add the mock IUserRepository here
+                        _mockCollectionRepository.Object,
+                        _mockBookRepository.Object,
+                        _mapper);
         }
 
         [Fact]

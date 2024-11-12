@@ -47,12 +47,11 @@ namespace BookHub.WPF.Views
 
         private async void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            int userId = 1; // Отримайте реальний ID користувача, як вам потрібно
+            int userId = 1; 
             var user = await ((BooksViewModel)DataContext).GetUserByIdAsync(userId);
 
             if (user != null)
             {
-                // Тільки якщо user не null, створюємо ViewModel
                 var userProfileViewModel = new UserProfileViewModel(user);
                 var userProfileView = new UserProfileView
                 {
