@@ -50,13 +50,16 @@ namespace BookHub.WPF.Views
         // Button to navigate to User Profile view
         private async void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            int userId = 1; // Replace with actual logic to retrieve user ID
-            var user = await ((BooksViewModel)DataContext).GetUserByIdAsync(userId);
+            int userId = 1; // Ideally, fetch this from session/context or login
+
+            // Fetch user data asynchronously using the IUserService
+            var user = await _userService.GetUserByIdAsync(userId);
 
             if (user != null)
             {
-                var userProfileViewModel = new UserProfileViewModel(user);
-                var userProfileView = new UserProfileView
+                // Create UserProfileViewModel only if user exists
+                var userProfileViewModel = new UserProfileViewModel(_userService, user.Data);
+                var userProfileView = new UserProfileView(_userService, user.Data)
                 {
                     DataContext = userProfileViewModel
                 };
@@ -67,7 +70,7 @@ namespace BookHub.WPF.Views
                 MessageBox.Show("User not found.");
             }
         }
-        
+
         private async void Journal_Click(object sender, RoutedEventArgs e)
         {
             int userId = 1; // Replace with actual logic to get the user ID

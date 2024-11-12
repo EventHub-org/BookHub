@@ -35,13 +35,14 @@ namespace BookHub.WPF.ViewModels
         public BooksViewModel(IBookService bookService, IUserService userService, IReviewService reviewService, IMapper mapper)
         {
             _bookService = bookService;
-            _userService = userService; // Initialize IUserService
-            _mapper = mapper; // Initialize IMapper
+            _userService = userService;
+            _mapper = mapper;
             CurrentPage = 1;
             LoadBooksAsync().ConfigureAwait(false);
             PreviousPageCommand = new RelayCommand(PreviousPage, CanGoToPreviousPage);
             NextPageCommand = new RelayCommand(NextPage, CanGoToNextPage);
             OpenBookDetailsCommand = new RelayCommand<int>(async (bookId) => await OpenBookDetailsAsync(bookId));
+
             _reviewService = reviewService;
         }
 
