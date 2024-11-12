@@ -8,18 +8,20 @@ using System.Windows.Input;
 public class JournalViewModel : INotifyPropertyChanged
 {
     private readonly IBookService _bookService;
-    private readonly IMapper _mapper;  // Injected AutoMapper
+    private readonly IReadingProgressService _readingProgressService;
+    private readonly UserDto _userDto;
     private ObservableCollection<JournalEntryDto> _journalEntries;
+    //private 
     private int _currentPage;
     private const int _pageSize = 3;
     private int _totalPages;
 
-    public JournalViewModel(IBookService bookService, IMapper mapper)
+    public JournalViewModel(UserDto user, IReadingProgressService readingProgressService, IBookService bookService)
     {
-        _bookService = bookService;
-        _mapper = mapper;  // Initialized AutoMapper
+        _readingProgressService = readingProgressService;
         CurrentPage = 1;
-        LoadJournalAsync().ConfigureAwait(false);
+        _bookService = bookService;
+        //LoadJournalAsync().ConfigureAwait(false);
         PreviousPageCommand = new RelayCommand(PreviousPage, CanGoToPreviousPage);
         NextPageCommand = new RelayCommand(NextPage, CanGoToNextPage);
     }
@@ -41,7 +43,7 @@ public class JournalViewModel : INotifyPropertyChanged
         {
             _currentPage = value;
             OnPropertyChanged(nameof(CurrentPage));
-            LoadJournalAsync().ConfigureAwait(false);
+            //LoadJournalAsync().ConfigureAwait(false);
         }
     }
 
@@ -60,17 +62,42 @@ public class JournalViewModel : INotifyPropertyChanged
 
     private async Task LoadJournalAsync()
     {
-        var result = await _bookService.GetPaginatedBooksAsync(new Pageable { Page = CurrentPage, Size = _pageSize });
+        var result = await _readingProgressService.GetReadingProgressByUserIdAsync(_userDto.Id);
 
         if (result.Success)
         {
-            // Map from BookDto to JournalEntryDto
-            JournalEntries = new ObservableCollection<JournalEntryDto>(
-                _mapper.Map<IEnumerable<BookDto>, IEnumerable<JournalEntryDto>>(result.Data.Items)
-            );
-            TotalPages = result.Data.TotalPages; // Assuming your service returns total pages
+            // Initialize an empty collection to hold journal entries
+            var journalEntries = new List<JournalEntryDto>();
+
+            for (var i = 0; i < result.Data.Count; i++)
+            {
+                var readingProgress = result.Data[i];
+
+                // Fetch the book details for each reading progress entry
+                var bookResult = await _bookService.GetBookAsync(readingProgress.BookId);
+
+                if (bookResult.Success && bookResult.Data != null)
+                {
+                    // Manually create a JournalEntryDto instance
+                    var journalEntry = new JournalEntryDto
+                    {
+                        BookTitle = bookResult.Data.Title, // Assuming BookDto has a Title property
+                        Progress = $"{readingProgress.CurrentPage} pages read",
+                        LastOpened = readingProgress.DateFinished.HasValue
+                            ? readingProgress.DateFinished.Value.ToString("g")
+                            : "Not finished"
+                    };
+
+                    // Add the created JournalEntryDto to the list
+                    journalEntries.Add(journalEntry);
+                }
+            }
+
+            // Assign the populated list to JournalEntries as an ObservableCollection
+            JournalEntries = new ObservableCollection<JournalEntryDto>(journalEntries);
         }
     }
+
 
     private void PreviousPage()
     {

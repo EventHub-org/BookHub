@@ -15,6 +15,7 @@ namespace BookHub.BLL.Services.Interfaces
         public Task<ServiceResultType<ReadingProgressResponseDTO>> GetReadingProgressByIdAsync(int id);
         public Task<ServiceResultType<bool>> DeleteReadingProgressAsync(int id);
         public Task<ServiceResultType<ReadingProgressResponseDTO>> UpdateReadingProgressAsync(int id, ReadingProgressDTO readingProgressDTO);
+        public Task<ServiceResultType<List<ReadingProgressResponseDTO>>> GetReadingProgressByUserIdAsync(int userId);
 
     }
 }

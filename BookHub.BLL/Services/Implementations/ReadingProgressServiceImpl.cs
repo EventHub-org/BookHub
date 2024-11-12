@@ -92,5 +92,22 @@ namespace BookHub.BLL.Services.Implementations
             return ServiceResultType<bool>.SuccessResult(true);
         }
 
+        public async Task<ServiceResultType<List<ReadingProgressResponseDTO>>> GetReadingProgressByUserIdAsync(int userId)
+        {
+            var readingProgressEntities = await _readingProgressRepository.GetByUserIdAsync(userId);
+
+            if (readingProgressEntities == null || !readingProgressEntities.Any())
+            {
+                return ServiceResultType<List<ReadingProgressResponseDTO>>.ErrorResult($"No reading progress found for User ID {userId}.");
+            }
+
+            var readingProgressDtos = _mapper.Map<List<ReadingProgressResponseDTO>>(readingProgressEntities);
+
+            Log.Information($"Retrieved reading progress for User ID: {userId} at {DateTime.UtcNow}.");
+
+            return ServiceResultType<List<ReadingProgressResponseDTO>>.SuccessResult(readingProgressDtos);
+        }
+
+
     }
 }

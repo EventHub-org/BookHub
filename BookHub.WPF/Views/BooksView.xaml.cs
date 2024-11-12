@@ -19,6 +19,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using AutoMapper;
 
 namespace BookHub.WPF.Views
 {
@@ -28,13 +29,17 @@ namespace BookHub.WPF.Views
     public partial class BooksView : Window
     {
 
-        private readonly ICollectionService _collectionService; 
+        private readonly ICollectionService _collectionService;
+        private readonly IReadingProgressService _readingProgressService;
+        private readonly IBookService _bookService;
 
-        public BooksView(BooksViewModel viewModel, ICollectionService collectionService)
+        public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IReadingProgressService readingProgressService, IBookService bookService)
         {
             InitializeComponent();
             DataContext = viewModel;
             _collectionService = collectionService;
+            _readingProgressService = readingProgressService;
+            _bookService = bookService;
         }
         private void CollectionsButton_Click(object sender, RoutedEventArgs e)
         {
@@ -65,6 +70,31 @@ namespace BookHub.WPF.Views
                 MessageBox.Show("User not found.");
             }
         }
+
+        private async void Journal_Click(object sender, RoutedEventArgs e)
+        {
+            int userId = 1; // Replace with actual logic to get the user ID
+            var user = await ((BooksViewModel)DataContext).GetUserByIdAsync(userId);
+
+            if (user != null)
+            {
+                // Initialize the JournalViewModel directly with dependencies
+                var journalViewModel = new JournalViewModel(
+                    user,
+                    _readingProgressService,
+                    _bookService
+                );
+
+                // Create and show the JournalView window with the view model
+                var journalView = new JournalView(journalViewModel);
+                journalView.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("User not found.");
+            }
+        }
+
     }
 
 }

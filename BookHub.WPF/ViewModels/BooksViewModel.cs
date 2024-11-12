@@ -121,16 +121,16 @@ namespace BookHub.WPF.ViewModels
         }
 
 
-        // Open Journal Command
-        public ICommand OpenJournalCommand => new RelayCommand(OpenJournal);
+        //// Open Journal Command
+        //public ICommand OpenJournalCommand => new RelayCommand(OpenJournal);
 
-        private void OpenJournal()
-        {
-            // Now using _mapper for mapping
-            var journalViewModel = new JournalViewModel(_bookService, _mapper);
-            var journalView = new JournalView(journalViewModel);
-            journalView.Show();
-        }
+        //private void OpenJournal()
+        //{
+        //    // Now using _mapper for mapping
+        //    var journalViewModel = new JournalViewModel(_bookService, _mapper);
+        //    var journalView = new JournalView(journalViewModel);
+        //    journalView.Show();
+        //}
 
     }
 }

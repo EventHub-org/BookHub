@@ -66,11 +66,8 @@ namespace BookHub.WPF
 
             ConfigureAutoMapper();
 
-
-            // Реєстрація IMapper в контейнері
+            // Register IMapper in the container
             builder.RegisterInstance(_mapper).As<IMapper>().SingleInstance();
-
-
 
             string envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\.env");
 
@@ -83,34 +80,32 @@ namespace BookHub.WPF
             builder.Register(db =>
             {
                 var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-                optionsBuilder.UseSqlServer(connectionString); // або UseSqlite, UseNpgsql і т.д. залежно від вашої бази даних
+                optionsBuilder.UseSqlServer(connectionString);
                 return new AppDbContext(optionsBuilder.Options);
             }).AsSelf().InstancePerLifetimeScope();
 
-            // Реєстрація репозиторіїв та сервісів
+            // Register repositories and services
             builder.RegisterType<BookRepository>().As<IBookRepository>();
+            builder.RegisterType<ReadingProgressRepository>().As<IReadingProgressRepository>();
             builder.RegisterType<UserRepository>().As<IUserRepository>();
 
             builder.RegisterType<BookService>().As<IBookService>();
             builder.RegisterType<UserService>().As<IUserService>();
+            builder.RegisterType<ReadingProgressServiceImpl>().As<IReadingProgressService>();
 
-            builder.RegisterType<JournalViewModel>();
-            builder.RegisterType<JournalView>();
-
-
-
-            builder.RegisterType<BookRepository>().As<IRepository<BookEntity>>();
-
-            builder.RegisterType<CollectionRepository>().As<IRepository<CollectionEntity>>();
-
+            // Register additional repositories and services
             builder.RegisterType<CollectionService>().As<ICollectionService>();
+            //builder.RegisterType<CollectionRepository>().As<ICollectionRepository>();
 
-            // Реєстрація ViewModels та Views
+            // Register ViewModels and Views
             builder.RegisterType<BooksViewModel>();
+            builder.RegisterType<CollectionsViewModel>();
             builder.RegisterType<UserProfileViewModel>();
+            builder.RegisterType<JournalViewModel>();
 
             builder.RegisterType<BooksView>();
             builder.RegisterType<UserProfileView>();
+            builder.RegisterType<JournalView>();
 
             _container = builder.Build();
 
@@ -118,6 +113,7 @@ namespace BookHub.WPF
             var mainView = _container.Resolve<BooksView>();
             mainView.Show();
         }
+
 
         protected override void OnExit(ExitEventArgs e)
         {
