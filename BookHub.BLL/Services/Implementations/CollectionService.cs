@@ -40,7 +40,6 @@ namespace BookHub.BLL.Services.Implementations
                 Log.Error("User with ID {UserId} does not exist.", collectionDto.UserId);
                 return ServiceResultType<CollectionDto>.ErrorResult($"User with ID {collectionDto.UserId} does not exist.");
             }
-            Log.Error("User with ID {UserId} exist.", collectionDto.UserId);
 
             var validationResults = new List<ValidationResult>();
             var validationContext = new ValidationContext(collectionDto);
