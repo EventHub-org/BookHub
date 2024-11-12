@@ -10,7 +10,11 @@ public class MappingProfile : Profile
 
         CreateMap<BookEntity, BookDto>();
 
-        CreateMap<CollectionEntity, CollectionDto>(); 
+        CreateMap<CollectionEntity, CollectionDto>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.UserId)) // Витягуємо UserId з User
+                .ForMember(dest => dest.BookCount, opt => opt.MapFrom(src => src.Books != null ? src.Books.Count : 0)) // Додаємо маппінг для BookCount
+                .ReverseMap()
+                .ForMember(dest => dest.User, opt => opt.Ignore());
 
         CreateMap<UserEntity, UserDto>();
 

@@ -8,17 +8,21 @@ using BookHub.BLL.Utils;
 using BookHub.DAL.Repositories.Implementations;
 
 using Serilog;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookHub.BLL.Services.Implementations
 {
     public class CollectionService : ICollectionService 
     {
-        private readonly IRepository<CollectionEntity> _collectionRepository;
+        private readonly ICollectionRepository _collectionRepository;
         private readonly IRepository<BookEntity> _bookRepository;
         private readonly IMapper _mapper;
+        private readonly IUserRepository _userRepository;
 
-        public CollectionService(IRepository<CollectionEntity> collectionRepository, IRepository<BookEntity> bookRepository, IMapper mapper)
+        public CollectionService(IUserRepository userRepository, ICollectionRepository collectionRepository, IRepository<BookEntity> bookRepository, IMapper mapper)
         {
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+
             _collectionRepository = collectionRepository;
             _bookRepository = bookRepository;
             _mapper = mapper;
@@ -30,6 +34,13 @@ namespace BookHub.BLL.Services.Implementations
             {
                 return ServiceResultType<CollectionDto>.ErrorResult("Collection data cannot be null");
             }
+            var userExists = await _userRepository.ExistsAsync(collectionDto.UserId);
+            if (!userExists)
+            {
+                Log.Error("User with ID {UserId} does not exist.", collectionDto.UserId);
+                return ServiceResultType<CollectionDto>.ErrorResult($"User with ID {collectionDto.UserId} does not exist.");
+            }
+            Log.Error("User with ID {UserId} exist.", collectionDto.UserId);
 
             var validationResults = new List<ValidationResult>();
             var validationContext = new ValidationContext(collectionDto);
@@ -96,22 +107,27 @@ namespace BookHub.BLL.Services.Implementations
 
             return ServiceResultType.SuccessResult();
         }
-        public async Task<ServiceResultType<List<CollectionDto>>> GetAllCollectionsAsync()
+        public async Task<ServiceResultType<List<CollectionDto>>> GetAllCollectionsAsync(int userId)
         {
-            Log.Information("Початок отримання всіх колекцій..."); 
+            Log.Information($"Початок отримання всіх колекцій для користувача з Id: {userId}...");
             try
             {
-                var collectionEntities = await _collectionRepository.GetAllAsync(); 
-                var collectionDtos = _mapper.Map<List<CollectionDto>>(collectionEntities); 
-                Log.Information($"Завантажено {collectionDtos.Count} колекцій."); 
-                return ServiceResultType<List<CollectionDto>>.SuccessResult(collectionDtos); 
+                var collectionEntities = await _collectionRepository.GetAllAsync(c => c.User.UserId == userId);
+                var collectionDtos = _mapper.Map<List<CollectionDto>>(collectionEntities);
+
+                Log.Information($"Завантажено {collectionDtos.Count} колекцій для користувача з Id: {userId}.");
+                return ServiceResultType<List<CollectionDto>>.SuccessResult(collectionDtos);
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Виникла помилка під час отримання колекцій."); // Log exception
-                return ServiceResultType<List<CollectionDto>>.ErrorResult("Failed to retrieve collections."); // Return error
+                Log.Error(ex, $"Виникла помилка під час отримання колекцій для користувача з Id: {userId}.");
+                return ServiceResultType<List<CollectionDto>>.ErrorResult("Failed to retrieve collections.");
             }
         }
+
+       
+
+
 
     }
 }

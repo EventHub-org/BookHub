@@ -15,6 +15,8 @@ namespace BookHub.DAL.DTO
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 50 characters.")]
         public string Name { get; set; }
 
+        public int BookCount { get; set; }
+
         public int UserId { get; set; } 
     }
 
