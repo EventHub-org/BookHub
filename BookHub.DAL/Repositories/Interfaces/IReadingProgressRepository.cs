@@ -1,9 +1,7 @@
 ﻿using BookHub.DAL.Entities;
+using BookHub.DAL.Repositories.Interfaces;
 
-namespace BookHub.DAL.Repositories.Interfaces
+public interface IReadingProgressRepository : IRepository<ReadingProgressEntity>
 {
-    public interface IReadingProgressRepository : IRepository<ReadingProgressEntity>
-    {
-
-    }
+    Task<List<ReadingProgressEntity>> GetByUserIdAsync(int userId);
 }

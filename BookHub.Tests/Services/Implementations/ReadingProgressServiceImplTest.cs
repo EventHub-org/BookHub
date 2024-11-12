@@ -160,6 +160,46 @@ namespace BookHub.Tests.Services.Impl
             Assert.Equal("Reading progress not found", result.ErrorMessage);
         }
 
+        [Fact]
+        public async Task GetReadingProgressByUserIdAsync_ShouldReturnReadingProgressDtos_WhenRecordsExist()
+        {
+            // Arrange
+            int userId = 1;
+            var readingProgressEntities = new List<ReadingProgressEntity>
+            {
+                new ReadingProgressEntity { Id = 1, UserId = userId, BookId = 2, CurrentPage = 100 },
+                new ReadingProgressEntity { Id = 2, UserId = userId, BookId = 3, CurrentPage = 50 }
+            };
+
+            _mockRepository.Setup(repo => repo.GetByUserIdAsync(userId)).ReturnsAsync(readingProgressEntities);
+
+            // Act
+            var result = await _service.GetReadingProgressByUserIdAsync(userId);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.NotNull(result.Data);
+            Assert.Equal(readingProgressEntities.Count, result.Data.Count);
+            Assert.Equal(readingProgressEntities[0].Id, result.Data[0].Id);
+            Assert.Equal(readingProgressEntities[1].Id, result.Data[1].Id);
+        }
+
+        [Fact]
+        public async Task GetReadingProgressByUserIdAsync_ShouldReturnError_WhenNoRecordsExist()
+        {
+            // Arrange
+            int userId = 1;
+            _mockRepository.Setup(repo => repo.GetByUserIdAsync(userId)).ReturnsAsync(new List<ReadingProgressEntity>());
+
+            // Act
+            var result = await _service.GetReadingProgressByUserIdAsync(userId);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Equal($"No reading progress found for User ID {userId}.", result.ErrorMessage);
+            Assert.Null(result.Data);
+        }
+
 
     }
 }

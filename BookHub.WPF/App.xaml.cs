@@ -66,11 +66,8 @@ namespace BookHub.WPF
 
             ConfigureAutoMapper();
 
-
-            // Реєстрація IMapper в контейнері
+            // Register IMapper in the container
             builder.RegisterInstance(_mapper).As<IMapper>().SingleInstance();
-
-
 
             string envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\.env");
 
@@ -87,12 +84,14 @@ namespace BookHub.WPF
                 return new AppDbContext(optionsBuilder.Options);
             }).AsSelf().InstancePerLifetimeScope();
 
-            // Реєстрація репозиторіїв та сервісів
+            // Register repositories and services
             builder.RegisterType<BookRepository>().As<IBookRepository>();
+            builder.RegisterType<ReadingProgressRepository>().As<IReadingProgressRepository>();
             builder.RegisterType<UserRepository>().As<IUserRepository>();
 
             builder.RegisterType<BookService>().As<IBookService>();
             builder.RegisterType<UserService>().As<IUserService>();
+            builder.RegisterType<ReadingProgressServiceImpl>().As<IReadingProgressService>();
 
 
             builder.RegisterType<BookRepository>().As<IRepository<BookEntity>>();
@@ -100,13 +99,17 @@ namespace BookHub.WPF
             builder.RegisterType<CollectionRepository>().As<ICollectionRepository>();
 
             builder.RegisterType<CollectionService>().As<ICollectionService>();
+            //builder.RegisterType<CollectionRepository>().As<ICollectionRepository>();
 
-            // Реєстрація ViewModels та Views
+            // Register ViewModels and Views
             builder.RegisterType<BooksViewModel>();
+            builder.RegisterType<CollectionsViewModel>();
             builder.RegisterType<UserProfileViewModel>();
+            builder.RegisterType<JournalViewModel>();
 
             builder.RegisterType<BooksView>();
             builder.RegisterType<UserProfileView>();
+            builder.RegisterType<JournalView>();
 
             _container = builder.Build();
 
@@ -114,6 +117,7 @@ namespace BookHub.WPF
             var mainView = _container.Resolve<BooksView>();
             mainView.Show();
         }
+
 
         protected override void OnExit(ExitEventArgs e)
         {
