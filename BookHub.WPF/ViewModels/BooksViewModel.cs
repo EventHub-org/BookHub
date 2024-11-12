@@ -3,8 +3,6 @@ using BookHub.DAL.DTO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows.Controls;
-using System.Windows;
 
 using Serilog;
 
@@ -13,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using BookHub.WPF.Views;
 
 namespace BookHub.WPF.ViewModels
 {
@@ -21,15 +18,13 @@ namespace BookHub.WPF.ViewModels
     {
         private readonly IBookService _bookService;
         private readonly IUserService _userService; // Додаємо IUserService
-        private readonly IReviewService _reviewService;
-        public ICommand OpenBookDetailsCommand { get; }
         private ObservableCollection<BookDto> _books;
         private BookDto _selectedBook;
         private int _currentPage;
         private const int _pageSize = 3; // Кількість книг на сторінці
         private int _totalPages;
 
-        public BooksViewModel(IBookService bookService, IUserService userService, IReviewService reviewService)
+        public BooksViewModel(IBookService bookService, IUserService userService)
         {
             _bookService = bookService;
             _userService = userService; // Ініціалізуємо IUserService
@@ -37,8 +32,6 @@ namespace BookHub.WPF.ViewModels
             LoadBooksAsync().ConfigureAwait(false);
             PreviousPageCommand = new RelayCommand(PreviousPage, CanGoToPreviousPage);
             NextPageCommand = new RelayCommand(NextPage, CanGoToNextPage);
-            OpenBookDetailsCommand = new RelayCommand<int>(async (bookId) => await OpenBookDetailsAsync(bookId));
-            _reviewService = reviewService;
         }
 
         // Метод для отримання користувача
@@ -102,26 +95,6 @@ namespace BookHub.WPF.ViewModels
                 TotalPages = result.Data.TotalPages; // Припустимо, ваш сервіс повертає загальну кількість сторінок
             }
         }
-
-        private async Task OpenBookDetailsAsync(int bookId)
-        {
-            var bookDetailsViewModel = new BookDetailsViewModel(_bookService, _reviewService); // Передаємо обидві залежності
-            await bookDetailsViewModel.LoadBookAsync(bookId);
-
-            var bookDetailsView = new BookDetailsView
-            {
-                DataContext = bookDetailsViewModel
-            };
-
-            NavigateToPage(bookDetailsView);
-        }
-
-        private void NavigateToPage(Page page)
-        {
-            var booksView = Application.Current.MainWindow as BooksView;
-            booksView?.NavigateToPage(page);
-        }
-
 
         private void PreviousPage()
         {
