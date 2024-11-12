@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookHub.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241021223508_AddManyToManyColectionBook")]
-    partial class AddManyToManyColectionBook
+    [Migration("20241112084605_aaaaaaaaaaaa")]
+    partial class aaaaaaaaaaaa
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

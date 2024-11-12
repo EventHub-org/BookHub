@@ -5,7 +5,7 @@
 namespace BookHub.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class AddManyToManyColectionBook : Migration
+    public partial class aaaaaaaaaaaa : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

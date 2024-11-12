@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Serilog;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace BookHub.WPF.ViewModels
 {
@@ -39,27 +40,57 @@ namespace BookHub.WPF.ViewModels
                 OnPropertyChanged(nameof(SelectedCollection));
             }
         }
+        
 
-        private async Task LoadCollectionsAsync()
+        private async Task LoadCollectionsAsync(int userId = 1)
         {
-            Log.Information("Starting to load collections..."); // Log start of loading
             try
             {
-                var result = await _collectionService.GetAllCollectionsAsync(); // Use the new method to get all collections
+                var result = await _collectionService.GetAllCollectionsAsync(userId); 
                 if (result.Success)
                 {
-                    Collections = new ObservableCollection<CollectionDto>(result.Data); // Bind data to the collection
-                    Log.Information($"Loaded {result.Data.Count} collections."); // Log the number of loaded collections
+                    Collections = new ObservableCollection<CollectionDto>(result.Data); 
+                    Log.Information($"Loaded {result.Data.Count} collections."); 
                 }
                 else
                 {
-                    Log.Error($"Failed to load collections: {result.ErrorMessage}"); // Log error
+                    Log.Error($"Failed to load collections: {result.ErrorMessage}"); 
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "An error occurred while loading collections."); // Log exception
+                Log.Error(ex, "An error occurred while loading collections."); 
             }
+        }
+        public async Task CreateCollectionAsync(string collectionName, int userId = 1)
+        {
+            Log.Information("Starting to create a new collection...");
+
+            try
+            {
+                var newCollection = new CollectionDto { Name = collectionName, UserId = userId };
+                var result = await _collectionService.CreateCollectionAsync(newCollection);
+
+                if (result.Success)
+                {
+                    Collections.Add(newCollection);
+                    Log.Information($"New collection '{collectionName}' created successfully.");
+                }
+                else
+                {
+                    Log.Error($"Failed to create collection: {result.ErrorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while creating the collection.");
+            }
+        }
+
+        public async Task RefreshCollectionsAsync(int userId = 1)
+        {
+            Log.Information("Refreshing collections...");
+            await LoadCollectionsAsync(userId);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

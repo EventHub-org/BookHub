@@ -16,6 +16,7 @@ using BookHub.DAL.Entities;
 using DotNetEnv;
 using System.IO;
 using BookHub.DAL.DTO;
+using System.Configuration;
 
 
 namespace BookHub.WPF
@@ -54,7 +55,6 @@ namespace BookHub.WPF
 
                 cfg.AddProfile<MappingProfile>();
             });
-
             _mapper = config.CreateMapper();
         }
 
@@ -80,7 +80,7 @@ namespace BookHub.WPF
             builder.Register(db =>
             {
                 var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseSqlServer(connectionString); 
                 return new AppDbContext(optionsBuilder.Options);
             }).AsSelf().InstancePerLifetimeScope();
 
@@ -93,7 +93,11 @@ namespace BookHub.WPF
             builder.RegisterType<UserService>().As<IUserService>();
             builder.RegisterType<ReadingProgressServiceImpl>().As<IReadingProgressService>();
 
-            // Register additional repositories and services
+
+            builder.RegisterType<BookRepository>().As<IRepository<BookEntity>>();
+
+            builder.RegisterType<CollectionRepository>().As<ICollectionRepository>();
+
             builder.RegisterType<CollectionService>().As<ICollectionService>();
             //builder.RegisterType<CollectionRepository>().As<ICollectionRepository>();
 
