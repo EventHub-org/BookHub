@@ -7,7 +7,7 @@ namespace BookHub.WPF.ViewModels
     public class BookDetailsViewModel
     {
         private readonly IBookService _bookService;
-
+        
         public BookDto Book { get; private set; }
 
         public BookDetailsViewModel(IBookService bookService)

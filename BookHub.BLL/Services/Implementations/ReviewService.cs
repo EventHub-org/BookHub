@@ -37,7 +37,7 @@ namespace BookHub.BLL.Services.Implementations
 
             var totalPages = (int)Math.Ceiling((double)totalElements / pageable.Size);
 
-            Log.Information($"Ініціалізовано отримання всіх книг з пагінацією о {DateTime.UtcNow}.");
+            Log.Information($"Ініціалізовано отримання всіх рецензій з пагінацією о {DateTime.UtcNow}.");
 
             return ServiceResultType<PageDto<ReviewDto>>.SuccessResult(new PageDto<ReviewDto>
             {
