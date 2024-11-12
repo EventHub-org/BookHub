@@ -21,6 +21,7 @@ namespace BookHub.WPF.ViewModels
     {
         private readonly IBookService _bookService;
         private readonly IUserService _userService; // Додаємо IUserService
+        private readonly IReviewService _reviewService;
         public ICommand OpenBookDetailsCommand { get; }
         private ObservableCollection<BookDto> _books;
         private BookDto _selectedBook;
@@ -28,7 +29,7 @@ namespace BookHub.WPF.ViewModels
         private const int _pageSize = 3; // Кількість книг на сторінці
         private int _totalPages;
 
-        public BooksViewModel(IBookService bookService, IUserService userService)
+        public BooksViewModel(IBookService bookService, IUserService userService, IReviewService reviewService)
         {
             _bookService = bookService;
             _userService = userService; // Ініціалізуємо IUserService
@@ -37,6 +38,7 @@ namespace BookHub.WPF.ViewModels
             PreviousPageCommand = new RelayCommand(PreviousPage, CanGoToPreviousPage);
             NextPageCommand = new RelayCommand(NextPage, CanGoToNextPage);
             OpenBookDetailsCommand = new RelayCommand<int>(async (bookId) => await OpenBookDetailsAsync(bookId));
+            _reviewService = reviewService;
         }
 
         // Метод для отримання користувача
@@ -103,7 +105,7 @@ namespace BookHub.WPF.ViewModels
 
         private async Task OpenBookDetailsAsync(int bookId)
         {
-            var bookDetailsViewModel = new BookDetailsViewModel(_bookService);
+            var bookDetailsViewModel = new BookDetailsViewModel(_bookService, _reviewService); // Передаємо обидві залежності
             await bookDetailsViewModel.LoadBookAsync(bookId);
 
             var bookDetailsView = new BookDetailsView
