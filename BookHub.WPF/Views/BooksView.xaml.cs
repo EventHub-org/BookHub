@@ -3,6 +3,14 @@ using BookHub.WPF.ViewModels;
 using BookHub.WPF.Views;
 using System;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using AutoMapper;
 using System.Threading.Tasks;
 
 namespace BookHub.WPF.Views
@@ -14,14 +22,18 @@ namespace BookHub.WPF.Views
     {
         private readonly ICollectionService _collectionService;
         private readonly IUserService _userService;
+        
+        private readonly IReadingProgressService _readingProgressService;
+        private readonly IBookService _bookService;
 
-        // Constructor with dependency injection
-        public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IUserService userService)
 
+        public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IUserService userService, IReadingProgressService readingProgressService, IBookService bookService)
         {
             InitializeComponent();
             DataContext = viewModel;
             _collectionService = collectionService;
+            _readingProgressService = readingProgressService;
+            _bookService = bookService;
             _userService = userService;
         }
 
@@ -55,6 +67,31 @@ namespace BookHub.WPF.Views
                 MessageBox.Show("User not found.");
             }
         }
+        
+        private async void Journal_Click(object sender, RoutedEventArgs e)
+        {
+            int userId = 1; // Replace with actual logic to get the user ID
+            var user = await _userService.GetUserByIdAsync(userId);
+
+            if (user != null)
+            {
+                // Initialize the JournalViewModel directly with dependencies
+                var journalViewModel = new JournalViewModel(
+                    user.Data,
+                    _readingProgressService,
+                    _bookService
+                );
+
+                // Create and show the JournalView window with the view model
+                var journalView = new JournalView(journalViewModel);
+                journalView.Show();
+            }
+            else
+            {
+                MessageBox.Show("User not found.");
+            }
+        }
+
 
         public void NavigateToPage(Page page)
         {
@@ -62,5 +99,6 @@ namespace BookHub.WPF.Views
             Content = frame;
             frame.Navigate(page);
         }
+
     }
 }
