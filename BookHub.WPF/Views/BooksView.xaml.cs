@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using AutoMapper;
 using System.Threading.Tasks;
+using Microsoft.Win32;
 
 namespace BookHub.WPF.Views
 {
@@ -22,12 +23,13 @@ namespace BookHub.WPF.Views
     {
         private readonly ICollectionService _collectionService;
         private readonly IUserService _userService;
-        
+        private readonly IAuthService _authService;
+
         private readonly IReadingProgressService _readingProgressService;
         private readonly IBookService _bookService;
 
 
-        public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IUserService userService, IReadingProgressService readingProgressService, IBookService bookService)
+        public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IUserService userService, IReadingProgressService readingProgressService, IBookService bookService, IAuthService authService)
         {
             InitializeComponent();
             DataContext = viewModel;
@@ -35,6 +37,7 @@ namespace BookHub.WPF.Views
             _readingProgressService = readingProgressService;
             _bookService = bookService;
             _userService = userService;
+            _authService = authService;
         }
 
 
@@ -69,6 +72,17 @@ namespace BookHub.WPF.Views
             {
                 MessageBox.Show("User not found.");
             }
+        }
+
+        private void RegisterButton_Click(object sender, RoutedEventArgs e)
+        {
+            var registerViewModel = new RegisterViewModel(_authService); // Pass the required authService parameter
+            var registerView = new RegisterWindow(_authService) // Pass the required authService parameter
+            {
+                DataContext = registerViewModel // Bind ViewModel to View
+            };
+            registerView.Show(); // Open the registration window
+            this.Close(); // Close the current window
         }
 
         private async void Journal_Click(object sender, RoutedEventArgs e)

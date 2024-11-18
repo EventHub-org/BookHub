@@ -29,7 +29,14 @@ namespace BookHub.BLL.Services.Implementations
                 return ServiceResultType<UserDto>.ErrorResult("User with this email already exists.");
             }
 
-            var userEntity = _mapper.Map<UserEntity>(userRegistrerDto);
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(userRegistrerDto.Password);
+            //var userEntity = _mapper.Map<UserEntity>(userRegistrerDto);
+            var userEntity = new UserEntity
+            {
+                Name = userRegistrerDto.Name,
+                Email = userRegistrerDto.Email,
+                Password = passwordHash
+            };
 
             await _userRepository.AddAsync(userEntity);
             Log.Information($"Користувач з email {userRegistrerDto.Email} зареєстрований о {DateTime.UtcNow}.");

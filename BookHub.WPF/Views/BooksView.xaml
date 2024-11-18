@@ -13,6 +13,8 @@
                 <Button Content="Collections" Margin="5" Padding="5" Width="100" Click="CollectionsButton_Click"/>
 
                 <Button Content="Profile" Margin="5" Padding="5" Width="100" Click="ProfileButton_Click"/>
+
+                <Button Content="Register" Margin="5" Padding="5" Width="100" Click="RegisterButton_Click"/>
             </StackPanel>
         </Border>
 

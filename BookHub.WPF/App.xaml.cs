@@ -17,6 +17,7 @@ using DotNetEnv;
 using System.IO;
 using BookHub.DAL.DTO;
 using System.Configuration;
+using Microsoft.Win32;
 
 
 namespace BookHub.WPF
@@ -94,6 +95,7 @@ namespace BookHub.WPF
             builder.RegisterType<UserService>().As<IUserService>();
             builder.RegisterType<ReviewService>().As<IReviewService>();
             builder.RegisterType<ReadingProgressServiceImpl>().As<IReadingProgressService>();
+            builder.RegisterType<AuthService>().As<IAuthService>();
 
 
             builder.RegisterType<BookRepository>().As<IRepository<BookEntity>>();
@@ -113,10 +115,12 @@ namespace BookHub.WPF
             builder.RegisterType<CollectionsViewModel>();
             builder.RegisterType<UserProfileViewModel>();
             builder.RegisterType<JournalViewModel>();
+            builder.RegisterType<RegisterViewModel>();
 
             builder.RegisterType<BooksView>();
             builder.RegisterType<UserProfileView>();
             builder.RegisterType<JournalView>();
+            builder.RegisterType<RegisterWindow>();
 
             _container = builder.Build();
 
