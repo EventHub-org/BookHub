@@ -116,11 +116,13 @@ namespace BookHub.WPF
             builder.RegisterType<UserProfileViewModel>();
             builder.RegisterType<JournalViewModel>();
             builder.RegisterType<RegisterViewModel>();
+            builder.RegisterType<LoginViewModel>();
 
             builder.RegisterType<BooksView>();
             builder.RegisterType<UserProfileView>();
             builder.RegisterType<JournalView>();
             builder.RegisterType<RegisterWindow>();
+            builder.RegisterType<LoginWindow>();
 
             _container = builder.Build();
 

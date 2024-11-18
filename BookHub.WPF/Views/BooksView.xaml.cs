@@ -85,6 +85,17 @@ namespace BookHub.WPF.Views
             this.Close(); // Close the current window
         }
 
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            var loginViewModel = new LoginViewModel(_authService); // Pass the required authService parameter
+            var loginView = new LoginWindow(_authService) // Pass the required authService parameter
+            {
+                DataContext = loginViewModel // Bind ViewModel to View
+            };
+            loginView.Show(); // Open the login window
+            this.Close(); // Close the current window
+        }
+
         private async void Journal_Click(object sender, RoutedEventArgs e)
         {
             int userId = 1; // Replace with actual logic to get the user ID
