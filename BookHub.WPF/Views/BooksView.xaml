@@ -3,20 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:BookHub.WPF.Converters"
         mc:Ignorable="d"
         Title="Books" Height="600" Width="800">
+    <Window.Resources>
+        <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+    </Window.Resources>
     <Grid>
         <!-- Відокремлений верхній блок для кнопок -->
         <Border Background="LightGray" Margin="0,0,0,10">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-
                 <Button Content="Collections" Margin="5" Padding="5" Width="100" Click="CollectionsButton_Click"/>
-
                 <Button Content="Profile" Margin="5" Padding="5" Width="100" Click="ProfileButton_Click"/>
-
-                <Button Content="Register" Margin="5" Padding="5" Width="100" Click="RegisterButton_Click"/>
-
-                <Button Content="Login" Margin="5" Padding="5" Width="100" Click="LoginButton_Click"/>
+                <Button Content="Login" Click="LoginButton_Click" Visibility="{Binding ShowLoginButton, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+                <Button Content="Register" Click="RegisterButton_Click" Visibility="{Binding ShowRegisterButton, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
             </StackPanel>
         </Border>
 
@@ -29,25 +29,18 @@
                             <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="16" Margin="5" Padding="0" Background="White" Width="250">
                                 <StackPanel ClipToBounds="True">
                                     <!-- Cover Image -->
-                                    
                                     <Image Source="{Binding CoverImageUrl}" Height="350" Width="250" Stretch="UniformToFill" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-
                                     <!-- Book Title -->
                                     <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="Bold" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-
                                     <!-- Author -->
                                     <TextBlock Text="Author:" FontWeight="Bold"/>
                                     <TextBlock Text="{Binding Author}" TextWrapping="Wrap" Margin="0,0,0,5"/>
-
                                     <!-- Rating -->
                                     <TextBlock Text="Rating:" FontWeight="Bold"/>
                                     <TextBlock Text="{Binding Rating}" Margin="0,0,0,5"/>
-
                                     <!-- Button to open book details -->
                                     <Button Content="View Details" Command="{Binding DataContext.OpenBookDetailsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
                                         CommandParameter="{Binding Id}" Margin="5,10,5,0"/>
-
-
                                 </StackPanel>
                             </Border>
                         </DataTemplate>

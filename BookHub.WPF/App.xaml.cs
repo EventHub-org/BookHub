@@ -70,6 +70,9 @@ namespace BookHub.WPF
             // Register IMapper in the container
             builder.RegisterInstance(_mapper).As<IMapper>().SingleInstance();
 
+            // Реєстрація SessionService
+            builder.RegisterType<SessionService>().As<ISessionService>().SingleInstance();
+
             string envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\.env");
 
             DotNetEnv.Env.Load(envPath);

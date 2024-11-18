@@ -4,22 +4,27 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using BookHub.DAL.DTO;
+using BookHub.WPF.Views;
 
 namespace BookHub.WPF.ViewModels
 {
     public class LoginViewModel : INotifyPropertyChanged
     {
         private readonly IAuthService _authService;
+        private readonly ISessionService _sessionService;
 
-        public LoginViewModel(IAuthService authService)
+        public LoginViewModel(IAuthService authService, ISessionService sessionService)
         {
             _authService = authService;
+            _sessionService = sessionService;
             LoginCommand = new RelayCommand(async () => await LoginAsync(), () => CanLogin);
+            IsAuthenticated = _sessionService.IsUserAuthenticated();
         }
 
         private string _email;
         private string _password;
         private string _errorMessage;
+        private bool _isAuthenticated;
 
         public string Email
         {
@@ -37,6 +42,12 @@ namespace BookHub.WPF.ViewModels
         {
             get => _errorMessage;
             set { _errorMessage = value; OnPropertyChanged(); }
+        }
+
+        public bool IsAuthenticated
+        {
+            get => _isAuthenticated;
+            set { _isAuthenticated = value; OnPropertyChanged(); }
         }
 
         public ICommand LoginCommand { get; }
@@ -69,6 +80,9 @@ namespace BookHub.WPF.ViewModels
             else
             {
                 ErrorMessage = "Login successful!";
+                _sessionService.SetCurrentUser(result.Data); // Оновлюємо поточного користувача в сесії
+
+                IsAuthenticated = _sessionService.IsUserAuthenticated();
             }
         }
 

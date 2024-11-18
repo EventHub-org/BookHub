@@ -24,12 +24,14 @@ namespace BookHub.WPF.Views
         private readonly ICollectionService _collectionService;
         private readonly IUserService _userService;
         private readonly IAuthService _authService;
+        private readonly ISessionService _sessionService;
 
         private readonly IReadingProgressService _readingProgressService;
         private readonly IBookService _bookService;
 
 
-        public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IUserService userService, IReadingProgressService readingProgressService, IBookService bookService, IAuthService authService)
+        public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IUserService userService,
+            IReadingProgressService readingProgressService, IBookService bookService, IAuthService authService, ISessionService sessionService)
         {
             InitializeComponent();
             DataContext = viewModel;
@@ -38,6 +40,7 @@ namespace BookHub.WPF.Views
             _bookService = bookService;
             _userService = userService;
             _authService = authService;
+            _sessionService = sessionService;
         }
 
 
@@ -76,24 +79,24 @@ namespace BookHub.WPF.Views
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
-            var registerViewModel = new RegisterViewModel(_authService); // Pass the required authService parameter
-            var registerView = new RegisterWindow(_authService) // Pass the required authService parameter
+            var registerViewModel = new RegisterViewModel(_authService, _sessionService); // Pass the required authService parameter
+            var registerView = new RegisterWindow(_authService, _sessionService) // Pass the required authService parameter
             {
                 DataContext = registerViewModel // Bind ViewModel to View
             };
             registerView.Show(); // Open the registration window
-            this.Close(); // Close the current window
+            
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var loginViewModel = new LoginViewModel(_authService); // Pass the required authService parameter
-            var loginView = new LoginWindow(_authService) // Pass the required authService parameter
+            var loginViewModel = new LoginViewModel(_authService, _sessionService); // Pass the required authService parameter
+            var loginView = new LoginWindow(_authService, _sessionService) // Pass the required authService parameter
             {
                 DataContext = loginViewModel // Bind ViewModel to View
             };
             loginView.Show(); // Open the login window
-            this.Close(); // Close the current window
+            
         }
 
         private async void Journal_Click(object sender, RoutedEventArgs e)

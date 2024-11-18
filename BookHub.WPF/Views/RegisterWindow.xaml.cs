@@ -21,10 +21,10 @@ namespace BookHub.WPF.Views
     /// </summary>
     public partial class RegisterWindow : Window
     {
-        public RegisterWindow(IAuthService authService)
+        public RegisterWindow(IAuthService authService, ISessionService sessionService)
         {
             InitializeComponent();
-            DataContext = new RegisterViewModel(authService);
+            DataContext = new RegisterViewModel(authService, sessionService);
         }
 
         private void OnPasswordChanged(object sender, RoutedEventArgs e)

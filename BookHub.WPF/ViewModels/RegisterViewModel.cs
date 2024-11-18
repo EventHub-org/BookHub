@@ -16,10 +16,12 @@ namespace BookHub.WPF.ViewModels
     public class RegisterViewModel : INotifyPropertyChanged
     {
         private readonly IAuthService _authService;
+        private readonly ISessionService _sessionService;
 
-        public RegisterViewModel(IAuthService authService)
+        public RegisterViewModel(IAuthService authService, ISessionService sessionService)
         {
             _authService = authService;
+            _sessionService = sessionService;
             RegisterCommand = new RelayCommand(async () => await RegisterAsync(), () => CanRegister);
         }
 
@@ -29,6 +31,7 @@ namespace BookHub.WPF.ViewModels
         private string _repeatPassword;
         private string _errorMessage;
 
+        public ICommand RegisterCommand { get; }
         public string Name
         {
             get => _name;
@@ -59,7 +62,6 @@ namespace BookHub.WPF.ViewModels
             set { _errorMessage = value; OnPropertyChanged(); }
         }
 
-        public ICommand RegisterCommand { get; }
 
         public bool CanRegister =>
             !string.IsNullOrWhiteSpace(Name) &&
