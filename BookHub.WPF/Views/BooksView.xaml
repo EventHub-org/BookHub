@@ -34,6 +34,9 @@
                     Command="{Binding LoginCommand}" Click="LoginButton_Click" />
                     <Button Content="Register" Margin="5" Padding="5" Width="100" Height="30" Click="RegisterButton_Click" 
                     Visibility="{Binding IsUserNotLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Button Content="Logout" Margin="5" Padding="5" Width="100" Height="30"
+                    Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                    Command="{Binding LogoutCommand}" Click="Logout_Click" />
                 </StackPanel>
             </Grid>
         </Border>

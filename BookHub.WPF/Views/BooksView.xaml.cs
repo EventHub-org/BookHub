@@ -198,6 +198,9 @@ namespace BookHub.WPF.Views
             frame.Navigate(page);
         }
 
-        
+        private void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            _accountStore.ClearSession();
+        }
     }
 }
