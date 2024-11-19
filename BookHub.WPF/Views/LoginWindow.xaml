@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BookHub.WPF.Views"
         mc:Ignorable="d"
-        Title="Login" Height="250" Width="350">
+        Title="Login" Height="600" Width="800">
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -18,15 +18,20 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Email:" Grid.Row="0" Grid.Column="0" Margin="0,5,10,5" />
-        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
+        <!-- Home Button in the Top Left Corner -->
+        <Button Content="Home" Click="HomeButton_Click" 
+                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,10"
+                Grid.Row="0" Grid.Column="0"/>
 
-        <TextBlock Text="Password:" Grid.Row="1" Grid.Column="0" Margin="0,5,10,5" />
-        <PasswordBox x:Name="PasswordBox" Grid.Row="1" Grid.Column="1" PasswordChanged="OnPasswordChanged" />
+        <TextBlock Text="Email:" Grid.Row="1" Grid.Column="0" Margin="0,5,10,5" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock Text="Password:" Grid.Row="2" Grid.Column="0" Margin="0,5,10,5" />
+        <PasswordBox x:Name="PasswordBox" Grid.Row="2" Grid.Column="1" PasswordChanged="OnPasswordChanged" />
 
         <Button Content="Login" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,20,0,0"
                 Command="{Binding LoginCommand}" />
 
-        <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Foreground="Red" Text="{Binding ErrorMessage}" />
+        <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Foreground="Red" Text="{Binding ErrorMessage}" />
     </Grid>
 </Window>

@@ -37,6 +37,7 @@ namespace BookHub.WPF.Views
             IReadingProgressService readingProgressService, IBookService bookService, IAuthService authService, ISessionService sessionService, IAccountStore accountStore)
         {
             InitializeComponent();
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             DataContext = viewModel;
             _collectionService = collectionService;
             _readingProgressService = readingProgressService;
@@ -47,113 +48,147 @@ namespace BookHub.WPF.Views
             _accountStore = accountStore;
         }
 
-
-        // Button to navigate to Collections view
         private void CollectionsButton_Click(object sender, RoutedEventArgs e)
         {
-            var collectionsViewModel = new CollectionsViewModel(_collectionService);
-            var collectionsView = new CollectionsView(collectionsViewModel);
-            collectionsView.Show();
-            this.Close();
-        }
-
-
-private async void ProfileButton_Click(object sender, RoutedEventArgs e)
-    {
-        // Log the profile button click
-        Log.Information("Profile button clicked.");
-
-        if (_accountStore.IsUserAuthenticated()) // Use AccountStore to get current authenticated account
-        {
-            int? userId = _accountStore.CurrentUserId; // Assuming Account has UserId
-
-            // Log the current user's ID
-            Log.Information("UserId retrieved from AccountStore: {UserId}", userId);
-
-            if (userId.HasValue)
+            if (_accountStore.IsUserAuthenticated())
             {
-                Log.Information("UserId is valid: {UserId}", userId.Value);
+                int? userId = _accountStore.CurrentUserId;
 
-                // Example: Fetching user data based on userId
-                var user = await _userService.GetUserByIdAsync(userId.Value);
+                Log.Information("UserId retrieved from AccountStore: {UserId}", userId);
 
-                if (user != null)
+                if (userId.HasValue)
                 {
-                    Log.Information("User data retrieved for UserId: {UserId}", userId.Value);
-
-                    var userProfileViewModel = new UserProfileViewModel(_userService, user.Data);
-                    var userProfileView = new UserProfileView(_userService, user.Data)
-                    {
-                        DataContext = userProfileViewModel
-                    };
-                    userProfileView.ShowDialog();
-
-                    Log.Information("User profile view shown for UserId: {UserId}", userId.Value);
+                    var collectionsViewModel = new CollectionsViewModel(_collectionService, userId.Value);
+                    var collectionsView = new CollectionsView(collectionsViewModel);
+                    collectionsView.Show();
+                    this.Hide();
                 }
                 else
                 {
-                    Log.Warning("No user data found for UserId: {UserId}", userId.Value);
-                    MessageBox.Show("User not found.");
+                    Log.Warning("UserId is null or invalid for the current account.");
+                    MessageBox.Show("User is not authenticated.");
                 }
             }
             else
             {
-                Log.Warning("UserId is null or invalid for the current account.");
-                MessageBox.Show("User is not authenticated.");
+                Log.Warning("No user is currently logged in.");
+                MessageBox.Show("No user is logged in.");
             }
         }
-        else
-        {
-            Log.Warning("No user is currently logged in.");
-            MessageBox.Show("No user is logged in.");
-        }
-    }
 
-
-    private void RegisterButton_Click(object sender, RoutedEventArgs e)
+        private async void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            var registerViewModel = new RegisterViewModel(_authService, _accountStore, _sessionService); 
-            var registerView = new RegisterWindow(_authService, _accountStore, _sessionService) 
+            Log.Information("Profile button clicked.");
+
+            if (_accountStore.IsUserAuthenticated())
             {
-                DataContext = registerViewModel 
+                int? userId = _accountStore.CurrentUserId;
+
+                Log.Information("UserId retrieved from AccountStore: {UserId}", userId);
+
+                if (userId.HasValue)
+                {
+                    Log.Information("UserId is valid: {UserId}", userId.Value);
+
+                    var user = await _userService.GetUserByIdAsync(userId.Value);
+
+                    if (user != null)
+                    {
+                        Log.Information("User data retrieved for UserId: {UserId}", userId.Value);
+
+                        var userProfileViewModel = new UserProfileViewModel(_userService, user.Data);
+                        var userProfileView = new UserProfileView(_userService, user.Data)
+                        {
+                            DataContext = userProfileViewModel
+                        };
+
+                        userProfileView.Show();
+                        this.Hide();
+
+                        Log.Information("User profile view shown for UserId: {UserId}", userId.Value);
+                    }
+                    else
+                    {
+                        Log.Warning("No user data found for UserId: {UserId}", userId.Value);
+                        MessageBox.Show("User not found.");
+                    }
+                }
+                else
+                {
+                    Log.Warning("UserId is null or invalid for the current account.");
+                    MessageBox.Show("User is not authenticated.");
+                }
+            }
+            else
+            {
+                Log.Warning("No user is currently logged in.");
+                MessageBox.Show("No user is logged in.");
+            }
+        }
+
+        private void RegisterButton_Click(object sender, RoutedEventArgs e)
+        {
+            var registerViewModel = new RegisterViewModel(_authService, _accountStore, _sessionService);
+            var registerView = new RegisterWindow(_authService, _accountStore, _sessionService)
+            {
+                DataContext = registerViewModel
             };
-            registerView.Show(); 
-            
+
+            registerView.Show();
+            this.Hide();
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var loginViewModel = new LoginViewModel(_authService, _accountStore, _sessionService); 
-            var loginView = new LoginWindow(_authService, _accountStore, _sessionService) 
+            var loginViewModel = new LoginViewModel(_authService, _accountStore, _sessionService);
+            var loginView = new LoginWindow(_authService, _accountStore, _sessionService)
             {
-                DataContext = loginViewModel 
+                DataContext = loginViewModel
             };
-            loginView.Show(); 
-            
+
+            loginView.Show();
+            this.Hide();
         }
 
         private async void Journal_Click(object sender, RoutedEventArgs e)
         {
-            int userId = 1; 
-            var user = await _userService.GetUserByIdAsync(userId);
-
-            if (user != null)
+            if (_accountStore.IsUserAuthenticated())
             {
-                var journalViewModel = new JournalViewModel(
-                    user.Data,
-                    _readingProgressService,
-                    _bookService
-                );
+                int? userId = _accountStore.CurrentUserId;
 
-                var journalView = new JournalView(journalViewModel);
-                journalView.Show();
+                if (userId.HasValue)
+                {
+                    var user = await _userService.GetUserByIdAsync(userId.Value);
+
+                    if (user != null)
+                    {
+                        var journalViewModel = new JournalViewModel(
+                            user.Data,
+                            _readingProgressService,
+                            _bookService
+                        );
+
+                        var journalView = new JournalView(journalViewModel);
+                        journalView.Show();
+                        this.Hide();
+                    }
+                    else
+                    {
+                        MessageBox.Show("User not found.");
+                    }
+                }
+                else
+                {
+                    Log.Warning("UserId is null or invalid for the current account.");
+                    MessageBox.Show("User is not authenticated.");
+                }
             }
             else
             {
-                MessageBox.Show("User not found.");
+                Log.Warning("No user is currently logged in.");
+                MessageBox.Show("No user is logged in.");
             }
         }
-
 
         public void NavigateToPage(Page page)
         {

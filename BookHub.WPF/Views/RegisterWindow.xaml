@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BookHub.WPF.Views"
         mc:Ignorable="d"
-        Title="RegisterWindow" Height="350" Width="400">
+        Title="RegisterWindow" Height="600" Width="800">
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -20,21 +20,27 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Name:" Grid.Row="0" Grid.Column="0" Margin="0,5,10,5" />
-        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+        <!-- Home Button - Верхній лівий кут -->
+        <Button Content="Home" Click="HomeButton_Click" 
+                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,10"
+                Grid.Row="0" Grid.Column="0"/>
 
-        <TextBlock Text="Email:" Grid.Row="1" Grid.Column="0" Margin="0,5,10,5" />
-        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Text="Name:" Grid.Row="1" Grid.Column="0" Margin="0,5,10,5" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
 
-        <TextBlock Text="Password:" Grid.Row="2" Grid.Column="0" Margin="0,5,10,5" />
-        <PasswordBox x:Name="PasswordBox" Grid.Row="2" Grid.Column="1" PasswordChanged="OnPasswordChanged" />
+        <TextBlock Text="Email:" Grid.Row="2" Grid.Column="0" Margin="0,5,10,5" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
 
-        <TextBlock Text="Repeat Password:" Grid.Row="3" Grid.Column="0" Margin="0,5,10,5" />
-        <PasswordBox x:Name="RepeatPasswordBox" Grid.Row="3" Grid.Column="1" PasswordChanged="OnRepeatPasswordChanged" />
+        <TextBlock Text="Password:" Grid.Row="3" Grid.Column="0" Margin="0,5,10,5" />
+        <PasswordBox x:Name="PasswordBox" Grid.Row="3" Grid.Column="1" PasswordChanged="OnPasswordChanged" />
+
+        <TextBlock Text="Repeat Password:" Grid.Row="4" Grid.Column="0" Margin="0,5,10,5" />
+        <PasswordBox x:Name="RepeatPasswordBox" Grid.Row="4" Grid.Column="1" PasswordChanged="OnRepeatPasswordChanged" />
 
         <Button Content="Register" Grid.Row="4" Grid.ColumnSpan="2" Margin="0,20,0,0" 
         Command="{Binding RegisterCommand}" />
 
-        <TextBlock Grid.Row="5" Grid.ColumnSpan="2" Foreground="Red" Text="{Binding ErrorMessage}" />
+        <TextBlock Grid.Row="6" Grid.ColumnSpan="2" Foreground="Red" Text="{Binding ErrorMessage}" />
+
     </Grid>
 </Window>

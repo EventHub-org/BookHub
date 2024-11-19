@@ -8,11 +8,12 @@
       Title="BookDetails">
 
     <Grid Background="#F5F5DC">
+        <!-- Home Button at the Top -->
+        <Button Content="Home" Click="HomeButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="75" Height="30"/>
 
         <Border Background="White" Margin="64" Padding="32" BorderThickness="1" BorderBrush="#979797" CornerRadius="16">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-
                     <!-- WrapPanel with Book Details -->
                     <WrapPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <!-- Cover Image Section -->
@@ -48,8 +49,6 @@
                                 </WrapPanel>
                             </Border>
 
-                            
-
                             <Button Content="Додати до списку читання" FontWeight="Bold" FontSize="24" Foreground="White">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
@@ -71,8 +70,6 @@
                             <Run Text="{Binding Book.Rating}"/>
                             <Run Text="/5"/>
                         </TextBlock>
-                    
-
 
                         <ItemsControl ItemsSource="{Binding Reviews}">
                             <ItemsControl.ItemTemplate>
@@ -92,10 +89,6 @@
                             <Button Content="Наступна" Command="{Binding LoadNextReviewsCommand}" Margin="5"/>
                         </StackPanel>
                     </StackPanel>
-
-
-
-
 
                 </StackPanel>
             </ScrollViewer>

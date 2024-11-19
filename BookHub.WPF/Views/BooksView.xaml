@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:BookHub.WPF.Converters"
         mc:Ignorable="d"
-        Title="Books" Height="600" Width="800">
+        Title="Books" Height="600" Width="800" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
     </Window.Resources>

@@ -3,6 +3,8 @@ using BookHub.WPF.ViewModels;
 using BookHub.DAL.DTO;
 using System.Windows;
 using BookHub.BLL.Services.Implementations;
+using BookHub.WPF.State.Accounts;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace BookHub.WPF.Views
 {
@@ -12,10 +14,11 @@ namespace BookHub.WPF.Views
     public partial class UserProfileView : Window
     {
         private readonly ICollectionService _collectionService;
-        // Constructor that initializes UserProfileView
+        private readonly IAccountStore _accountStore;
         public UserProfileView(IUserService userService, UserDto selectedUserDto)
         {
             InitializeComponent();
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             // Initialize the ViewModel and set it as DataContext
             var userProfileViewModel = new UserProfileViewModel(userService, selectedUserDto);
@@ -24,15 +27,37 @@ namespace BookHub.WPF.Views
 
         private void CollectionsButton_Click(object sender, RoutedEventArgs e)
         {
-            var collectionsViewModel = new CollectionsViewModel(_collectionService);
-            var collectionsView = new CollectionsView(collectionsViewModel);
-            collectionsView.Show();
-            this.Close();
+            if (_accountStore.IsUserAuthenticated())
+            {
+                int? userId = _accountStore.CurrentUserId;
+
+                if (userId.HasValue)
+                {
+                    var collectionsViewModel = new CollectionsViewModel(_collectionService, userId.Value);
+                    var collectionsView = new CollectionsView(collectionsViewModel);
+                    collectionsView.Show();
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("User is not authenticated.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("No user is logged in.");
+            }
         }
 
-        private void BooksButton_Click(object sender, RoutedEventArgs e)
+        private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
-            // Navigate to the Books view
+            // Отримуємо збережений інстанс BooksView з App
+            var app = (App)Application.Current; // Отримуємо екземпляр App
+            var booksView = app.BooksView;
+
+            booksView.Show(); // Показуємо BooksView
+            this.Close(); // Закриваємо поточне вікно UserProfileView
         }
+
     }
 }

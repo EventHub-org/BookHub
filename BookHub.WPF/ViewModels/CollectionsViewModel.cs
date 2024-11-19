@@ -14,9 +14,11 @@ namespace BookHub.WPF.ViewModels
         private readonly ICollectionService _collectionService; // Use your collection service interface
         private ObservableCollection<CollectionDto> _collections = new ObservableCollection<CollectionDto>(); // Initialize here
         private CollectionDto _selectedCollection; // The currently selected collection
+        private int _userId;
 
-        public CollectionsViewModel(ICollectionService collectionService)
+        public CollectionsViewModel(ICollectionService collectionService, int userId)
         {
+            _userId = userId;
             _collectionService = collectionService;
             LoadCollectionsAsync().ConfigureAwait(false);
         }
@@ -41,12 +43,11 @@ namespace BookHub.WPF.ViewModels
             }
         }
         
-
-        private async Task LoadCollectionsAsync(int userId = 1)
+        private async Task LoadCollectionsAsync()
         {
             try
             {
-                var result = await _collectionService.GetAllCollectionsAsync(userId); 
+                var result = await _collectionService.GetAllCollectionsAsync(_userId); 
                 if (result.Success)
                 {
                     Collections = new ObservableCollection<CollectionDto>(result.Data); 
@@ -62,13 +63,14 @@ namespace BookHub.WPF.ViewModels
                 Log.Error(ex, "An error occurred while loading collections."); 
             }
         }
-        public async Task CreateCollectionAsync(string collectionName, int userId = 1)
+
+        public async Task CreateCollectionAsync(string collectionName)
         {
             Log.Information("Starting to create a new collection...");
 
             try
             {
-                var newCollection = new CollectionDto { Name = collectionName, UserId = userId };
+                var newCollection = new CollectionDto { Name = collectionName, UserId = _userId };
                 var result = await _collectionService.CreateCollectionAsync(newCollection);
 
                 if (result.Success)
@@ -87,10 +89,10 @@ namespace BookHub.WPF.ViewModels
             }
         }
 
-        public async Task RefreshCollectionsAsync(int userId = 1)
+        public async Task RefreshCollectionsAsync()
         {
             Log.Information("Refreshing collections...");
-            await LoadCollectionsAsync(userId);
+            await LoadCollectionsAsync();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -15,6 +15,7 @@ namespace BookHub.WPF.Views
         public LoginWindow(IAuthService authService,IAccountStore accountStore, ISessionService sessionService)
         {
             InitializeComponent();
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             DataContext = new LoginViewModel(authService, accountStore, sessionService);
         }
 
@@ -24,6 +25,16 @@ namespace BookHub.WPF.Views
             {
                 vm.Password = passwordBox.Password;
             }
+        }
+
+        private void HomeButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Отримуємо збережений інстанс BooksView з App
+            var app = (App)Application.Current; // Отримуємо екземпляр App
+            var booksView = app.BooksView;
+
+            booksView.Show(); // Показуємо BooksView
+            this.Close(); // Закриваємо поточне вікно UserProfileView
         }
     }
 }

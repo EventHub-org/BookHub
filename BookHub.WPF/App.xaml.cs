@@ -30,6 +30,7 @@ namespace BookHub.WPF
     {
         private IMapper _mapper;
         private Autofac.IContainer _container;
+        public BooksView BooksView { get; private set; }
 
         public App()
         {
@@ -134,8 +135,10 @@ namespace BookHub.WPF
             _container = builder.Build();
 
             // Resolve the main window and show it
-            var mainView = _container.Resolve<BooksView>();
-            mainView.Show();
+            //var mainView = _container.Resolve<BooksView>();
+            //mainView.Show();
+            BooksView = _container.Resolve<BooksView>();
+            BooksView.Show();
         }
 
 
