@@ -1,5 +1,6 @@
 ﻿using BookHub.BLL.Services.Interfaces;
 using BookHub.DAL.DTO;
+using BookHub.WPF.State.Accounts;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-
+using Serilog;
 
 
 namespace BookHub.WPF.ViewModels
@@ -18,10 +19,13 @@ namespace BookHub.WPF.ViewModels
         private readonly IAuthService _authService;
         private readonly ISessionService _sessionService;
 
-        public RegisterViewModel(IAuthService authService, ISessionService sessionService)
+        private readonly IAccountStore _accountStore;
+
+        public RegisterViewModel(IAuthService authService, IAccountStore accountStore, ISessionService sessionService)
         {
             _authService = authService;
             _sessionService = sessionService;
+            _accountStore = accountStore;
             RegisterCommand = new RelayCommand(async () => await RegisterAsync(), () => CanRegister);
         }
 
@@ -89,14 +93,22 @@ namespace BookHub.WPF.ViewModels
                 Email = Email,
                 Password = Password
             };
+            Log.Information("Attempting to register with email: {Email}", Email);
 
             var result = await _authService.RegisterUserAsync(userDto);
             if (!result.Success)
             {
+                Log.Error("Registration failed for email: {Email}. Error: {ErrorMessage}", Email, result.ErrorMessage);
+
                 ErrorMessage = result.ErrorMessage;
             }
             else
             {
+                Log.Information("Registration successful for email: {Email}. ", Email);
+                _accountStore.SetCurrentUser(result.Data);
+                //_sessionService.SetCurrentUser(result.Data);
+
+                //IsAuthenticated = _sessionService.IsUserAuthenticated();
                 ErrorMessage = "Registration successful!";
             }
         }

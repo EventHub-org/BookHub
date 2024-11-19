@@ -18,6 +18,7 @@ using System.IO;
 using BookHub.DAL.DTO;
 using System.Configuration;
 using Microsoft.Win32;
+using BookHub.WPF.State.Accounts;
 
 
 namespace BookHub.WPF
@@ -100,6 +101,7 @@ namespace BookHub.WPF
             builder.RegisterType<ReadingProgressServiceImpl>().As<IReadingProgressService>();
             builder.RegisterType<AuthService>().As<IAuthService>();
 
+            builder.RegisterType<SessionService>().As<ISessionService>();
 
             builder.RegisterType<BookRepository>().As<IRepository<BookEntity>>();
 
@@ -109,6 +111,7 @@ namespace BookHub.WPF
 
             builder.RegisterType<CollectionRepository>().As<ICollectionRepository>();
 
+            builder.RegisterType<AccountStore>().As<IAccountStore>().SingleInstance();
 
             builder.RegisterType<CollectionService>().As<ICollectionService>();
             //builder.RegisterType<CollectionRepository>().As<ICollectionRepository>();
@@ -126,6 +129,7 @@ namespace BookHub.WPF
             builder.RegisterType<JournalView>();
             builder.RegisterType<RegisterWindow>();
             builder.RegisterType<LoginWindow>();
+
 
             _container = builder.Build();
 

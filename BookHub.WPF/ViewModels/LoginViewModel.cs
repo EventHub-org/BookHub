@@ -1,21 +1,26 @@
 ﻿using BookHub.BLL.Services.Interfaces;
+using BookHub.DAL.DTO;
+using BookHub.WPF.Views;
+using BookHub.WPF.State.Accounts;
+using Serilog; // Add the Serilog namespace for logging
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using BookHub.DAL.DTO;
-using BookHub.WPF.Views;
 
 namespace BookHub.WPF.ViewModels
 {
     public class LoginViewModel : INotifyPropertyChanged
     {
         private readonly IAuthService _authService;
+        private readonly IAccountStore _accountStore;
         private readonly ISessionService _sessionService;
 
-        public LoginViewModel(IAuthService authService, ISessionService sessionService)
+        public LoginViewModel(IAuthService authService, IAccountStore accountStore, ISessionService sessionService)
         {
             _authService = authService;
+            _accountStore = accountStore;
             _sessionService = sessionService;
             LoginCommand = new RelayCommand(async () => await LoginAsync(), () => CanLogin);
             IsAuthenticated = _sessionService.IsUserAuthenticated();
@@ -72,17 +77,24 @@ namespace BookHub.WPF.ViewModels
                 Password = Password
             };
 
+            Log.Information("Attempting to log in with email: {Email}", Email);
+
             var result = await _authService.LoginUserAsync(userDto);
+
             if (!result.Success)
             {
+                Log.Error("Login failed for email: {Email}. Error: {ErrorMessage}", Email, result.ErrorMessage);
                 ErrorMessage = result.ErrorMessage;
             }
             else
             {
+                Log.Information("Login successful for email: {Email}. ", Email);
                 ErrorMessage = "Login successful!";
-                _sessionService.SetCurrentUser(result.Data); // Оновлюємо поточного користувача в сесії
 
-                IsAuthenticated = _sessionService.IsUserAuthenticated();
+                _accountStore.SetCurrentUser(result.Data);
+                //_sessionService.SetCurrentUser(result.Data);
+
+                //IsAuthenticated = _accountStore.IsUserAuthenticated();
             }
         }
 

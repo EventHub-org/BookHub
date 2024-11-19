@@ -1,5 +1,6 @@
 ﻿using BookHub.BLL.Services.Implementations;
 using BookHub.BLL.Services.Interfaces;
+using BookHub.WPF.State.Accounts;
 using BookHub.WPF.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,10 +12,10 @@ namespace BookHub.WPF.Views
     /// </summary>
     public partial class LoginWindow : Window
     {
-        public LoginWindow(IAuthService authService, ISessionService sessionService)
+        public LoginWindow(IAuthService authService,IAccountStore accountStore, ISessionService sessionService)
         {
             InitializeComponent();
-            DataContext = new LoginViewModel(authService, sessionService);
+            DataContext = new LoginViewModel(authService, accountStore, sessionService);
         }
 
         private void OnPasswordChanged(object sender, RoutedEventArgs e)

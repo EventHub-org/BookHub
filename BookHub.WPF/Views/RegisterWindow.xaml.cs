@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using BookHub.WPF.ViewModels;
+using BookHub.WPF.State.Accounts;
 
 namespace BookHub.WPF.Views
 {
@@ -21,10 +22,10 @@ namespace BookHub.WPF.Views
     /// </summary>
     public partial class RegisterWindow : Window
     {
-        public RegisterWindow(IAuthService authService, ISessionService sessionService)
+        public RegisterWindow(IAuthService authService, IAccountStore accountStore,ISessionService sessionService)
         {
             InitializeComponent();
-            DataContext = new RegisterViewModel(authService, sessionService);
+            DataContext = new RegisterViewModel(authService, accountStore, sessionService);
         }
 
         private void OnPasswordChanged(object sender, RoutedEventArgs e)

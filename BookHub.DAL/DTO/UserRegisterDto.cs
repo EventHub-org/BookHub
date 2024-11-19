@@ -20,5 +20,8 @@ namespace BookHub.DAL.DTO
 
         [Required(ErrorMessage = "Password is required.")]
         public string Password { get; set; }
+
+        [Required(ErrorMessage = "Password is required.")]
+        public string confirmPassword { get; set; }
     }
 }

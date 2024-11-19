@@ -13,6 +13,9 @@ using System.Windows.Shapes;
 using AutoMapper;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using BookHub.WPF.State.Accounts;
+using BookHub.BLL.Services.Implementations;
+using Serilog; 
 
 namespace BookHub.WPF.Views
 {
@@ -28,10 +31,10 @@ namespace BookHub.WPF.Views
 
         private readonly IReadingProgressService _readingProgressService;
         private readonly IBookService _bookService;
-
+        private readonly IAccountStore _accountStore;
 
         public BooksView(BooksViewModel viewModel, ICollectionService collectionService, IUserService userService,
-            IReadingProgressService readingProgressService, IBookService bookService, IAuthService authService, ISessionService sessionService)
+            IReadingProgressService readingProgressService, IBookService bookService, IAuthService authService, ISessionService sessionService, IAccountStore accountStore)
         {
             InitializeComponent();
             DataContext = viewModel;
@@ -41,6 +44,7 @@ namespace BookHub.WPF.Views
             _userService = userService;
             _authService = authService;
             _sessionService = sessionService;
+            _accountStore = accountStore;
         }
 
 
@@ -53,67 +57,94 @@ namespace BookHub.WPF.Views
             this.Close();
         }
 
-        // Button to navigate to User Profile view
-        private async void ProfileButton_Click(object sender, RoutedEventArgs e)
+
+private async void ProfileButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Log the profile button click
+        Log.Information("Profile button clicked.");
+
+        if (_accountStore.IsUserAuthenticated()) // Use AccountStore to get current authenticated account
         {
-            int userId = 1; // Ideally, fetch this from session/context or login
+            int? userId = _accountStore.CurrentUserId; // Assuming Account has UserId
 
-            // Fetch user data asynchronously using the IUserService
-            var user = await _userService.GetUserByIdAsync(userId);
+            // Log the current user's ID
+            Log.Information("UserId retrieved from AccountStore: {UserId}", userId);
 
-            if (user != null)
+            if (userId.HasValue)
             {
-                // Create UserProfileViewModel only if user exists
-                var userProfileViewModel = new UserProfileViewModel(_userService, user.Data);
-                var userProfileView = new UserProfileView(_userService, user.Data)
+                Log.Information("UserId is valid: {UserId}", userId.Value);
+
+                // Example: Fetching user data based on userId
+                var user = await _userService.GetUserByIdAsync(userId.Value);
+
+                if (user != null)
                 {
-                    DataContext = userProfileViewModel
-                };
-                userProfileView.ShowDialog();
+                    Log.Information("User data retrieved for UserId: {UserId}", userId.Value);
+
+                    var userProfileViewModel = new UserProfileViewModel(_userService, user.Data);
+                    var userProfileView = new UserProfileView(_userService, user.Data)
+                    {
+                        DataContext = userProfileViewModel
+                    };
+                    userProfileView.ShowDialog();
+
+                    Log.Information("User profile view shown for UserId: {UserId}", userId.Value);
+                }
+                else
+                {
+                    Log.Warning("No user data found for UserId: {UserId}", userId.Value);
+                    MessageBox.Show("User not found.");
+                }
             }
             else
             {
-                MessageBox.Show("User not found.");
+                Log.Warning("UserId is null or invalid for the current account.");
+                MessageBox.Show("User is not authenticated.");
             }
         }
-
-        private void RegisterButton_Click(object sender, RoutedEventArgs e)
+        else
         {
-            var registerViewModel = new RegisterViewModel(_authService, _sessionService); // Pass the required authService parameter
-            var registerView = new RegisterWindow(_authService, _sessionService) // Pass the required authService parameter
+            Log.Warning("No user is currently logged in.");
+            MessageBox.Show("No user is logged in.");
+        }
+    }
+
+
+    private void RegisterButton_Click(object sender, RoutedEventArgs e)
+        {
+            var registerViewModel = new RegisterViewModel(_authService, _accountStore, _sessionService); 
+            var registerView = new RegisterWindow(_authService, _accountStore, _sessionService) 
             {
-                DataContext = registerViewModel // Bind ViewModel to View
+                DataContext = registerViewModel 
             };
-            registerView.Show(); // Open the registration window
+            registerView.Show(); 
             
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var loginViewModel = new LoginViewModel(_authService, _sessionService); // Pass the required authService parameter
-            var loginView = new LoginWindow(_authService, _sessionService) // Pass the required authService parameter
+            var loginViewModel = new LoginViewModel(_authService, _accountStore, _sessionService); 
+            var loginView = new LoginWindow(_authService, _accountStore, _sessionService) 
             {
-                DataContext = loginViewModel // Bind ViewModel to View
+                DataContext = loginViewModel 
             };
-            loginView.Show(); // Open the login window
+            loginView.Show(); 
             
         }
 
         private async void Journal_Click(object sender, RoutedEventArgs e)
         {
-            int userId = 1; // Replace with actual logic to get the user ID
+            int userId = 1; 
             var user = await _userService.GetUserByIdAsync(userId);
 
             if (user != null)
             {
-                // Initialize the JournalViewModel directly with dependencies
                 var journalViewModel = new JournalViewModel(
                     user.Data,
                     _readingProgressService,
                     _bookService
                 );
 
-                // Create and show the JournalView window with the view model
                 var journalView = new JournalView(journalViewModel);
                 journalView.Show();
             }
