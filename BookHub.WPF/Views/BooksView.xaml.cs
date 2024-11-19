@@ -48,6 +48,7 @@ namespace BookHub.WPF.Views
             _accountStore = accountStore;
         }
 
+
         private void CollectionsButton_Click(object sender, RoutedEventArgs e)
         {
             if (_accountStore.IsUserAuthenticated())
@@ -197,5 +198,6 @@ namespace BookHub.WPF.Views
             frame.Navigate(page);
         }
 
+        
     }
 }
