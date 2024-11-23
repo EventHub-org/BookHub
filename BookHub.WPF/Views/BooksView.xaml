@@ -12,12 +12,29 @@
     <Grid>
         <!-- Відокремлений верхній блок для кнопок -->
         <Border Background="LightGray" Margin="0,0,0,10">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <Button Content="Collections" Margin="5" Padding="5" Width="100" Click="CollectionsButton_Click"/>
-                <Button Content="Profile" Margin="5" Padding="5" Width="100" Click="ProfileButton_Click"/>
-                <Button Content="Login" Click="LoginButton_Click" Visibility="{Binding ShowLoginButton, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
-                <Button Content="Register" Click="RegisterButton_Click" Visibility="{Binding ShowRegisterButton, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
-            </StackPanel>
+            <Grid VerticalAlignment="Top">
+                <!-- Дві колонки: одна для кнопок ліворуч, інша для праворуч -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <!-- Ліва колонка -->
+                    <ColumnDefinition Width="Auto" />
+                    <!-- Права колонка -->
+                </Grid.ColumnDefinitions>
+
+                <!-- Кнопки зліва -->
+                <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Top">
+                    <Button Content="Collections" Margin="5" Padding="5" Width="100" Height="30" Click="CollectionsButton_Click"/>
+                    <Button Content="Profile" Margin="5" Padding="5" Width="100" Height="30" Click="ProfileButton_Click"/>
+                </StackPanel>
+
+                <!-- Кнопки справа -->
+                <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">
+                    <Button Content="Login" Margin="5" Padding="5" Width="100" Height="30" Click="LoginButton_Click" 
+              Visibility="{Binding ShowLoginButton, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+                    <Button Content="Register" Margin="5" Padding="5" Width="100" Height="30" Click="RegisterButton_Click" 
+              Visibility="{Binding ShowRegisterButton, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+                </StackPanel>
+            </Grid>
         </Border>
 
         <!-- Основний контент -->

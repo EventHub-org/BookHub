@@ -5,6 +5,7 @@ using BookHub.DAL.DTO;
 using BookHub.DAL.Entities;
 using BookHub.DAL.Repositories.Interfaces;
 using Serilog;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookHub.BLL.Services.Implementations
 {
@@ -38,6 +39,14 @@ namespace BookHub.BLL.Services.Implementations
                 ProfilePicture = "https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg"
             };
 
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(userEntity);
+            bool isValid = Validator.TryValidateObject(userEntity, validationContext, validationResults, true);
+
+            if (!isValid)
+            {
+                return ServiceResultType<UserDto>.ErrorResult("Validation failed: " + string.Join(", ", validationResults.Select(v => v.ErrorMessage)));
+            }
             await _userRepository.AddAsync(userEntity);
             Log.Information($"User with email {userRegisterDto.Email} registered at {DateTime.UtcNow}.");
 
