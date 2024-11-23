@@ -1,30 +1,39 @@
 <Window x:Class="BookHub.WPF.Views.JournalView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Journal" Height="400" Width="300">
-    <Grid>
-        <Border Background="LightGray" Margin="0,0,0,10">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                <TextBlock Text="Recent books" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        Title="Journal" Height="600" Width="800" MinHeight="600" MinWidth="800" ResizeMode="CanResizeWithGrip">
+    <DockPanel Margin="20">
+        <!-- Home Button in the Top Left Corner -->
+        <Button Content="Home" Click="HomeButton_Click" 
+                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,10"
+                DockPanel.Dock="Top"/>
+
+        <!-- Main Content of the Window -->
+        <Grid DockPanel.Dock="Top">
+            <Border Background="LightGray" Margin="0,0,0,10">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                    <TextBlock Text="Recent books" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="0,40,0,0">
+                <ListView ItemsSource="{Binding JournalEntries}" Margin="10" >
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Book Title" DisplayMemberBinding="{Binding BookTitle}" Width="100"/>
+                            <GridViewColumn Header="Progress" DisplayMemberBinding="{Binding Progress}" Width="50"/>
+                            <GridViewColumn Header="Last Opened" DisplayMemberBinding="{Binding LastOpened}" Width="100"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </ScrollViewer>
+
+            <!-- Pagination Controls -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10">
+                <Button Content="&#x25C0;" Width="50" Margin="5" Padding="5" Command="{Binding PreviousPageCommand}"/>
+                <TextBlock Text="{Binding CurrentPage}" VerticalAlignment="Center" Margin="5"/>
+                <Button Content="&#x25B6;" Width="50" Margin="5" Padding="5" Command="{Binding NextPageCommand}"/>
             </StackPanel>
-        </Border>
-
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="0,40,0,0">
-            <ListView ItemsSource="{Binding JournalEntries}" Margin="10">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Book Title" DisplayMemberBinding="{Binding BookTitle}" Width="100"/>
-                        <GridViewColumn Header="Progress" DisplayMemberBinding="{Binding Progress}" Width="50"/>
-                        <GridViewColumn Header="Last Opened" DisplayMemberBinding="{Binding LastOpened}" Width="100"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </ScrollViewer>
-
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10">
-            <Button Content="&#x25C0;" Width="50" Margin="5" Padding="5" Command="{Binding PreviousPageCommand}"/>
-            <TextBlock Text="{Binding CurrentPage}" VerticalAlignment="Center" Margin="5"/>
-            <Button Content="&#x25B6;" Width="50" Margin="5" Padding="5" Command="{Binding NextPageCommand}"/>
-        </StackPanel>
-    </Grid>
+        </Grid>
+    </DockPanel>
 </Window>

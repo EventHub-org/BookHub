@@ -11,5 +11,6 @@ namespace BookHub.BLL.Services.Interfaces
     public interface IAuthService
     {
         Task<ServiceResultType<UserDto>> RegisterUserAsync(UserRegisterDto userRegistraterDto);
+        Task<ServiceResultType<UserDto>> LoginUserAsync(UserLoginDto userLoginDto);
     }
 }

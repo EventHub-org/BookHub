@@ -3,18 +3,44 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:BookHub.WPF.Converters"
         mc:Ignorable="d"
-        Title="Books" Height="600" Width="800">
+        Title="Books" Height="600" Width="800" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
     <Grid>
         <!-- Відокремлений верхній блок для кнопок -->
         <Border Background="LightGray" Margin="0,0,0,10">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <Grid VerticalAlignment="Top">
+                <!-- Дві колонки: одна для кнопок ліворуч, інша для праворуч -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <!-- Ліва колонка -->
+                    <ColumnDefinition Width="Auto" />
+                    <!-- Права колонка -->
+                </Grid.ColumnDefinitions>
 
-                <Button Content="Collections" Margin="5" Padding="5" Width="100" Click="CollectionsButton_Click"/>
+                <!-- Кнопки зліва -->
+                <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Top">
+                    <Button Content="Collections" Margin="5" Padding="5" Width="100" Height="30" Click="CollectionsButton_Click"/>
+                    <Button Content="Profile" Margin="5" Padding="5" Width="100" Height="30" Click="ProfileButton_Click"/>
+                </StackPanel>
 
-                <Button Content="Profile" Margin="5" Padding="5" Width="100" Click="ProfileButton_Click"/>
-            </StackPanel>
+                <!-- Кнопки справа -->
+                <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">
+                    <Button Content="Login"  Margin="5" Padding="5" Width="100" Height="30"
+                    Visibility="{Binding IsUserNotLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                    Command="{Binding LoginCommand}" Click="LoginButton_Click" />
+                    <Button Content="Register" Margin="5" Padding="5" Width="100" Height="30" Click="RegisterButton_Click" 
+                    Visibility="{Binding IsUserNotLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Button Content="Logout" Margin="5" Padding="5" Width="100" Height="30"
+                    Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                    Command="{Binding LogoutCommand}" Click="Logout_Click" />
+                </StackPanel>
+            </Grid>
         </Border>
+
 
         <!-- Основний контент -->
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="0,60,0,0">
@@ -25,25 +51,18 @@
                             <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="16" Margin="5" Padding="0" Background="White" Width="250">
                                 <StackPanel ClipToBounds="True">
                                     <!-- Cover Image -->
-                                    
                                     <Image Source="{Binding CoverImageUrl}" Height="350" Width="250" Stretch="UniformToFill" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-
                                     <!-- Book Title -->
                                     <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="Bold" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-
                                     <!-- Author -->
                                     <TextBlock Text="Author:" FontWeight="Bold"/>
                                     <TextBlock Text="{Binding Author}" TextWrapping="Wrap" Margin="0,0,0,5"/>
-
                                     <!-- Rating -->
                                     <TextBlock Text="Rating:" FontWeight="Bold"/>
                                     <TextBlock Text="{Binding Rating}" Margin="0,0,0,5"/>
-
                                     <!-- Button to open book details -->
                                     <Button Content="View Details" Command="{Binding DataContext.OpenBookDetailsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
                                         CommandParameter="{Binding Id}" Margin="5,10,5,0"/>
-
-
                                 </StackPanel>
                             </Border>
                         </DataTemplate>

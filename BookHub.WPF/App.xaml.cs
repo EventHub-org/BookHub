@@ -17,6 +17,8 @@ using DotNetEnv;
 using System.IO;
 using BookHub.DAL.DTO;
 using System.Configuration;
+using Microsoft.Win32;
+using BookHub.WPF.State.Accounts;
 
 
 namespace BookHub.WPF
@@ -28,6 +30,7 @@ namespace BookHub.WPF
     {
         private IMapper _mapper;
         private Autofac.IContainer _container;
+        public BooksView BooksView { get; private set; }
 
         public App()
         {
@@ -69,6 +72,9 @@ namespace BookHub.WPF
             // Register IMapper in the container
             builder.RegisterInstance(_mapper).As<IMapper>().SingleInstance();
 
+            // Реєстрація SessionService
+            builder.RegisterType<SessionService>().As<ISessionService>().SingleInstance();
+
             string envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\.env");
 
             DotNetEnv.Env.Load(envPath);
@@ -94,7 +100,9 @@ namespace BookHub.WPF
             builder.RegisterType<UserService>().As<IUserService>();
             builder.RegisterType<ReviewService>().As<IReviewService>();
             builder.RegisterType<ReadingProgressServiceImpl>().As<IReadingProgressService>();
+            builder.RegisterType<AuthService>().As<IAuthService>();
 
+            builder.RegisterType<SessionService>().As<ISessionService>();
 
             builder.RegisterType<BookRepository>().As<IRepository<BookEntity>>();
 
@@ -104,6 +112,7 @@ namespace BookHub.WPF
 
             builder.RegisterType<CollectionRepository>().As<ICollectionRepository>();
 
+            builder.RegisterType<AccountStore>().As<IAccountStore>().SingleInstance();
 
             builder.RegisterType<CollectionService>().As<ICollectionService>();
             //builder.RegisterType<CollectionRepository>().As<ICollectionRepository>();
@@ -113,16 +122,23 @@ namespace BookHub.WPF
             builder.RegisterType<CollectionsViewModel>();
             builder.RegisterType<UserProfileViewModel>();
             builder.RegisterType<JournalViewModel>();
+            builder.RegisterType<RegisterViewModel>();
+            builder.RegisterType<LoginViewModel>();
 
             builder.RegisterType<BooksView>();
             builder.RegisterType<UserProfileView>();
             builder.RegisterType<JournalView>();
+            builder.RegisterType<RegisterWindow>();
+            builder.RegisterType<LoginWindow>();
+
 
             _container = builder.Build();
 
             // Resolve the main window and show it
-            var mainView = _container.Resolve<BooksView>();
-            mainView.Show();
+            //var mainView = _container.Resolve<BooksView>();
+            //mainView.Show();
+            BooksView = _container.Resolve<BooksView>();
+            BooksView.Show();
         }
 
 

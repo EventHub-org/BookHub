@@ -5,6 +5,7 @@ public class RelayCommand : ICommand
 {
     private readonly Action _execute;
     private readonly Func<bool> _canExecute;
+    private EventHandler _canExecuteChanged;
 
     public RelayCommand(Action execute, Func<bool> canExecute = null)
     {
@@ -21,6 +22,8 @@ public class RelayCommand : ICommand
         add => CommandManager.RequerySuggested += value;
         remove => CommandManager.RequerySuggested -= value;
     }
+    public void RaiseCanExecuteChanged() =>
+        _canExecuteChanged?.Invoke(this, EventArgs.Empty);
 }
 
 public class RelayCommand<T> : ICommand

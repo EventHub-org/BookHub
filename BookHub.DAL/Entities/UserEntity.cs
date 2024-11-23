@@ -18,7 +18,7 @@ namespace BookHub.DAL.Entities
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Password is required.")]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "Password must be between 6 and 20 characters.")]
+        [StringLength(200, ErrorMessage = "Password hash cannot exceed 200 characters.")]
         public string Password { get; set; }
 
         public string ProfilePicture { get; set; } //url

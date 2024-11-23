@@ -1,27 +1,20 @@
+using AutoMapper;
 using BookHub.BLL.Services.Interfaces;
 using BookHub.DAL.DTO;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows.Controls;
-using System.Windows;
-using Serilog;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+using BookHub.WPF.State.Accounts;
 using BookHub.WPF.Views;
-using AutoMapper;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 
 namespace BookHub.WPF.ViewModels
 {
     public class BooksViewModel : INotifyPropertyChanged
     {
-
         private readonly IBookService _bookService;
-        private readonly IUserService _userService;
         private readonly IReviewService _reviewService;
         private readonly IMapper _mapper;
         public ICommand OpenBookDetailsCommand { get; }
@@ -31,27 +24,34 @@ namespace BookHub.WPF.ViewModels
         private const int _pageSize = 3;
         private int _totalPages;
 
+        private readonly IAccountStore _accountStore;
 
-        public BooksViewModel(IBookService bookService, IUserService userService, IReviewService reviewService, IMapper mapper)
+
+        public BooksViewModel(IBookService bookService, IReviewService reviewService, IMapper mapper, ISessionService sessionService, IAccountStore accountStore)
         {
             _bookService = bookService;
-            _userService = userService;
+            _reviewService = reviewService;
             _mapper = mapper;
+
+            _accountStore = accountStore;
+            _accountStore.StateChanged += OnAccountStateChanged;
+
             CurrentPage = 1;
             LoadBooksAsync().ConfigureAwait(false);
             PreviousPageCommand = new RelayCommand(PreviousPage, CanGoToPreviousPage);
             NextPageCommand = new RelayCommand(NextPage, CanGoToNextPage);
             OpenBookDetailsCommand = new RelayCommand<int>(async (bookId) => await OpenBookDetailsAsync(bookId));
 
-            _reviewService = reviewService;
+        }
+        public bool IsUserLoggedIn => _accountStore.IsUserAuthenticated();
+        public bool IsUserNotLoggedIn => !IsUserLoggedIn;
+
+        private void OnAccountStateChanged()
+        {
+            OnPropertyChanged(nameof(IsUserLoggedIn));
+            OnPropertyChanged(nameof(IsUserNotLoggedIn));
         }
 
-        // Method to get user by ID
-        public async Task<UserDto> GetUserByIdAsync(int userId)
-        {
-            var result = await _userService.GetUserByIdAsync(userId);
-            return result.Success ? result.Data : null;
-        }
 
         public ObservableCollection<BookDto> Books
         {
@@ -126,7 +126,6 @@ namespace BookHub.WPF.ViewModels
             booksView?.NavigateToPage(page);
         }
 
-
         private void PreviousPage()
         {
             if (CanGoToPreviousPage())
@@ -146,6 +145,9 @@ namespace BookHub.WPF.ViewModels
         private bool CanGoToPreviousPage() => CurrentPage > 1;
 
         private bool CanGoToNextPage() => CurrentPage < TotalPages;
+
+
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

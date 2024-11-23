@@ -23,6 +23,7 @@ namespace BookHub.WPF.Views
         public MainWindow()
         {
             InitializeComponent();
+            this.Close();
             //DataContext = viewModel;
         }
     }
