@@ -21,5 +21,7 @@ namespace BookHub.WPF.Views
             booksView.Show(); // Показуємо BooksView
             this.Close(); // Закриваємо поточне вікно UserProfileView
         }
+
+       
     }
 }

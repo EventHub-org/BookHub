@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Books" Height="600" Width="800" WindowStartupLocation="CenterScreen">
     <Window.Resources>
-        <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Window.Resources>
     <Grid>
         <!-- Відокремлений верхній блок для кнопок -->
@@ -29,13 +29,18 @@
 
                 <!-- Кнопки справа -->
                 <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">
-                    <Button Content="Login" Margin="5" Padding="5" Width="100" Height="30" Click="LoginButton_Click" 
-              Visibility="{Binding ShowLoginButton, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+                    <Button Content="Login"  Margin="5" Padding="5" Width="100" Height="30"
+                    Visibility="{Binding IsUserNotLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                    Command="{Binding LoginCommand}" Click="LoginButton_Click" />
                     <Button Content="Register" Margin="5" Padding="5" Width="100" Height="30" Click="RegisterButton_Click" 
-              Visibility="{Binding ShowRegisterButton, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+                    Visibility="{Binding IsUserNotLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Button Content="Logout" Margin="5" Padding="5" Width="100" Height="30"
+                    Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                    Command="{Binding LogoutCommand}" Click="Logout_Click" />
                 </StackPanel>
             </Grid>
         </Border>
+
 
         <!-- Основний контент -->
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="0,60,0,0">

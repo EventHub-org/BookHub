@@ -1,6 +1,7 @@
 using AutoMapper;
 using BookHub.BLL.Services.Interfaces;
 using BookHub.DAL.DTO;
+using BookHub.WPF.State.Accounts;
 using BookHub.WPF.Views;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -15,7 +16,6 @@ namespace BookHub.WPF.ViewModels
     {
         private readonly IBookService _bookService;
         private readonly IReviewService _reviewService;
-        private readonly ISessionService _sessionService;
         private readonly IMapper _mapper;
         public ICommand OpenBookDetailsCommand { get; }
         private ObservableCollection<BookDto> _books;
@@ -24,14 +24,17 @@ namespace BookHub.WPF.ViewModels
         private const int _pageSize = 3;
         private int _totalPages;
 
-        
+        private readonly IAccountStore _accountStore;
 
-        public BooksViewModel(IBookService bookService, IReviewService reviewService, IMapper mapper, ISessionService sessionService)
+
+        public BooksViewModel(IBookService bookService, IReviewService reviewService, IMapper mapper, ISessionService sessionService, IAccountStore accountStore)
         {
             _bookService = bookService;
             _reviewService = reviewService;
             _mapper = mapper;
-            _sessionService = sessionService;
+
+            _accountStore = accountStore;
+            _accountStore.StateChanged += OnAccountStateChanged;
 
             CurrentPage = 1;
             LoadBooksAsync().ConfigureAwait(false);
@@ -40,8 +43,15 @@ namespace BookHub.WPF.ViewModels
             OpenBookDetailsCommand = new RelayCommand<int>(async (bookId) => await OpenBookDetailsAsync(bookId));
 
         }
+        public bool IsUserLoggedIn => _accountStore.IsUserAuthenticated();
+        public bool IsUserNotLoggedIn => !IsUserLoggedIn;
 
-        
+        private void OnAccountStateChanged()
+        {
+            OnPropertyChanged(nameof(IsUserLoggedIn));
+            OnPropertyChanged(nameof(IsUserNotLoggedIn));
+        }
+
 
         public ObservableCollection<BookDto> Books
         {

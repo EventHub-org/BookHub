@@ -9,13 +9,8 @@ namespace BookHub.WPF.State.Accounts
     {
         private Account _currentAccount;
         private UserDto _currentUser;
-        private readonly ISessionService _sessionService;
 
-        // Constructor to inject SessionService
-        public AccountStore(ISessionService sessionService)
-        {
-            _sessionService = sessionService;
-        }
+        
 
         // Property to store and retrieve the current account
         public Account CurrentAccount
@@ -34,7 +29,6 @@ namespace BookHub.WPF.State.Accounts
             private set
             {
                 _currentUser = value;
-                _sessionService.SetCurrentUser(value);  
                 StateChanged?.Invoke();
             }
         }
