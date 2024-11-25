@@ -90,6 +90,30 @@
                         </StackPanel>
                     </StackPanel>
 
+                    <!-- Button to open the new collection input field -->
+                    <Button Content="Create New Review" Click="CreateNewReview_Click" Margin="10" Grid.Row="1"/>
+
+                    <!-- Panel for creating a new collection, initially collapsed -->
+                    <StackPanel x:Name="CreateReviewPanel" Margin="10"
+                        MouseDown="CreateReviewPanel_MouseDown">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsReviewnPanelVisible}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <!-- Додатковий контент панелі, наприклад, TextBox для назви колекції -->
+                        <TextBox x:Name="ReviewRatingTextBox" Width="200" Margin="0,5"/>
+                        <TextBlock Height="10"/>
+                        <TextBox x:Name="ReviewCommentTextBox" Width="200" Margin="0,5"/>
+                        <TextBlock Height="10"/>
+                        <Button Content="Save" Click="SaveNewReview_Click" Margin="5"/>
+                    </StackPanel>
+
                 </StackPanel>
             </ScrollViewer>
         </Border>

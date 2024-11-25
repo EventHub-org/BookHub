@@ -112,7 +112,7 @@ namespace BookHub.WPF.ViewModels
             var bookDetailsViewModel = new BookDetailsViewModel(_bookService, _reviewService); // Передаємо обидві залежності
             await bookDetailsViewModel.LoadBookAsync(bookId);
 
-            var bookDetailsView = new BookDetailsView
+            var bookDetailsView = new BookDetailsView(_accountStore, bookDetailsViewModel, bookId)
             {
                 DataContext = bookDetailsViewModel
             };
