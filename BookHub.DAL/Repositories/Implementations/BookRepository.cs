@@ -28,5 +28,23 @@ namespace BookHub.DAL.Repositories.Implementations
 
             return (items, totalCount);
         }
+
+        public async Task<(List<BookEntity> Items, long TotalCount)> GetPagedBooksByCollectionAsync(int collectionId, Pageable pageable)
+        {
+            var query = _context.Collections
+                .Where(c => c.Id == collectionId)
+                .SelectMany(c => c.Books);
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .Skip((pageable.Page - 1) * pageable.Size)
+                .Take(pageable.Size)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
+
+
     }
 }

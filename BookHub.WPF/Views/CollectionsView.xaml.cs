@@ -1,4 +1,8 @@
-﻿using BookHub.DAL.DTO;
+﻿using AutoMapper;
+using BookHub.BLL.Services.Implementations;
+using BookHub.BLL.Services.Interfaces;
+using BookHub.DAL.DTO;
+using BookHub.WPF.State.Accounts;
 using BookHub.WPF.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -21,14 +25,20 @@ namespace BookHub.WPF.Views
     /// </summary>
     public partial class CollectionsView : Window
     {
-        private readonly CollectionsViewModel _viewModel; 
+        private readonly CollectionsViewModel _viewModel;
+        private readonly IBookService _bookService;
+        private ICollectionService _collectionService;
+        private readonly IAccountStore _accountStore;
 
-        public CollectionsView(CollectionsViewModel viewModel)
+        public CollectionsView(CollectionsViewModel viewModel, IBookService bookService, ICollectionService collectionService, IAccountStore accountStore)
         {
             InitializeComponent();
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             DataContext = viewModel; 
             _viewModel = viewModel; 
+            _bookService = bookService;
+            _collectionService = collectionService;
+            _accountStore = accountStore;
         }
 
 
@@ -73,6 +83,23 @@ namespace BookHub.WPF.Views
             booksView.Show(); // Показуємо BooksView
             this.Close(); // Закриваємо поточне вікно UserProfileView
         }
+
+        private void CollectionItem_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Border border && border.DataContext is CollectionDto selectedCollection)
+            {
+                var booksViewModel = new BooksFromCollectionViewModel(
+                    _bookService,
+                    selectedCollection.Id                                 
+                );
+
+                var booksView = new BooksFromCollectionView(booksViewModel, _bookService, _collectionService, _accountStore);
+                booksView.Show();
+
+                this.Close();
+            }
+        }
+
     }
 
 }
