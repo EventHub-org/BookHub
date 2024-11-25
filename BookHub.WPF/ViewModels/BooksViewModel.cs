@@ -17,6 +17,7 @@ namespace BookHub.WPF.ViewModels
         private readonly IBookService _bookService;
         private readonly IReviewService _reviewService;
         private readonly IMapper _mapper;
+        private readonly ICollectionService _collectionService;
         public ICommand OpenBookDetailsCommand { get; }
         private ObservableCollection<BookDto> _books;
         private BookDto _selectedBook;
@@ -27,10 +28,11 @@ namespace BookHub.WPF.ViewModels
         private readonly IAccountStore _accountStore;
 
 
-        public BooksViewModel(IBookService bookService, IReviewService reviewService, IMapper mapper, ISessionService sessionService, IAccountStore accountStore)
+        public BooksViewModel(ICollectionService collectionService, IBookService bookService, IReviewService reviewService, IMapper mapper, ISessionService sessionService, IAccountStore accountStore)
         {
             _bookService = bookService;
             _reviewService = reviewService;
+            _collectionService = collectionService;
             _mapper = mapper;
 
             _accountStore = accountStore;
@@ -103,16 +105,16 @@ namespace BookHub.WPF.ViewModels
             if (result.Success)
             {
                 Books = new ObservableCollection<BookDto>(result.Data.Items);
-                TotalPages = result.Data.TotalPages; // Assuming your service returns total pages
+                TotalPages = result.Data.TotalPages;
             }
         }
 
         private async Task OpenBookDetailsAsync(int bookId)
         {
-            var bookDetailsViewModel = new BookDetailsViewModel(_bookService, _reviewService); // Передаємо обидві залежності
+            var bookDetailsViewModel = new BookDetailsViewModel(_bookService, _reviewService);
             await bookDetailsViewModel.LoadBookAsync(bookId);
 
-            var bookDetailsView = new BookDetailsView
+            var bookDetailsView = new BookDetailsView(_accountStore, _collectionService, bookId, bookDetailsViewModel)
             {
                 DataContext = bookDetailsViewModel
             };

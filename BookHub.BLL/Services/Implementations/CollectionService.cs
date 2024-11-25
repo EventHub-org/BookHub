@@ -71,12 +71,19 @@ namespace BookHub.BLL.Services.Implementations
                 return ServiceResultType.ErrorResult("Book not found");
             }
 
+            
+            Log.Information($"Book entity: {bookEntity.Title}");
+            
+
+            collectionEntity.Books = collectionEntity.Books ?? new List<BookEntity>();
+
             if (collectionEntity.Books.Any(b => b.Id == bookId))
             {
                 return ServiceResultType.ErrorResult("Book is already in the collection");
             }
 
             collectionEntity.Books.Add(bookEntity);
+            Log.Information($"Collection entity book: {collectionEntity.Books}");
 
             await _collectionRepository.UpdateAsync(collectionEntity);
             Log.Information($"Ініціалізовано додавання книги з Id: {bookId} до колекції з Id: {collectionId} о {DateTime.UtcNow}.");

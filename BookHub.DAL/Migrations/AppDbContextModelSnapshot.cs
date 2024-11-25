@@ -40,19 +40,19 @@ namespace BookHub.DAL.Migrations
                     b.ToTable("UsersAchievments", (string)null);
                 });
 
-            modelBuilder.Entity("BookEntityCollectionEntity", b =>
+            modelBuilder.Entity("BookCollection", b =>
                 {
-                    b.Property<int>("BooksId")
+                    b.Property<int>("BookId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CollectionsId")
+                    b.Property<int>("CollectionId")
                         .HasColumnType("int");
 
-                    b.HasKey("BooksId", "CollectionsId");
+                    b.HasKey("BookId", "CollectionId");
 
-                    b.HasIndex("CollectionsId");
+                    b.HasIndex("CollectionId");
 
-                    b.ToTable("BookEntityCollectionEntity");
+                    b.ToTable("BookCollection");
                 });
 
             modelBuilder.Entity("BookHub.DAL.Entities.AchievementEntity", b =>
@@ -249,8 +249,8 @@ namespace BookHub.DAL.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("ProfilePicture")
                         .IsRequired()
@@ -276,17 +276,17 @@ namespace BookHub.DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BookEntityCollectionEntity", b =>
+            modelBuilder.Entity("BookCollection", b =>
                 {
                     b.HasOne("BookHub.DAL.Entities.BookEntity", null)
                         .WithMany()
-                        .HasForeignKey("BooksId")
+                        .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BookHub.DAL.Entities.CollectionEntity", null)
                         .WithMany()
-                        .HasForeignKey("CollectionsId")
+                        .HasForeignKey("CollectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

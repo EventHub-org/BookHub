@@ -42,6 +42,14 @@ namespace BookHub.DAL.DataAccess
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
+            modelBuilder.Entity<BookEntity>()
+           .HasMany(b => b.Collections)
+           .WithMany(c => c.Books)
+           .UsingEntity<Dictionary<string, object>>(
+               "BookCollection",
+               j => j.HasOne<CollectionEntity>().WithMany().HasForeignKey("CollectionId"),
+               j => j.HasOne<BookEntity>().WithMany().HasForeignKey("BookId"));
+
 
             modelBuilder.Entity<AchievementEntity>();
         }

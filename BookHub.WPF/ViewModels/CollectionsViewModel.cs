@@ -23,6 +23,10 @@ namespace BookHub.WPF.ViewModels
             LoadCollectionsAsync().ConfigureAwait(false);
         }
 
+        public CollectionsViewModel()
+        {
+        }
+
         public ObservableCollection<CollectionDto> Collections
         {
             get => _collections;

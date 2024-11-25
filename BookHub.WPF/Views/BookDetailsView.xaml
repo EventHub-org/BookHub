@@ -49,18 +49,30 @@
                                 </WrapPanel>
                             </Border>
 
-                            <Button Content="Додати до списку читання" FontWeight="Bold" FontSize="24" Foreground="White">
+                            <Button Content="Додати до списку читання" Click="openCollectionsView" FontWeight="Bold" FontSize="24" Foreground="White" 
+        IsEnabled="{Binding IsAddToListEnabled}" Background="Green">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
-                                        <Border Background="#865F20"
-                                                Padding="16,12"
-                                                Margin="0, 16"
-                                                CornerRadius="8">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border x:Name="Border" Background="{TemplateBinding Background}" Padding="16,12" Margin="0,16" CornerRadius="8" BorderThickness="1">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
+                                        <ControlTemplate.Triggers>
+                                            <!-- Trigger for the IsEnabled property -->
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Background" TargetName="Border" Value="#CCC" />
+                                                <!-- Disabled background -->
+                                                <Setter Property="Foreground" Value="#888" />
+                                                <!-- Disabled foreground -->
+                                                <Setter Property="Opacity" Value="0.5" />
+                                                <!-- Optional: Make the button semi-transparent -->
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>
+
+
+
                         </StackPanel>
                     </WrapPanel>
 
