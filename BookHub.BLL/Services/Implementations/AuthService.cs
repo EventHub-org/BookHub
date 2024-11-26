@@ -14,12 +14,20 @@ namespace BookHub.BLL.Services.Implementations
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly ISessionService _sessionService;
+        private IUserRepository @object;
+        private IMapper mapper;
 
         public AuthService(IUserRepository userRepository, IMapper mapper, ISessionService sessionService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _sessionService = sessionService;
+        }
+
+        public AuthService(IUserRepository @object, IMapper mapper)
+        {
+            this.@object = @object;
+            this.mapper = mapper;
         }
 
         public async Task<ServiceResultType<UserDto>> RegisterUserAsync(UserRegisterDto userRegisterDto)

@@ -17,6 +17,7 @@ namespace BookHub.WPF.ViewModels
         private readonly IBookService _bookService;
         private readonly IReviewService _reviewService;
         private readonly IMapper _mapper;
+        private readonly ICollectionService _collectionService;
         public ICommand OpenBookDetailsCommand { get; }
         private ObservableCollection<BookDto> _books;
         private BookDto _selectedBook;
@@ -27,10 +28,11 @@ namespace BookHub.WPF.ViewModels
         private readonly IAccountStore _accountStore;
 
 
-        public BooksViewModel(IBookService bookService, IReviewService reviewService, IMapper mapper, ISessionService sessionService, IAccountStore accountStore)
+        public BooksViewModel(ICollectionService collectionService, IBookService bookService, IReviewService reviewService, IMapper mapper, ISessionService sessionService, IAccountStore accountStore)
         {
             _bookService = bookService;
             _reviewService = reviewService;
+            _collectionService = collectionService;
             _mapper = mapper;
 
             _accountStore = accountStore;
@@ -103,40 +105,39 @@ namespace BookHub.WPF.ViewModels
             if (result.Success)
             {
                 Books = new ObservableCollection<BookDto>(result.Data.Items);
-                TotalPages = result.Data.TotalPages; // Assuming your service returns total pages
+                TotalPages = result.Data.TotalPages;
             }
         }
 
         private async Task OpenBookDetailsAsync(int bookId)
         {
-            // Створюємо ViewModel для деталей книги
+         
             var bookDetailsViewModel = new BookDetailsViewModel(_bookService, _reviewService);
             await bookDetailsViewModel.LoadBookAsync(bookId);
-
-            // Створюємо нове вікно
-            var bookDetailsWindow = new BookDetailsView(_accountStore, bookDetailsViewModel, bookId)
+        
+          
+            var bookDetailsWindow = new BookDetailsView(_accountStore, bookDetailsViewModel, bookId, bookDetailsViewModel)
             {
                 DataContext = bookDetailsViewModel,
-                Owner = Application.Current.MainWindow, // Встановлюємо власника
+                Owner = Application.Current.MainWindow,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
-
-            // Закриваємо поточне вікно
+        
+               
             if (Application.Current.MainWindow is Window currentWindow)
             {
-                currentWindow.Hide(); // Використовуємо Hide замість Close для можливого повернення
+                currentWindow.Hide();
             }
-
-            // Показуємо нове вікно
+        
+           
             bookDetailsWindow.ShowDialog();
-
-            // Після закриття нового вікна повертаємо основне
+        
             if (Application.Current.MainWindow is Window previousWindow)
             {
                 previousWindow.Show();
             }
         }
-
+        
         private void NavigateToPage(Page page)
         {
             var booksView = Application.Current.MainWindow as BooksView;

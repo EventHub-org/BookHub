@@ -48,6 +48,9 @@ namespace BookHub.WPF.Views
             _accountStore = accountStore;
         }
 
+        public BooksView()
+        {
+        }
 
         private void CollectionsButton_Click(object sender, RoutedEventArgs e)
         {
