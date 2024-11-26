@@ -3,6 +3,7 @@ using BookHub.DAL.Repositories.Interfaces;
 using BookHub.DAL.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using BookHub.DAL.DTO;
+using System.Linq.Expressions;
 
 namespace BookHub.DAL.Repositories.Implementations
 {
@@ -26,6 +27,11 @@ namespace BookHub.DAL.Repositories.Implementations
                 .ToListAsync();
 
             return (items, totalCount);
+        }
+
+        public async Task<IEnumerable<ReviewEntity>> GetAllAsync(Expression<Func<ReviewEntity, bool>> predicate)
+        {
+            return await _context.Reviews.Where(predicate).ToListAsync();
         }
     }
 }

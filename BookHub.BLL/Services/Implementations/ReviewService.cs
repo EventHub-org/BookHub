@@ -6,20 +6,23 @@ using BookHub.DAL.Repositories.Interfaces;
 using BookHub.BLL.Utils;
 using Serilog;
 using System.ComponentModel.DataAnnotations;
+using BookHub.DAL.Repositories.Implementations;
 
 namespace BookHub.BLL.Services.Implementations
 {
     public class ReviewService : IReviewService
     {
         private readonly IReviewRepository _reviewRepository;
+        private readonly IBookRepository _bookRepository;
         private readonly IRepository<ReviewEntity> _repository;
         private readonly IMapper _mapper;
 
-        public ReviewService(IRepository<ReviewEntity> repository, IReviewRepository reviewRepository, IMapper mapper)
+        public ReviewService(IRepository<ReviewEntity> repository, IReviewRepository reviewRepository, IMapper mapper, IBookRepository bookRepository)
         {
             _repository = repository;
             _reviewRepository = reviewRepository;
             _mapper = mapper;
+            _bookRepository = bookRepository;
         }
 
         public async Task<ServiceResultType<PageDto<ReviewDto>>> GetPaginatedReviewsAsync(Pageable pageable)
@@ -111,6 +114,16 @@ namespace BookHub.BLL.Services.Implementations
             var reviewEntity = _mapper.Map<ReviewEntity>(reviewDto);
             await _reviewRepository.AddAsync(reviewEntity);
 
+            var existingReviews = await _reviewRepository.GetAllAsync(r => r.BookId == reviewDto.BookId);
+            double averageRating = existingReviews.Any() ? existingReviews.Average(r => r.Rating) : 0;
+            var bookEntity = await _bookRepository.GetByIdAsync(b => b.Id == reviewDto.BookId);
+            if (bookEntity != null)
+            {
+                bookEntity.Rating = averageRating;
+                await _bookRepository.UpdateAsync(bookEntity);
+            }
+
+
             Log.Information($"Ініціалізовано створення рецензії з Id: {reviewEntity.Id} о {DateTime.UtcNow}.");
 
             return ServiceResultType<ReviewDto>.SuccessResult(_mapper.Map<ReviewDto>(reviewEntity));
@@ -119,25 +132,19 @@ namespace BookHub.BLL.Services.Implementations
 
         public async Task<ServiceResultType<PageDto<ReviewDto>>> GetPaginatedReviewsByBookIdAsync(int bookId, Pageable pageable)
         {
-            // Отримуємо всі рев'ю, що відповідають bookId, за допомогою репозиторію
             var allReviews = await _reviewRepository.GetAllAsync();
 
-            // Фільтруємо рев'ю за bookId
             var filteredReviews = allReviews.Where(r => r.BookId == bookId);
 
-            // Розраховуємо загальну кількість елементів
             var totalItems = filteredReviews.Count();
 
-            // Застосовуємо пагінацію вручну
             var paginatedReviews = filteredReviews
                 .Skip((pageable.Page - 1) * pageable.Size)
                 .Take(pageable.Size)
                 .ToList();
 
-            // Мапимо отримані ReviewEntity до ReviewDto
             var reviewDtos = _mapper.Map<List<ReviewDto>>(paginatedReviews);
 
-            // Формуємо об'єкт PageDto
             var pageDto = new PageDto<ReviewDto>
             {
                 Items = reviewDtos,
@@ -145,7 +152,6 @@ namespace BookHub.BLL.Services.Implementations
                 TotalPages = (int)Math.Ceiling((double)totalItems / pageable.Size)
             };
 
-            // Повертаємо результат
             return ServiceResultType<PageDto<ReviewDto>>.SuccessResult(pageDto);
         }
 

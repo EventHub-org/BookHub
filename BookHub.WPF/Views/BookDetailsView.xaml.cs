@@ -7,7 +7,7 @@ using Serilog;
 
 namespace BookHub.WPF.Views
 {
-    public partial class BookDetailsView : Page
+    public partial class BookDetailsView : Window
     {
         private readonly IAccountStore _accountStore;
         private readonly BookDetailsViewModel _viewModel;
@@ -16,15 +16,19 @@ namespace BookHub.WPF.Views
         public BookDetailsView(IAccountStore accountStore, BookDetailsViewModel viewModel, int bookId)
         {
             InitializeComponent();
+            DataContext = viewModel;
             _accountStore = accountStore;
             _viewModel = viewModel;
             _bookId = bookId;
         }
 
-        // Home button click handler
         private void HomeButton_Click(object sender, RoutedEventArgs e)
         {
+            var app = (App)Application.Current;
+            var booksView = app.BooksView;
 
+            booksView.Show();
+            this.Close();
         }
 
         private async void SaveNewReview_Click(object sender, RoutedEventArgs e)
@@ -38,13 +42,10 @@ namespace BookHub.WPF.Views
                 {
                     int? userId = _accountStore.CurrentUserId;
 
-                    // Додаємо колекцію в базу даних за допомогою асинхронного методу
                     await _viewModel.CreateReviewAsync(reviewRating, reviewComment, userId.Value, _bookId);
 
-                    // Оновлюємо список на інтерфейсі
                     await _viewModel.RefreshReviewsAsync();
 
-                    // Сховати панель і очистити текстове поле
                     CreateReviewPanel.Visibility = Visibility.Collapsed;
                     ReviewRatingTextBox.Clear();
                     ReviewCommentTextBox.Clear();

@@ -109,15 +109,32 @@ namespace BookHub.WPF.ViewModels
 
         private async Task OpenBookDetailsAsync(int bookId)
         {
-            var bookDetailsViewModel = new BookDetailsViewModel(_bookService, _reviewService); // Передаємо обидві залежності
+            // Створюємо ViewModel для деталей книги
+            var bookDetailsViewModel = new BookDetailsViewModel(_bookService, _reviewService);
             await bookDetailsViewModel.LoadBookAsync(bookId);
 
-            var bookDetailsView = new BookDetailsView(_accountStore, bookDetailsViewModel, bookId)
+            // Створюємо нове вікно
+            var bookDetailsWindow = new BookDetailsView(_accountStore, bookDetailsViewModel, bookId)
             {
-                DataContext = bookDetailsViewModel
+                DataContext = bookDetailsViewModel,
+                Owner = Application.Current.MainWindow, // Встановлюємо власника
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
 
-            NavigateToPage(bookDetailsView);
+            // Закриваємо поточне вікно
+            if (Application.Current.MainWindow is Window currentWindow)
+            {
+                currentWindow.Hide(); // Використовуємо Hide замість Close для можливого повернення
+            }
+
+            // Показуємо нове вікно
+            bookDetailsWindow.ShowDialog();
+
+            // Після закриття нового вікна повертаємо основне
+            if (Application.Current.MainWindow is Window previousWindow)
+            {
+                previousWindow.Show();
+            }
         }
 
         private void NavigateToPage(Page page)
