@@ -14,8 +14,9 @@ namespace BookHub.WPF.Views
     public partial class UserProfileView : Window
     {
         private readonly ICollectionService _collectionService;
+        private readonly IBookService _bookService;
         private readonly IAccountStore _accountStore;
-        public UserProfileView(IUserService userService, UserDto selectedUserDto)
+        public UserProfileView(IUserService userService, IBookService bookService, IAccountStore accountStore, UserDto selectedUserDto)
         {
             InitializeComponent();
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -23,6 +24,8 @@ namespace BookHub.WPF.Views
             // Initialize the ViewModel and set it as DataContext
             var userProfileViewModel = new UserProfileViewModel(userService, selectedUserDto);
             DataContext = userProfileViewModel;
+            _bookService = bookService;
+            _accountStore = accountStore;
         }
 
         private void CollectionsButton_Click(object sender, RoutedEventArgs e)
@@ -34,7 +37,7 @@ namespace BookHub.WPF.Views
                 if (userId.HasValue)
                 {
                     var collectionsViewModel = new CollectionsViewModel(_collectionService, userId.Value);
-                    var collectionsView = new CollectionsView(collectionsViewModel);
+                    var collectionsView = new CollectionsView(collectionsViewModel, _bookService, _collectionService, _accountStore);
                     collectionsView.Show();
                     this.Close();
                 }

@@ -64,6 +64,34 @@ namespace BookHub.BLL.Services.Implementations
             });
         }
 
+        public async Task<ServiceResultType<PageDto<BookDto>>> GetPaginatedBooksFromCollectionAsync(int collectionId, Pageable pageable)
+        {
+            var validationResult = PageUtils.ValidatePage<BookDto>(pageable);
+
+            if (!validationResult.Success)
+            {
+                return ServiceResultType<PageDto<BookDto>>.ErrorResult(validationResult.ErrorMessage);
+            }
+
+            var (bookEntities, totalElements) = await _bookRepository.GetPagedBooksByCollectionAsync(collectionId, pageable);
+
+
+            var bookDtos = _mapper.Map<List<BookDto>>(bookEntities);
+
+            var totalPages = (int)Math.Ceiling((double)totalElements / pageable.Size);
+
+            Log.Information($"Fetched paginated books for collection ID {collectionId} at {DateTime.UtcNow}.");
+
+            return ServiceResultType<PageDto<BookDto>>.SuccessResult(new PageDto<BookDto>
+            {
+                Items = bookDtos,
+                TotalElements = totalElements,
+                CurrentPage = pageable.Page,
+                TotalPages = totalPages
+            });
+        }
+
+
         public async Task<ServiceResultType<BookDto>> CreateBook(BookCreateDto bookCreateDto)
         {
             if (bookCreateDto == null)

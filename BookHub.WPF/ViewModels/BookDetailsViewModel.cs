@@ -1,8 +1,10 @@
-﻿using BookHub.BLL.Services.Interfaces;
+﻿using BookHub.BLL.Services.Implementations;
+using BookHub.BLL.Services.Interfaces;
 using BookHub.DAL.DTO;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
+using Serilog;
 
 namespace BookHub.WPF.ViewModels
 {
@@ -68,6 +70,37 @@ namespace BookHub.WPF.ViewModels
 
                 _totalPages = result.Data.TotalPages;
             }
+        }
+
+        public async Task CreateReviewAsync(double reviewRating, string reviewComment, int userId, int bookId)
+        {
+            Log.Information("Starting to create a new review...");
+
+            try
+            {
+                var newReview = new ReviewDto { Rating = reviewRating, Comment = reviewComment, UserId = userId, BookId = bookId };
+                var result = await _reviewService.CreateReviewAsync(newReview);
+
+                if (result.Success)
+                {
+                    Reviews.Add(newReview);
+                    Log.Information($"New review created successfully.");
+                }
+                else
+                {
+                    Log.Error($"Failed to create collection: {result.ErrorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while creating the review.");
+            }
+        }
+
+        public async Task RefreshReviewsAsync()
+        {
+            Log.Information("Refreshing reviews...");
+            await LoadReviewsAsync();
         }
 
         private void LoadNextReviews()

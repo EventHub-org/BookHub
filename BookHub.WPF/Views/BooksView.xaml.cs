@@ -63,7 +63,7 @@ namespace BookHub.WPF.Views
                 if (userId.HasValue)
                 {
                     var collectionsViewModel = new CollectionsViewModel(_collectionService, userId.Value);
-                    var collectionsView = new CollectionsView(collectionsViewModel);
+                    var collectionsView = new CollectionsView(collectionsViewModel, _bookService, _collectionService, _accountStore);
                     collectionsView.Show();
                     this.Hide();
                 }
@@ -101,7 +101,7 @@ namespace BookHub.WPF.Views
                         Log.Information("User data retrieved for UserId: {UserId}", userId.Value);
 
                         var userProfileViewModel = new UserProfileViewModel(_userService, user.Data);
-                        var userProfileView = new UserProfileView(_userService, user.Data)
+                        var userProfileView = new UserProfileView(_userService, _bookService, _accountStore, user.Data)
                         {
                             DataContext = userProfileViewModel
                         };
@@ -169,7 +169,8 @@ namespace BookHub.WPF.Views
                         var journalViewModel = new JournalViewModel(
                             user.Data,
                             _readingProgressService,
-                            _bookService
+                            _bookService,
+                            userId.Value
                         );
 
                         var journalView = new JournalView(journalViewModel);

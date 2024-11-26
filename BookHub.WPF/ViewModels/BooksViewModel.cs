@@ -111,17 +111,33 @@ namespace BookHub.WPF.ViewModels
 
         private async Task OpenBookDetailsAsync(int bookId)
         {
+         
             var bookDetailsViewModel = new BookDetailsViewModel(_bookService, _reviewService);
             await bookDetailsViewModel.LoadBookAsync(bookId);
-
-            var bookDetailsView = new BookDetailsView(_accountStore, _collectionService, bookId, bookDetailsViewModel)
+        
+          
+            var bookDetailsWindow = new BookDetailsView(_accountStore, bookDetailsViewModel, bookId, bookDetailsViewModel)
             {
-                DataContext = bookDetailsViewModel
+                DataContext = bookDetailsViewModel,
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
-
-            NavigateToPage(bookDetailsView);
+        
+               
+            if (Application.Current.MainWindow is Window currentWindow)
+            {
+                currentWindow.Hide();
+            }
+        
+           
+            bookDetailsWindow.ShowDialog();
+        
+            if (Application.Current.MainWindow is Window previousWindow)
+            {
+                previousWindow.Show();
+            }
         }
-
+        
         private void NavigateToPage(Page page)
         {
             var booksView = Application.Current.MainWindow as BooksView;
@@ -147,9 +163,6 @@ namespace BookHub.WPF.ViewModels
         private bool CanGoToPreviousPage() => CurrentPage > 1;
 
         private bool CanGoToNextPage() => CurrentPage < TotalPages;
-
-
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 
