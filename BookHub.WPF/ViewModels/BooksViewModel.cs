@@ -22,7 +22,7 @@ namespace BookHub.WPF.ViewModels
         private ObservableCollection<BookDto> _books;
         private BookDto _selectedBook;
         private int _currentPage;
-        private const int _pageSize = 3;
+        private const int _pageSize = 24;
         private int _totalPages;
 
         private readonly IAccountStore _accountStore;

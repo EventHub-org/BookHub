@@ -5,78 +5,109 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:BookHub.WPF.Converters"
         mc:Ignorable="d"
-        Title="Books" Height="600" Width="800" WindowStartupLocation="CenterScreen">
+        Title="Books" Height="800" Width="1200" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <local:WindowWidthToColumnCountConverter x:Key="WindowWidthToColumnCountConverter" />
+
+        <!-- Стиль для кнопок з заокругленими кутами -->
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="#865F20"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#865F20"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="3, 10"/>
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border 
+                            Padding="4"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <!-- Тригери для зміни вигляду кнопки залежно від стану -->
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#CCCCCC"/>
+                    <Setter Property="Foreground" Value="#666666"/>
+                    <Setter Property="BorderBrush" Value="#CCCCCC"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
+
     <Grid>
-        <!-- Відокремлений верхній блок для кнопок -->
-        <Border Background="LightGray" Margin="0,0,0,10">
+        <!-- Верхній блок для кнопок -->
+        <Border Background="#E9E9E9" Margin="0,0,0,10" BorderBrush="#979797" BorderThickness="1">
             <Grid VerticalAlignment="Top">
-                <!-- Дві колонки: одна для кнопок ліворуч, інша для праворуч -->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <!-- Ліва колонка -->
                     <ColumnDefinition Width="Auto" />
-                    <!-- Права колонка -->
                 </Grid.ColumnDefinitions>
 
-                <!-- Кнопки зліва -->
-                <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Top">
-                    <Button Content="Collections" Margin="5" Padding="5" Width="100" Height="30" Click="CollectionsButton_Click"/>
-                    <Button Content="Profile" Margin="5" Padding="5" Width="100" Height="30" Click="ProfileButton_Click"/>
+                <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Top" Margin="10, 0,0,0">
+                    <!-- Кнопки з застосуванням стилю RoundedButtonStyle -->
+                    <Button Content="Collections" Style="{StaticResource RoundedButtonStyle}" Click="CollectionsButton_Click"/>
+                    <Button Content="Profile" Style="{StaticResource RoundedButtonStyle}" Click="ProfileButton_Click"/>
                 </StackPanel>
 
-                <!-- Кнопки справа -->
-                <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">
-                    <Button Content="Login"  Margin="5" Padding="5" Width="100" Height="30"
-                    Visibility="{Binding IsUserNotLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}" 
-                    Command="{Binding LoginCommand}" Click="LoginButton_Click" />
-                    <Button Content="Register" Margin="5" Padding="5" Width="100" Height="30" Click="RegisterButton_Click" 
-                    Visibility="{Binding IsUserNotLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <Button Content="Logout" Margin="5" Padding="5" Width="100" Height="30"
-                    Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}" 
-                    Command="{Binding LogoutCommand}" Click="Logout_Click" />
+                <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,10,0">
+                    <Button Content="Login" Visibility="{Binding IsUserNotLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Command="{Binding LoginCommand}" Style="{StaticResource RoundedButtonStyle}" Click="LoginButton_Click"/>
+                    <Button Content="Register" Visibility="{Binding IsUserNotLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Style="{StaticResource RoundedButtonStyle}" Click="RegisterButton_Click"/>
+                    <Button Content="Logout" Visibility="{Binding IsUserLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Command="{Binding LogoutCommand}" Style="{StaticResource RoundedButtonStyle}" Click="Logout_Click"/>
                 </StackPanel>
             </Grid>
         </Border>
 
-
-        <!-- Основний контент -->
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="0,60,0,0">
-            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-                <ItemsControl ItemsSource="{Binding Books}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="16" Margin="5" Padding="0" Background="White" Width="250">
-                                <StackPanel ClipToBounds="True">
-                                    <!-- Cover Image -->
-                                    <Image Source="{Binding CoverImageUrl}" Height="350" Width="250" Stretch="UniformToFill" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                                    <!-- Book Title -->
-                                    <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="Bold" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                                    <!-- Author -->
-                                    <TextBlock Text="Author:" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding Author}" TextWrapping="Wrap" Margin="0,0,0,5"/>
-                                    <!-- Rating -->
-                                    <TextBlock Text="Rating:" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding Rating}" Margin="0,0,0,5"/>
-                                    <!-- Button to open book details -->
-                                    <Button Content="View Details" Command="{Binding DataContext.OpenBookDetailsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
-                                        CommandParameter="{Binding Id}" Margin="5,10,5,0"/>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </WrapPanel>
+        <!-- Основний контент з адаптивними книжками -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,60,0,0" Background="#F5F5DC">
+            <ItemsControl ItemsSource="{Binding Books}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="0,0,16,16" Margin="5" Padding="0" Background="White" Width="250">
+                            <StackPanel ClipToBounds="True">
+                                <Image Source="{Binding CoverImageUrl}" Height="380" Stretch="UniformToFill" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                                <TextBlock Text="{Binding Author}" TextWrapping="Wrap" Margin="5,0,0,0" FontSize="16" Foreground="#979797" FontWeight="DemiBold"/>
+                                <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="Bold" TextWrapping="Wrap" Margin="5,0,0,5"/>
+                                <TextBlock Text="{Binding Rating, StringFormat='Rating: {0}'}" FontWeight="Bold" FontSize="14" Margin="5,0,0,0"/>
+                                <Button Content="View Details" Command="{Binding DataContext.OpenBookDetailsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                        CommandParameter="{Binding Id}" Margin="5,10,5,8" Style="{StaticResource RoundedButtonStyle}" FontSize="16" Height="35" Width="230"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </ScrollViewer>
 
+        <!-- Кнопки пагінації -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10">
-            <Button Content="&#x25C0;" Width="50" Margin="5" Padding="5" Command="{Binding PreviousPageCommand}" />
+            <Button Content="&#x25C0;" Width="50" Command="{Binding PreviousPageCommand}" Style="{StaticResource RoundedButtonStyle}" />
             <TextBlock Text="{Binding CurrentPage}" VerticalAlignment="Center" Margin="5" />
-            <Button Content="&#x25B6;" Width="50" Margin="5" Padding="5" Command="{Binding NextPageCommand}" />
+            <Button Content="&#x25B6;" Width="50" Command="{Binding NextPageCommand}" Style="{StaticResource RoundedButtonStyle}" />
         </StackPanel>
-        <Button Content="Journal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20"
-                Width="100" Height="40" Click="Journal_Click" />
+
+        <Button Content="Journal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20" Width="100" Height="40" Style="{StaticResource RoundedButtonStyle}" Click="Journal_Click"/>
     </Grid>
 </Window>

@@ -22,7 +22,7 @@ namespace BookHub.WPF.ViewModels
             _authService = authService;
             _accountStore = accountStore;
             _sessionService = sessionService;
-            LoginCommand = new RelayCommand(async () => await LoginAsync(), () => CanLogin);
+            LoginCommand = new RelayCommand(async () => await LoginAsync(), () => CanLogin); // Command depends on CanLogin
             IsAuthenticated = _sessionService.IsUserAuthenticated();
         }
 
@@ -31,44 +31,52 @@ namespace BookHub.WPF.ViewModels
         private string _errorMessage;
         private bool _isAuthenticated;
 
+        // Property for Email, triggers UpdateLoginState when changed
         public string Email
         {
             get => _email;
             set { _email = value; OnPropertyChanged(); UpdateLoginState(); }
         }
 
+        // Property for Password, triggers UpdateLoginState when changed
         public string Password
         {
             get => _password;
             set { _password = value; OnPropertyChanged(); UpdateLoginState(); }
         }
 
+        // Property for ErrorMessage
         public string ErrorMessage
         {
             get => _errorMessage;
             set { _errorMessage = value; OnPropertyChanged(); }
         }
 
+        // Property for IsAuthenticated
         public bool IsAuthenticated
         {
             get => _isAuthenticated;
             set { _isAuthenticated = value; OnPropertyChanged(); }
         }
 
+        // Command for logging in
         public ICommand LoginCommand { get; }
 
+        // Property determining whether the login button can be clicked
         public bool CanLogin =>
-            !string.IsNullOrWhiteSpace(Email) &&
-            !string.IsNullOrWhiteSpace(Password);
+            !string.IsNullOrWhiteSpace(Email) &&  // Email must not be empty
+            !string.IsNullOrWhiteSpace(Password); // Password must not be empty
 
+        // Method to update the state of the login button
         private void UpdateLoginState()
         {
             if (LoginCommand is RelayCommand command)
             {
-                command.RaiseCanExecuteChanged();
+                command.RaiseCanExecuteChanged(); // Re-evaluate whether the command can execute
             }
         }
 
+        // Method to log the user in
         private async Task LoginAsync()
         {
             var userDto = new UserLoginDto
@@ -88,7 +96,7 @@ namespace BookHub.WPF.ViewModels
             }
             else
             {
-                Log.Information("Login successful for email: {Email}. ", Email);
+                Log.Information("Login successful for email: {Email}.", Email);
                 ErrorMessage = "Login successful!";
 
                 _accountStore.SetCurrentUser(result.Data);
@@ -98,6 +106,7 @@ namespace BookHub.WPF.ViewModels
             }
         }
 
+        // Event for property changes
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

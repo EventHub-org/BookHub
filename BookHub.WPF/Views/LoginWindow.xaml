@@ -5,33 +5,140 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BookHub.WPF.Views"
         mc:Ignorable="d"
-        Title="Login" Height="600" Width="800">
-    <Grid Margin="20">
+        Title="Login" Height="480" Width="550"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <!-- Style for TextBox -->
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Background" Value="#E9E9E9"/>
+            <Setter Property="BorderBrush" Value="#979797"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,0,0,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Left"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#865F20"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding Text.Length, RelativeSource={RelativeSource Self}}" Value="0">
+                    <Setter Property="BorderBrush" Value="#979797"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Style for PasswordBox -->
+        <Style TargetType="PasswordBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Background" Value="#E9E9E9"/>
+            <Setter Property="BorderBrush" Value="#979797"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,0,0,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#865F20"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding Password.Length, RelativeSource={RelativeSource Self}}" Value="0">
+                    <Setter Property="BorderBrush" Value="#979797"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Style for Login Button with Template -->
+        <Style x:Key="LoginButtonStyle" TargetType="Button">
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="#865F20"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#865F20"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="8">
+                            <!-- Додаємо CornerRadius до Border -->
+                            <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      RecognizesAccessKey="True"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="False">
+                    <Setter Property="Background" Value="#D3D3D3"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid Margin="32,32,32,32">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!-- Home Button in the Top Left Corner -->
-        <Button Content="Home" Click="HomeButton_Click" 
-                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,10"
-                Grid.Row="0" Grid.Column="0"/>
+        <!-- StackPanel for Home Button and Labels -->
+        <StackPanel Grid.Row="0" Orientation="Vertical" Margin="0,0,0,20">
+            <!-- Home Button does not use the LoginButtonStyle -->
 
-        <TextBlock Text="Email:" Grid.Row="1" Grid.Column="0" Margin="0,5,10,5" />
-        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Content="На головну" Click="HomeButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top"
+        Background="#865F20" Foreground="White" FontSize="14" FontWeight="Bold">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button"> 
+                        <Border Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    Padding="4"
+                    BorderThickness="1"
+                    CornerRadius="4">
+                            <!-- Застосовуємо внутрішні відступи -->
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <TextBlock Text="Вхід" FontWeight="Bold" FontSize="24" Margin="0,0,0,0" />
+            <TextBlock Text="Увійдіть щоб отримати доступ до акаунту BookHub" FontSize="14" />
+        </StackPanel>
 
-        <TextBlock Text="Password:" Grid.Row="2" Grid.Column="0" Margin="0,5,10,5" />
-        <PasswordBox x:Name="PasswordBox" Grid.Row="2" Grid.Column="1" PasswordChanged="OnPasswordChanged" />
+        <!-- StackPanel for Email Field -->
+        <StackPanel Grid.Row="1" Orientation="Vertical" Margin="0,0,0,10">
+            <TextBlock Text="Електронна пошта" FontWeight="Bold" FontSize="14"/>
+            <Border BorderBrush="#979797" BorderThickness="1" CornerRadius="4">
+                <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" FontSize="14" Height="40"/>
+            </Border>
+        </StackPanel>
 
-        <Button Content="Login" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,20,0,0"
-                Command="{Binding LoginCommand}" />
+        <!-- StackPanel for Password Field -->
+        <StackPanel Grid.Row="2" Orientation="Vertical" Margin="0,10,0,10">
+            <TextBlock Text="Пароль" FontWeight="Bold" FontSize="14"/>
+            <Border BorderBrush="#979797" BorderThickness="1" CornerRadius="4">
+                <PasswordBox x:Name="PasswordBox" PasswordChanged="OnPasswordChanged" FontSize="14" Height="40"/>
+            </Border>
+        </StackPanel>
 
+        <!-- Login Button (with custom style) -->
+        <Button Content="Увійти" Grid.Row="3" HorizontalAlignment="Stretch" Margin="0,20,0,0" Cursor="Hand" 
+        Command="{Binding LoginCommand}" IsEnabled="{Binding IsLoginEnabled}"
+        Style="{StaticResource LoginButtonStyle}"/>
+
+        <!-- Error Message -->
         <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Foreground="Red" Text="{Binding ErrorMessage}" />
     </Grid>
 </Window>

@@ -3,11 +3,28 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      Title="Book Details" Height="600" Width="800" WindowStartupLocation="CenterScreen">
+      Title="Book Details" Height="800" Width="1200" WindowStartupLocation="CenterScreen">
 
     <Grid Background="#F5F5DC">
         <!-- Home Button at the Top -->
-        <Button Content="Home" Click="HomeButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="75" Height="30"/>
+        <Button Content="На головну" Click="HomeButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" 
+                Width="120" Height="30" Foreground="White" Background="#865F20" FontWeight="Bold" FontSize="14"> 
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Border" Background="{TemplateBinding Background}" CornerRadius="8" BorderThickness="1">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" TargetName="Border" Value="#CCC" />
+                            <Setter Property="Foreground" Value="#888" />
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+
 
         <Border Background="White" Margin="64" Padding="32" BorderThickness="1" BorderBrush="#979797" CornerRadius="16">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -48,21 +65,17 @@
                             </Border>
 
                             <Button Content="Додати до списку читання" Click="openCollectionsView" FontWeight="Bold" FontSize="24" Foreground="White" 
-        IsEnabled="{Binding IsAddToListEnabled}" Background="Green">
+        IsEnabled="{Binding IsAddToListEnabled}" Background="#865F20">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border x:Name="Border" Background="{TemplateBinding Background}" Padding="16,12" Margin="0,16" CornerRadius="8" BorderThickness="1">
                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
                                         <ControlTemplate.Triggers>
-                                            <!-- Trigger for the IsEnabled property -->
                                             <Trigger Property="IsEnabled" Value="False">
                                                 <Setter Property="Background" TargetName="Border" Value="#CCC" />
-                                                <!-- Disabled background -->
                                                 <Setter Property="Foreground" Value="#888" />
-                                                <!-- Disabled foreground -->
                                                 <Setter Property="Opacity" Value="0.5" />
-                                                <!-- Optional: Make the button semi-transparent -->
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
@@ -80,31 +93,50 @@
                             <Run Text="{Binding Book.Rating}"/>
                             <Run Text="/5"/>
                         </TextBlock>
+                        
+                        
 
                         <ItemsControl ItemsSource="{Binding Reviews}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Margin="0,5,0,5" Padding="10" Background="#EFEFEF" CornerRadius="8" BorderBrush="#979797" BorderThickness="1">
                                         <StackPanel>
-                                            <TextBlock Text="{Binding Comment}" TextWrapping="Wrap" Margin="0,5,0,0"/>
-                                            <TextBlock Text="{Binding CreatedAt, StringFormat=d}" FontSize="12" Foreground="#979797"/>
+                                            <TextBlock Text="{Binding Rating, StringFormat='Оцінка - {0}'}" FontSize="16" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Comment}" TextWrapping="Wrap" Margin="0,5,0,0" FontSize="14" />
+                                            <TextBlock Text="{Binding CreatedAt, StringFormat=d}" FontSize="14" Foreground="#979797"/>
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
-                            <Button Content="Попередня" Command="{Binding LoadPreviousReviewsCommand}" Margin="5"/>
-                            <Button Content="Наступна" Command="{Binding LoadNextReviewsCommand}" Margin="5"/>
-                        </StackPanel>
+
                     </StackPanel>
 
                     <!-- Button to open the new collection input field -->
-                    <Button Content="Create New Review" Click="CreateNewReview_Click" Margin="10" Grid.Row="1"/>
+                    <Button Content="Написати рецензію" Click="CreateNewReview_Click" Margin="0,20,0,0" Grid.Row="1" 
+                            Foreground="White" Background="#865F20" FontWeight="Bold" FontSize="14" Padding="10" Height="35" Width="300"
+                            HorizontalAlignment="Left">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="Border" Background="{TemplateBinding Background}" CornerRadius="8" BorderThickness="1">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Background" TargetName="Border" Value="#CCC" />
+                                        <Setter Property="Foreground" Value="#888" />
+                                        <Setter Property="Opacity" Value="0.5" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    
 
                     <!-- Panel for creating a new collection, initially collapsed -->
-                    <StackPanel x:Name="CreateReviewPanel" Margin="10"
+                    <StackPanel x:Name="CreateReviewPanel"
                         MouseDown="CreateReviewPanel_MouseDown">
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
@@ -116,14 +148,41 @@
                                 </Style.Triggers>
                             </Style>
                         </StackPanel.Style>
-                        <!-- Додатковий контент панелі, наприклад, TextBox для назви колекції -->
-                        <TextBlock Text="Оцінка від 0 до 5" FontSize="14" FontWeight="Regular"/>
-                        <TextBox x:Name="ReviewRatingTextBox" Width="200" Margin="0,5"/>
-                        <TextBlock Height="10"/>
-                        <TextBlock Text="Коментар" FontSize="14" FontWeight="Regular"/>
-                        <TextBox x:Name="ReviewCommentTextBox" Width="200" Margin="0,5"/>
-                        <TextBlock Height="10"/>
-                        <Button Content="Save" Click="SaveNewReview_Click" Margin="5"/>
+
+                        <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+                            <TextBlock Text="Оцінка від 0 до 5" FontWeight="Bold" FontSize="14"/>
+                            <Border BorderBrush="#979797" BorderThickness="1" CornerRadius="4" Width="150" HorizontalAlignment="Left">
+                                <TextBox x:Name="ReviewRatingTextBox" FontSize="14" Height="25"/>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+                            <TextBlock Text="Коментар" FontWeight="Bold" FontSize="14"/>
+                            <Border BorderBrush="#979797" BorderThickness="1" CornerRadius="4">
+                                <TextBox x:Name="ReviewCommentTextBox" FontSize="14" Height="80"/>
+                            </Border>
+                        </StackPanel>
+
+
+                        <Button Content="Зберегти" Click="SaveNewReview_Click" Margin="0,3,0,0" Grid.Row="1" 
+                                Foreground="White" Background="#865F20" FontWeight="Bold" FontSize="14" Padding="10" Height="35" Width="300"
+                                HorizontalAlignment="Right">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}" CornerRadius="8" BorderThickness="1">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Background" TargetName="Border" Value="#CCC" />
+                                            <Setter Property="Foreground" Value="#888" />
+                                            <Setter Property="Opacity" Value="0.5" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
                     </StackPanel>
 
                 </StackPanel>
