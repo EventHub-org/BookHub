@@ -119,6 +119,7 @@ namespace BookHub.WPF
 
             // Register ViewModels and Views
             builder.RegisterType<BooksViewModel>();
+            builder.RegisterType<BooksFromCollectionViewModel>();
             builder.RegisterType<CollectionsViewModel>();
             builder.RegisterType<UserProfileViewModel>();
             builder.RegisterType<JournalViewModel>();
@@ -126,6 +127,7 @@ namespace BookHub.WPF
             builder.RegisterType<LoginViewModel>();
 
             builder.RegisterType<BooksView>();
+            builder.RegisterType<BooksFromCollectionView>();
             builder.RegisterType<UserProfileView>();
             builder.RegisterType<JournalView>();
             builder.RegisterType<RegisterWindow>();

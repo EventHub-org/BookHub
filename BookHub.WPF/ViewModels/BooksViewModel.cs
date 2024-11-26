@@ -163,9 +163,6 @@ namespace BookHub.WPF.ViewModels
 
         private bool CanGoToNextPage() => CurrentPage < TotalPages;
 
-
-
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
