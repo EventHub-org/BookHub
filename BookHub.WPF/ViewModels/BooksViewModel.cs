@@ -116,7 +116,7 @@ namespace BookHub.WPF.ViewModels
             await bookDetailsViewModel.LoadBookAsync(bookId);
         
           
-            var bookDetailsWindow = new BookDetailsView(_accountStore, bookDetailsViewModel, bookId, bookDetailsViewModel)
+            var bookDetailsWindow = new BookDetailsView(_accountStore, _collectionService, bookId, bookDetailsViewModel)
             {
                 DataContext = bookDetailsViewModel,
                 Owner = Application.Current.MainWindow,

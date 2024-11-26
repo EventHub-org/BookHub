@@ -19,7 +19,7 @@ namespace BookHub.WPF.Views
         private readonly BookDetailsViewModel _viewModel;
         //private bool _isAddToListEnabled = true;
         
-        public BookDetailsView(IAccountStore accountStore, BookDetailsViewModel viewModel, ICollectionService collectionService, int bookId)
+        public BookDetailsView(IAccountStore accountStore, ICollectionService collectionService, int bookId, BookDetailsViewModel viewModel)
         {
             InitializeComponent();
             DataContext = viewModel;

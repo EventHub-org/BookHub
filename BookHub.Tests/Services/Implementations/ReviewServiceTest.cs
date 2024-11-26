@@ -14,6 +14,7 @@ namespace BookHub.Tests.Services.Impl
     {
         private readonly Mock<IRepository<ReviewEntity>> _mockRepository;
         private readonly Mock<IReviewRepository> _mockReviewRepository;
+        private readonly Mock<IBookRepository> _mockBookRepository; // Added mock for IBookRepository
         private readonly IMapper _mapper;
         private readonly ReviewService _reviewService;
 
@@ -21,13 +22,15 @@ namespace BookHub.Tests.Services.Impl
         {
             _mockRepository = new Mock<IRepository<ReviewEntity>>();
             _mockReviewRepository = new Mock<IReviewRepository>();
+            _mockBookRepository = new Mock<IBookRepository>(); // Initialize the mock
 
-            var config = new MapperConfiguration(cfg => {
+            var config = new MapperConfiguration(cfg =>
+            {
                 cfg.AddProfile<ReviewProfile>();
             });
             _mapper = config.CreateMapper();
 
-            _reviewService = new ReviewService(_mockRepository.Object, _mockReviewRepository.Object, _mapper);
+            _reviewService = new ReviewService(_mockRepository.Object, _mockReviewRepository.Object, _mapper, _mockBookRepository.Object);
         }
 
         [Fact]
