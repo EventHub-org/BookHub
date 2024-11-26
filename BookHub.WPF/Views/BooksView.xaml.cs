@@ -166,7 +166,8 @@ namespace BookHub.WPF.Views
                         var journalViewModel = new JournalViewModel(
                             user.Data,
                             _readingProgressService,
-                            _bookService
+                            _bookService,
+                            userId.Value
                         );
 
                         var journalView = new JournalView(journalViewModel);

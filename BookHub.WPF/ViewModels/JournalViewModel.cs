@@ -2,6 +2,7 @@
 using BookHub.BLL.Services.Interfaces;
 using BookHub.BLL.Utils;
 using BookHub.DAL.DTO;
+using BookHub.WPF.State.Accounts;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -16,6 +17,8 @@ public class JournalViewModel : INotifyPropertyChanged
     private int _currentPage;
     private const int _pageSize = 3;
     private int _totalPages;
+    private int _userId;
+    //private readonly IAccountStore _accountStore;
 
     //public JournalViewModel(UserDto user, IReadingProgressService readingProgressService, IBookService bookService)
     //{
@@ -27,12 +30,13 @@ public class JournalViewModel : INotifyPropertyChanged
     //    NextPageCommand = new RelayCommand(NextPage, CanGoToNextPage);
     //}
 
-    public JournalViewModel(UserDto userDto, IReadingProgressService readingProgressService, IBookService bookService)
+    public JournalViewModel(UserDto userDto, IReadingProgressService readingProgressService, IBookService bookService, int userId)
     {
         this._userDto = userDto;
         this._readingProgressService = readingProgressService;
         this._bookService = bookService;
         LoadJournalAsync().ConfigureAwait(false);
+        _userId = userId;
     }
 
     public ObservableCollection<JournalEntryDto> JournalEntries
@@ -71,7 +75,7 @@ public class JournalViewModel : INotifyPropertyChanged
 
     private async Task LoadJournalAsync()
     {
-        var result = await _readingProgressService.GetReadingProgressByUserIdAsync(1);
+        var result = await _readingProgressService.GetReadingProgressByUserIdAsync(_userId);
 
         if (result.Success)
         {
