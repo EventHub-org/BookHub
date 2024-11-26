@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Register" Height="600" Width="550"
+        Title="Register" Height="650" Width="550"
         ResizeMode="NoResize">
 
     <Window.Resources>
@@ -145,7 +145,7 @@
         <!-- Кнопка Register -->
         <Button Content="Зареєструватися" Grid.Row="5" HorizontalAlignment="Stretch" Margin="0,20,0,0" Cursor="Hand"
                 Command="{Binding RegisterCommand}" 
-                IsEnabled="{Binding CanRegister}"
+                IsEnabled="True"
                 Style="{StaticResource RegisterButtonStyle}"/>
 
         <!-- Повідомлення про помилку -->

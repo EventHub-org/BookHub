@@ -75,7 +75,7 @@ public class JournalViewModel : INotifyPropertyChanged
 
     private async Task LoadJournalAsync()
     {
-        var result = await _readingProgressService.GetReadingProgressByUserIdAsync(_userId);
+        var result = await _readingProgressService.GetReadingProgressByUserIdAsync(_userDto.UserId);
 
         if (result.Success)
         {

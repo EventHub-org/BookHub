@@ -4,7 +4,7 @@
         Title="Journal" Height="800" Width="1200" MinHeight="600" MinWidth="800" ResizeMode="CanResizeWithGrip" Background="#F5F5DC">
     <DockPanel Margin="20">
         <!-- Home Button in the Top Left Corner -->
-        <Button Content="На головну" Click="HomeButton_Click" 
+        <Button Content="Home" Click="HomeButton_Click" 
         HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,10"
         DockPanel.Dock="Top" Width="120" Height="30" Foreground="White" Background="#865F20" FontWeight="Bold" FontSize="14">
             <Button.Template>
