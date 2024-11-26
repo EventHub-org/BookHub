@@ -1,7 +1,7 @@
 ﻿<Window x:Class="BookHub.WPF.Views.UserProfileView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="User Profile" Height="600" Width="800" Background="#EFEFEF" MinHeight="600" MinWidth="800" ResizeMode="CanResizeWithGrip">
+        Title="User Profile" Height="800" Width="1200" Background="#F5F5DC" MinHeight="600" MinWidth="800" ResizeMode="CanResizeWithGrip">
 
     <Window.Resources>
         <!-- Enhanced button style with gradient background and rounded corners -->
@@ -55,25 +55,35 @@
     </Window.Resources>
 
     <DockPanel Margin="15">
-        <!-- Home Button in the Top Left Corner -->
-        <Button Content="Home" Click="HomeButton_Click" 
-                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,10"
-                DockPanel.Dock="Top"/>
+        <!-- Home Button -->
+        <Button Content="На головну" Click="HomeButton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" 
+        Width="120" Height="30" Foreground="White" Background="#865F20" FontWeight="Bold" FontSize="14">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Border" Background="{TemplateBinding Background}" CornerRadius="8" BorderThickness="1">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" TargetName="Border" Value="#CCC" />
+                            <Setter Property="Foreground" Value="#888" />
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
 
-        <!-- Main Content of the Window -->
+        <!-- Main Content -->
         <Grid DockPanel.Dock="Top">
-            <!-- Navigation Buttons -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0">
-                <Button Content="Books" Command="{Binding NavigateToBooksCommand}" Style="{StaticResource NavButtonStyle}" />
-                <Button Content="Collections" Command="{Binding NavigateToCollectionsCommand}" Style="{StaticResource NavButtonStyle}" />
-                <Button Content="Friends" Command="{Binding NavigateToFriendsCommand}" Style="{StaticResource NavButtonStyle}" />
-            </StackPanel>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
 
-            <!-- Title for Selected User Profile -->
-            <TextBlock Text="Your Profile" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,50,0,10"/>
-
-            <!-- Top Section for Selected User Profile -->
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,60,0,0">
+            <!-- Left Column: User Profile -->
+            <StackPanel Grid.Column="0" Margin="15">
+                <TextBlock Text="Your Profile" FontSize="18" FontWeight="Bold" Margin="0,10,0,20" HorizontalAlignment="Center"/>
                 <Border Style="{StaticResource ProfileCardStyle}">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image Source="{Binding SelectedUser.ProfilePictureUrl}" Height="100" Width="100" Stretch="UniformToFill" Margin="0,10"/>
@@ -82,37 +92,24 @@
                 </Border>
             </StackPanel>
 
-            <!-- Title for Other Users Section -->
-            <TextBlock Text="Other Users You May Know" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,280,0,10"/>
-
-            <!-- Section for Other Users - Horizontal Scroll -->
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="20,300,20,0">
-                <ItemsControl ItemsSource="{Binding OtherUsers}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Style="{StaticResource ProfileCardStyle}">
-                                <StackPanel HorizontalAlignment="Center">
-                                    <Image Source="{Binding ProfilePictureUrl}" Height="80" Width="80" Stretch="UniformToFill" Margin="0,0,0,10"/>
-                                    <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                                    <Button Content="Add to Friends" Width="120" Command="{Binding DataContext.AddToFriendsCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" Style="{StaticResource NavButtonStyle}"/>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+            <!-- Right Column: Other Profiles -->
+            <ScrollViewer Grid.Column="1" Margin="15" VerticalScrollBarVisibility="Auto" Background="#E9E9E9" Padding="0,10,0,0">
+                <StackPanel>
+                    <TextBlock Text="Other Users You May Know" FontSize="18" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center"/>
+                    <ItemsControl ItemsSource="{Binding OtherUsers}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource ProfileCardStyle}">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <Image Source="{Binding ProfilePictureUrl}" Height="80" Width="80" Stretch="UniformToFill" Margin="0,0,0,10"/>
+                                        <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
             </ScrollViewer>
-
-            <!-- Bottom Section for Pagination Controls -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10,0,10,20">
-                <Button Content="&#x25C0;" Width="50" Margin="5" Padding="5" Command="{Binding PreviousPageCommand}" Style="{StaticResource NavButtonStyle}"/>
-                <TextBlock Text="{Binding CurrentPage}" VerticalAlignment="Center" Margin="10,0,10,0" FontSize="16" FontWeight="SemiBold"/>
-                <Button Content="&#x25B6;" Width="50" Margin="5" Padding="5" Command="{Binding NextPageCommand}" Style="{StaticResource NavButtonStyle}"/>
-            </StackPanel>
         </Grid>
     </DockPanel>
 </Window>

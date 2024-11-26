@@ -15,7 +15,7 @@ namespace BookHub.WPF.ViewModels
         private ObservableCollection<UserDto> _otherUsers;
         private UserDto _selectedUser;
         private int _currentPage;
-        private const int _pageSize = 3; // Number of users per page
+        private const int _pageSize = 10; // Number of users per page
         private int _totalPages;
 
         public UserProfileViewModel(IUserService userService, UserDto userDto)

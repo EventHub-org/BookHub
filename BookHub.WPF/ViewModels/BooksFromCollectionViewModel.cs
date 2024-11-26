@@ -17,7 +17,7 @@ namespace BookHub.WPF.ViewModels
         public ICommand OpenBookDetailsCommand { get; }
         private ObservableCollection<BookDto> _books;
         private int _currentPage;
-        private const int _pageSize = 3;
+        private const int _pageSize = 24;
         private int _totalPages;
 
         public BooksFromCollectionViewModel(IBookService bookService, int collectionId)
